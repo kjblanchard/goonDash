@@ -9,3 +9,5 @@
  *
  */
 #pragma once
+
+int InitializeSdlWindowLuaFunctions(lua_State *L);
