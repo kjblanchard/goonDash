@@ -1,7 +1,8 @@
 #include <GoonDash/gnpch.h>
 #include <GoonDash/aux/lua.h>
 
-#define SCRIPT_PATH "./Scripts/?.lua"
+// This could possibly need to be : instead of ; on Windows, we will find out when building there.
+#define SCRIPT_PATH "./Scripts/?.lua;./assets/tiled/?.lua"
 static lua_State *g_luaState;
 
 /**

@@ -7,6 +7,10 @@ WINDOWS_BUILD_SYSTEM = 'MinGW Makefiles'
 BUILD_FOLDER = build/bin
 BINARY_NAME = SupergoonDash
 BINARY_PATH = $(BUILD_FOLDER)/$(BINARY_NAME)
+TILED_PATH = /Applications/Tiled.app/Contents/MacOS/Tiled
+TILED_FOLDER_PATH = ./assets/tiled
+TILED_EXPORT_TILESETS = background terrain
+TILED_EXPORT_MAPS = level1
 
 all: build run
 
@@ -27,6 +31,14 @@ build:
 
 install:
 	@cmake --install build
+
+tiled:
+	@$(foreach file,$(TILED_EXPORT_TILESETS),\
+		$(TILED_PATH) --export-tileset lua $(TILED_FOLDER_PATH)/$(file).tsx $(TILED_FOLDER_PATH)/$(file).lua;\
+	)
+	@$(foreach file,$(TILED_EXPORT_MAPS),\
+		$(TILED_PATH) --export-map lua $(TILED_FOLDER_PATH)/$(file).tmx $(TILED_FOLDER_PATH)/$(file).lua;\
+	)
 
 clean:
 	@ - rm -rf build

@@ -162,7 +162,7 @@ target_include_directories(SupergoonDash
 # #########################################
 # Install
 # #########################################
-set(FOLDERS_TO_COPY src/Scripts)
+set(FOLDERS_TO_COPY src/Scripts assets)
 install(DIRECTORY ${FOLDERS_TO_COPY}
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 )
