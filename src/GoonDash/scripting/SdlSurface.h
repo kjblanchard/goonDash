@@ -11,4 +11,4 @@
 #pragma once
 typedef struct lua_State lua_State;
 
-int luaopen_LuaSurface(lua_State* L);
+int RegisterLuaSurfaceFunctions(lua_State* L);

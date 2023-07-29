@@ -12,6 +12,7 @@ static int LoadSurfaceFromFile(lua_State *L)
     // Arg1: filepath
     const char *filePath = luaL_checkstring(L, 1);
     SDL_Surface *tileSurface = IMG_Load(filePath);
+    LogWarn("Doing the thing");
     if (!tileSurface)
     {
         LogError("Could not load image %s, Error:\n%s", filePath, IMG_GetError());
@@ -42,14 +43,20 @@ static int FreeSurface(lua_State *L)
     return 0;
 }
 
-int luaopen_LuaSurface(lua_State *L)
+static int luaopen_LuaSurface(lua_State *L)
 {
+    luaL_newmetatable(L, "Lua.LuaSurface");
     luaL_Reg luaSurfaceLib[] = {
         {"NewFromFile", LoadSurfaceFromFile},
         {"Delete", FreeSurface},
         {NULL, NULL} // Sentinel value to indicate the end of the table
     };
     luaL_newlib(L, luaSurfaceLib);
-    // lua_setglobal(L, "LuaSurface");
     return 1;
+
+}
+
+int RegisterLuaSurfaceFunctions(lua_State* L)
+{
+    luaL_requiref(L, "LuaSurface", luaopen_LuaSurface, 0);
 }

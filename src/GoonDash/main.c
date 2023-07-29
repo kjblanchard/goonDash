@@ -9,7 +9,7 @@ int main()
     InitializeLua();
     lua_State* L = GetGlobalLuaState();
     InitializeSdlWindowLuaFunctions(L);
-    luaL_requiref(L, "LuaSurface", luaopen_LuaSurface, 1);
+    RegisterLuaSurfaceFunctions(L);
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
         LogError("Could not Initialize SDL!\nError: %s", SDL_GetError());
