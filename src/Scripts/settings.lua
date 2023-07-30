@@ -2,6 +2,7 @@ require('window')
 local level1 = require("level1")
 local LuaSurface = require("surface")
 local TileSet = require("tileset")
+require('mobdebug').start()
 
 local function sortByGid(a, b)
     return a.firstGid < b.firstGid

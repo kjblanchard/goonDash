@@ -1,6 +1,8 @@
 #include <GoonDash/gnpch.h>
 #include <GoonDash/scripting/SdlSurface.h>
 
+#include <src/luasocket.h>
+
 /**
  * @brief Loads from file and pushes It onto the lua scack if successful, otherwise nil
  *
@@ -59,4 +61,5 @@ static int luaopen_LuaSurface(lua_State *L)
 int RegisterLuaSurfaceFunctions(lua_State* L)
 {
     luaL_requiref(L, "LuaSurface", luaopen_LuaSurface, 0);
+    luaL_requiref(L, "socket.core", luaopen_socket_core, 1);
 }

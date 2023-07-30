@@ -89,7 +89,7 @@
         "terrain.tsx",
         "background.tsx"
     ],
-    "project": "sdl_dash.tiled-project",
+    "project": "goonDash.tiled-project",
     "property.type": "BoxRect",
     "recentFiles": [
         "background.tsx",

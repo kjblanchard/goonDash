@@ -2,7 +2,7 @@
     "automappingRulesFile": "",
     "commands": [
     ],
-    "extensionsPath": "../../../../../Documents/tiled/sdl_dash/extensions",
+    "extensionsPath": ".",
     "folders": [
         "."
     ],

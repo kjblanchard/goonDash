@@ -61,7 +61,7 @@ include(CTest)
 # #########################################
 # Options
 # #########################################
-option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" OFF)
+option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" ON)
 option(GOON_BUILD_PCH "Uses a PCH file to try and speed up compilation" ON)
 set(BUILD_TESTING OFF)
 
@@ -88,6 +88,16 @@ find_library(LIB_LUA
     HINTS /usr/local/lib
     REQUIRED)
 set(LUA_LIBRARIES ${LIB_LUA})
+
+find_library(LIB_SOCKET
+    NAMES socket-3.0.0.so
+    HINTS /Users/kevin/git/lua/luasocket/build/lib/lua/5.4/socket
+    REQUIRED)
+
+find_library(LIB_SOCKETMIME
+    NAMES socket-3.0.0.so
+    HINTS /Users/kevin/git/lua/luasocket/build/lib/lua/5.4/mime
+    REQUIRED)
 
 # #########################################
 # Compile Definitions
@@ -147,16 +157,20 @@ endif()
 # Link to the actual SDL2 library. SDL2::SDL2 is the shared SDL library, SDL2::SDL2-static is the static SDL libarary.
 target_link_libraries(SupergoonDash
     PUBLIC
+    ${LUA_LIBRARIES}
     PRIVATE
     SDL2::SDL2-static
     SDL2_image::SDL2_image-static
-    ${LUA_LIBRARIES}
+    ${LIB_SOCKET}
+    ${LIB_MIME}
 )
 
 target_include_directories(SupergoonDash
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/
     ${LUA_INCLUDE_DIR}
+    ${LUASOCKET_INCLUDE_DIR}
+    /Users/kevin/git/lua/luasocket
 )
 
 # #########################################
@@ -167,6 +181,7 @@ install(DIRECTORY ${FOLDERS_TO_COPY}
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     PATTERN "*.tsx" EXCLUDE
     PATTERN "*.tmx" EXCLUDE
+    PATTERN "*.tiled-project" EXCLUDE
 )
 
 # #########################################
