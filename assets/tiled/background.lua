@@ -8,7 +8,7 @@ return {
   spacing = 0,
   margin = 0,
   columns = 0,
-  objectalignment = "topleft",
+  objectalignment = "unspecified",
   tileoffset = {
     x = 0,
     y = 0
@@ -23,7 +23,7 @@ return {
   tilecount = 1,
   tiles = {
     {
-      id = 1,
+      id = 0,
       image = "../img/purple.png",
       width = 64,
       height = 64

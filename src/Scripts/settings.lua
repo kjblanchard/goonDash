@@ -32,7 +32,6 @@ table.sort(tilesets, sortByGid)
 
 -- Load all the surfaces and get their userdata so that we can use them when creating the atlas
 for _, tileset in ipairs(tilesets) do
-    print("Gid is " .. tileset.firstGid)
     local filenames = tileset:GetAllFileNames()
     for _, value in ipairs(filenames) do
         local surfaceUserdata = LuaSurface.NewFromFile(value)
