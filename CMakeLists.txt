@@ -82,7 +82,6 @@ find_package(SDL2_image REQUIRED CONFIG COMPONENTS SDL2_image)
 # 1. Look for a SDL2 package, 2. Look for the SDL2maincomponent and 3. DO NOT fail when SDL2main is not available
 find_package(SDL2 REQUIRED CONFIG COMPONENTS SDL2main)
 
-
 # Find lua static (non homebrew on mac)
 find_library(LIB_LUA
     NAMES liblua_static lua_static liblua_static.a lua_static.a liblua.a
@@ -144,6 +143,7 @@ if(TARGET SDL2::SDL2main)
     # It has an implicit dependency on SDL2 functions, so it MUST be added before SDL2::SDL2 (or SDL2::SDL2-static)
     target_link_libraries(SupergoonDash PRIVATE SDL2::SDL2main)
 endif()
+
 # Link to the actual SDL2 library. SDL2::SDL2 is the shared SDL library, SDL2::SDL2-static is the static SDL libarary.
 target_link_libraries(SupergoonDash
     PUBLIC
@@ -165,6 +165,8 @@ target_include_directories(SupergoonDash
 set(FOLDERS_TO_COPY src/Scripts assets)
 install(DIRECTORY ${FOLDERS_TO_COPY}
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    PATTERN "*.tsx" EXCLUDE
+    PATTERN "*.tmx" EXCLUDE
 )
 
 # #########################################
@@ -176,4 +178,3 @@ if(BUILD_TESTING AND NOT WIN32)
 endif(BUILD_TESTING AND NOT WIN32)
 
 add_test(NAME cppclean COMMAND ${CMAKE_SOURCE_DIR}/tests/cppclean.sh ${CMAKE_SOURCE_DIR})
-
