@@ -30,7 +30,7 @@ end
 ---@param srcRect table the rectangle to use from the tile
 ---@return unknown
 function BlitAtlasSurface(atlasSurface, tileSurface, destRect, srcRect)
-    return surface.BlitAtlasSurface(atlasSurface, tileSurface, destRect, srcRect)
+    return surface.BlitAtlas(atlasSurface, tileSurface, destRect, srcRect)
 end
 
 ---Free the memory from C

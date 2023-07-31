@@ -63,7 +63,7 @@ include(CTest)
 # #########################################
 option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" OFF)
 option(GOON_BUILD_PCH "Uses a PCH file to try and speed up compilation" ON)
-option(GOON_DEBUG_LUA "Includes socket so that we can debug lua remotely" OFF)
+option(GOON_DEBUG_LUA "Includes socket so that we can debug lua remotely" ON)
 set(BUILD_TESTING OFF)
 
 # #########################################

@@ -28,7 +28,7 @@ function TileSet:GetTile(id)
     if self.imageTileset then
         -- This is a Image tileset
         for _, value in ipairs(self.data.tiles) do
-            if value.id == id then
+            if value.id + self.firstGid == id then
                 return GetFullFilepath(value.image), value.width, value.height
             end
         end

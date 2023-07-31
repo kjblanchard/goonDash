@@ -46,9 +46,9 @@ static int BlitAtlasSurface(lua_State *L)
     // Arg2: SrcTileSurface
     // Arg3: DstRect
     // Arg4: SrcRect
-    if (!lua_islightuserdata(L, 1) || !lua_islightuserdata(L, 3))
+    if (!lua_islightuserdata(L, 1) || !lua_islightuserdata(L, 2))
     {
-        LogError("Bad argument passed into free surface, expected a userdata ptr to surface");
+        LogError("Bad argument passed into blit surface, expected a userdata ptr to surface");
         lua_pushnil(L);
         return 0;
     }
@@ -56,6 +56,7 @@ static int BlitAtlasSurface(lua_State *L)
     SDL_Surface *tileSurface = (SDL_Surface *)lua_touserdata(L, 2);
     SDL_Rect dstRect = GetRectFromLuaTable(L, 3);
     SDL_Rect srcRect = GetRectFromLuaTable(L, 4);
+    SDL_BlitSurface(tileSurface, &srcRect, atlasSurface, &dstRect);
 }
 
 static int FreeSurface(lua_State *L)
