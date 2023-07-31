@@ -61,8 +61,9 @@ include(CTest)
 # #########################################
 # Options
 # #########################################
-option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" ON)
+option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" OFF)
 option(GOON_BUILD_PCH "Uses a PCH file to try and speed up compilation" ON)
+option(GOON_DEBUG_LUA "Includes socket so that we can debug lua remotely" OFF)
 set(BUILD_TESTING OFF)
 
 # #########################################
@@ -89,15 +90,12 @@ find_library(LIB_LUA
     REQUIRED)
 set(LUA_LIBRARIES ${LIB_LUA})
 
-find_library(LIB_SOCKET
-    NAMES socket-3.0.0.so
-    HINTS /Users/kevin/git/lua/luasocket/build/lib/lua/5.4/socket
-    REQUIRED)
-
-find_library(LIB_SOCKETMIME
-    NAMES socket-3.0.0.so
-    HINTS /Users/kevin/git/lua/luasocket/build/lib/lua/5.4/mime
-    REQUIRED)
+if(GOON_DEBUG_LUA)
+    find_library(LIB_SOCKET
+        NAMES socket-3.0.0.so
+        HINTS /Users/kevin/git/lua/luasocket/build/lib/lua/5.4/socket
+        REQUIRED)
+endif(GOON_DEBUG_LUA)
 
 # #########################################
 # Compile Definitions
@@ -109,6 +107,10 @@ elseif(WIN32)
 elseif(LINUX)
     target_compile_definitions(SupergoonDash PRIVATE -DGN_PLATFORM_LINUX)
 endif(APPLE)
+
+if(GOON_DEBUG_LUA)
+    target_compile_definitions(SupergoonDash PRIVATE -DGN_DEBUG_LUA)
+endif(GOON_DEBUG_LUA)
 
 # #########################################
 # Precompiled headers
@@ -157,20 +159,17 @@ endif()
 # Link to the actual SDL2 library. SDL2::SDL2 is the shared SDL library, SDL2::SDL2-static is the static SDL libarary.
 target_link_libraries(SupergoonDash
     PUBLIC
-    ${LUA_LIBRARIES}
     PRIVATE
     SDL2::SDL2-static
     SDL2_image::SDL2_image-static
+    ${LUA_LIBRARIES}
     ${LIB_SOCKET}
-    ${LIB_MIME}
 )
 
 target_include_directories(SupergoonDash
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/
     ${LUA_INCLUDE_DIR}
-    ${LUASOCKET_INCLUDE_DIR}
-    /Users/kevin/git/lua/luasocket
 )
 
 # #########################################

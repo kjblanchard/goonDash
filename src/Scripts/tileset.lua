@@ -1,6 +1,7 @@
 local TileSet = {
     data = nil,
     firstGid = nil,
+    lastGid = nil,
     imageTileset = false
 }
 
@@ -19,7 +20,6 @@ function TileSet:New(firstGid, data)
     return tileset
 end
 
----comment
 ---@param id any
 ---@return string | nil image filename, nil on error
 ---@return number | nil tile width, nil on error
