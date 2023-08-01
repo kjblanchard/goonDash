@@ -84,3 +84,11 @@ void DumpLuaStack(lua_State *state)
     }
   }
 }
+
+int CallEngineLuaFunction(lua_State* L, const char* functionName)
+{
+  lua_getglobal(L, "Lua");
+  lua_getfield(L, -1, functionName);
+  lua_pcall(L, 0, 0, 0);
+  lua_settop(L, 0);
+}

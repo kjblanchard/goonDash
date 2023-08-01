@@ -18,14 +18,22 @@ int main()
     InitializeSdlWindowLuaFunctions(L);
     RegisterLuaSurfaceFunctions(L);
 
-    LuaLoadFileIntoGlobalState("settings.lua");
+    // Start lua
+    LuaLoadFileIntoGlobalState("main.lua");
+    CallEngineLuaFunction(L, "Initialize");
+
+    // Set event loop
     static bool shouldQuit = false;
     static SDL_Event event;
     SDL_Renderer *renderer = GetGlobalRenderer();
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+
+    // Lua Start
+    CallEngineLuaFunction(L, "Start");
+
+// Update loop
     while (!shouldQuit)
     {
-        // For now, just process events and check for quit and draw to the screen.
+        // Event loop
         while (SDL_PollEvent(&event))
         {
             switch (event.type)
@@ -43,21 +51,16 @@ int main()
                 break;
             }
         }
+        // Lua Update
+        CallEngineLuaFunction(L, "Update");
+
+        // Lua Draw
+        CallEngineLuaFunction(L, "Draw");
         SDL_RenderClear(renderer);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        // Should draw the atlas in lua
-        // // // // //TODO this is for testing
-        lua_getglobal(L, "DrawAtlas");
-        // Call the function (0 arguments, 0 return values)
-        int status = lua_pcall(L, 0, 0, 0);
-        if (status != LUA_OK)
-        {
-            // Handle any errors that occurred during the function call
-            printf("Error calling DrawAtlas(): %s\n", lua_tostring(L, -1));
-            lua_pop(L, 1); // Pop the error message from the stack
-        }
-        // // // // //
         SDL_RenderPresent(renderer);
+
+        // Delay currently
         SDL_Delay(16);
     }
     SDL_Quit();

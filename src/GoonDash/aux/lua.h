@@ -11,4 +11,6 @@ lua_State *GetGlobalLuaState();
  * @return int True if file was loaded successfully
  */
 int LuaLoadFileIntoGlobalState(const char *file);
+
+int CallEngineLuaFunction(lua_State* L, const char* functionName);
 void DumpLuaStack(lua_State *state);
