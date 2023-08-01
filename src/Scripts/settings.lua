@@ -19,12 +19,12 @@ local function checkIfTileInTilesetList(id, tilesetList)
     return nil
 end
 
--- Settings = {
---     windowName = "Goon Dash",
---     windowWidth = 648,
---     windowHeight = 480
--- }
--- InitializeWindow(Settings.windowName, Settings.windowWidth, Settings.windowHeight)
+Settings = {
+    windowName = "Goon Dash",
+    windowWidth = 648,
+    windowHeight = 480
+}
+InitializeWindow(Settings.windowName, Settings.windowWidth, Settings.windowHeight)
 
 local xNumTiles = level1.width
 local yNumTiles = level1.height
@@ -70,13 +70,11 @@ for _, layer in ipairs(level1.layers) do
             if tileTileset then
                 tilePngName = tileTileset:GetTile(objId)
             end
-            local dstRect = Rectangle:New(object.x, object.y, object.width, object.height)
-            print("I should load from file " .. tilePngName .. " at location " .. tostring(dstRect))
+            local dstRect = Rectangle:New(object.x, object.y - 64, object.width, object.height)
+            -- print("I should load from file " .. tilePngName .. " at location " .. tostring(dstRect))
             local srcRect = Rectangle:New(0, 0, object.width, object.height)
             local userdata = loadedSurfaces[tilePngName]
             BlitAtlasSurface(layer0Atlas, userdata, dstRect, srcRect)
-
-            -- Need to Blit to the layer 0 atlas here.
         end
     elseif layer.type == "tilelayer" then
         -- local tileData = layer.data
@@ -86,6 +84,14 @@ for _, layer in ipairs(level1.layers) do
         -- local objId =
     end
 end
+local texture = LuaSurface.CreateTexture(layer0Atlas)
+-- Putting global here for now.
+Layer_0_atlas = texture
+
+function DrawAtlas()
+    LuaSurface.DrawAtlas(Layer_0_atlas)
+end
+
 -- destroy surface and create texture from it
 
 -- Create atlas 1

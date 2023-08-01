@@ -21,18 +21,30 @@ static int LuaCreateSdlWindow(lua_State *L)
                                  width, height,
                                  SDL_WINDOW_SHOWN);
     // if the window creation succeeded create our renderer
-    if (g_pWindow != 0)
+    if (g_pWindow == NULL)
     {
-        g_pRenderer = SDL_CreateRenderer(g_pWindow, -1, 0);
+        LogError("Window could not be created, Error: %s", SDL_GetError());
+        return 0;
     }
-    SDL_SetRenderDrawColor(g_pRenderer, 0, 0, 0, 255);
-    SDL_RenderClear(g_pRenderer);
-    SDL_RenderPresent(g_pRenderer);
-    SDL_Delay(5000);
+    g_pRenderer = SDL_CreateRenderer(g_pWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    if(g_pRenderer == NULL)
+    {
+        LogError("Renderer could not be created, Error: %s", SDL_GetError());
+    }
     return 0;
 }
+
+SDL_Renderer *GetGlobalRenderer()
+{
+    return g_pRenderer;
+}
+SDL_Window *GetGlobalWindow()
+{
+    return g_pWindow;
+}
+
 int InitializeSdlWindowLuaFunctions(lua_State *L)
 {
     lua_pushcfunction(L, LuaCreateSdlWindow);
-    lua_setglobal(L, "InitializeWindow");
+    lua_setglobal(L, "InitializeWindows");
 }

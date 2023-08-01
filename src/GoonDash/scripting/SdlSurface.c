@@ -1,6 +1,7 @@
 #include <GoonDash/gnpch.h>
 #include <GoonDash/scripting/SdlSurface.h>
 #include <GoonDash/scripting/SdlRect.h>
+#include <GoonDash/scripting/SdlWindow.h>
 
 /**
  * @brief Loads from file and pushes It onto the lua scack if successful, otherwise nil
@@ -59,6 +60,46 @@ static int BlitAtlasSurface(lua_State *L)
     SDL_BlitSurface(tileSurface, &srcRect, atlasSurface, &dstRect);
 }
 
+static int CreateTextureFromSurface(lua_State *L)
+{
+    // Arg1: DstAtlasSurface
+    if (!lua_islightuserdata(L, 1))
+    {
+        LogError("Bad argument passed into blit surface, expected a userdata ptr to surface");
+        lua_pushnil(L);
+        return 0;
+    }
+    SDL_Surface *atlasSurface = (SDL_Surface *)lua_touserdata(L, 1);
+    SDL_Renderer *renderer = GetGlobalRenderer();
+    // Convert the surface to a texture
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, atlasSurface);
+    if (texture == NULL)
+    {
+        LogError("Could not create texture, Error: %s", SDL_GetError());
+        lua_pushnil(L);
+        return 0;
+    }
+    SDL_FreeSurface(atlasSurface); // We no longer need the surface after creating the texture
+    lua_pushlightuserdata(L, texture);
+    return 1;
+}
+
+static int DrawSurface(lua_State *L)
+{
+    // Arg1: DstAtlasSurface
+    if (!lua_islightuserdata(L, 1))
+    {
+        LogError("Bad argument passed into blit surface, expected a userdata ptr to surface");
+        lua_pushnil(L);
+        return 0;
+    }
+    SDL_Texture *atlasTexture = (SDL_Texture *)lua_touserdata(L, 1);
+    SDL_Renderer *renderer = GetGlobalRenderer();
+    SDL_Rect dstRect = {0, 0, 640, 480};
+    SDL_Rect srcRect = {0, 0, 640, 480};
+    SDL_RenderCopy(renderer, atlasTexture, &srcRect, &dstRect);
+}
+
 static int FreeSurface(lua_State *L)
 {
     // Arg1: Sutface ptr lightuserdata
@@ -86,6 +127,8 @@ static int luaopen_LuaSurface(lua_State *L)
         {"NewFromFile", LoadSurfaceFromFile},
         {"NewAtlas", LoadTextureAtlas},
         {"BlitAtlas", BlitAtlasSurface},
+        {"DrawAtlas", DrawSurface},
+        {"CreateTexture", CreateTextureFromSurface},
         {"Delete", FreeSurface},
         {NULL, NULL} // Sentinel value to indicate the end of the table
     };

@@ -6,7 +6,10 @@ local LuaSurface = {}
 ---@param name string The name of the window
 ---@param width number The size of the window
 ---@param height number The height of the window
-function InitializeWindow(name, width, height) end
+function InitializeWindow(name, width, height)
+    InitializeWindows(name, width, height)
+
+end
 
 ---Create a new lua surface from file
 ---@param filename string The filename to load from
@@ -21,6 +24,14 @@ end
 ---@return lightuserdata The loaded surface ptr
 function LuaSurface.LoadTextureAtlas(width, height)
     return surface.NewAtlas(width, height)
+end
+
+function LuaSurface.CreateTexture(atlasSurface)
+    return surface.CreateTexture(atlasSurface)
+end
+
+function LuaSurface.DrawAtlas(atlasTexture)
+    return surface.DrawAtlas(atlasTexture)
 end
 
 ---Draw onto the texture atlas, used when preparing the tilemap surface.
