@@ -4,7 +4,8 @@
 #include <GoonDash/scripting/SdlWindow.h>
 
 /**
- * @brief Loads from file and pushes It onto the lua scack if successful, otherwise nil
+ * @brief Loads a surface from file and pushes It onto the lua stack if successful,
+ * otherwise nil
  *
  * @param L The Lua State pointer
  * @return int The amount of return objects on the stack.
@@ -23,7 +24,12 @@ static int LoadSurfaceFromFile(lua_State *L)
     lua_pushlightuserdata(L, tileSurface);
     return 1;
 }
-
+/**
+ * @brief Creates a texture atlas with the right height and width, only tested with png
+ *
+ * @param L The lua state
+ * @return int Number of arguments pushed onto the stack.
+ */
 static int LoadTextureAtlas(lua_State *L)
 {
     // Arg1: Atlas Width
@@ -41,6 +47,12 @@ static int LoadTextureAtlas(lua_State *L)
     return 1;
 }
 
+/**
+ * @brief Used to draw onto a texture atlas.  Used for tile map operations mostly.
+ *
+ * @param L The lua state
+ * @return int Number of items on the stack.
+ */
 static int BlitAtlasSurface(lua_State *L)
 {
     // Arg1: DstAtlasSurface
@@ -60,6 +72,12 @@ static int BlitAtlasSurface(lua_State *L)
     SDL_BlitSurface(tileSurface, &srcRect, atlasSurface, &dstRect);
 }
 
+/**
+ * @brief Create a Texture From Surface object, and cleans up the surface.
+ *
+ * @param L
+ * @return int
+ */
 static int CreateTextureFromSurface(lua_State *L)
 {
     // Arg1: DstAtlasSurface
@@ -118,6 +136,19 @@ static int FreeSurface(lua_State *L)
     }
     SDL_FreeSurface(surface);
     return 0;
+}
+
+static int luaopen_LuaTileAtlas(lua_State *L)
+{
+    luaL_newmetatable(L, "Lua.TileAtlas");
+    luaL_Reg luaTileAtlasLib[] = {
+        {"NewAtlas", LoadTextureAtlas},
+        {"BlitAtlas", BlitAtlasSurface},
+        {"DrawAtlas", DrawSurface},
+        {NULL, NULL} // Sentinel value to indicate the end of the table
+    };
+    luaL_newlib(L, luaTileAtlasLib);
+    return 1;
 }
 
 static int luaopen_LuaSurface(lua_State *L)

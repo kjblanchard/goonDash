@@ -1,15 +1,5 @@
 local surface = require("LuaSurface")
 local LuaSurface = {}
---- A way to handle SDL surfaces in lua from C
--- LuaSurface = require("LuaSurface")
----Initialize a SDL window
----@param name string The name of the window
----@param width number The size of the window
----@param height number The height of the window
-function InitializeWindow(name, width, height)
-    InitializeWindows(name, width, height)
-
-end
 
 ---Create a new lua surface from file
 ---@param filename string The filename to load from

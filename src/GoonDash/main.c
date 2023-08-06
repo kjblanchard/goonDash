@@ -30,7 +30,7 @@ int main()
     // Lua Start
     CallEngineLuaFunction(L, "Start");
 
-// Update loop
+    // Update loop
     while (!shouldQuit)
     {
         // Event loop
@@ -55,9 +55,9 @@ int main()
         CallEngineLuaFunction(L, "Update");
 
         // Lua Draw
-        CallEngineLuaFunction(L, "Draw");
-        SDL_RenderClear(renderer);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+        CallEngineLuaFunction(L, "Draw");
         SDL_RenderPresent(renderer);
 
         // Delay currently

@@ -31,6 +31,7 @@ static int LuaCreateSdlWindow(lua_State *L)
     {
         LogError("Renderer could not be created, Error: %s", SDL_GetError());
     }
+    LogDebug("Created window\nWidth: %d, Height: %d", width, height);
     return 0;
 }
 
