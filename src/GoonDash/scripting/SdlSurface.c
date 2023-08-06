@@ -113,8 +113,8 @@ static int DrawSurface(lua_State *L)
     }
     SDL_Texture *atlasTexture = (SDL_Texture *)lua_touserdata(L, 1);
     SDL_Renderer *renderer = GetGlobalRenderer();
-    SDL_Rect dstRect = {0, 0, 640, 480};
-    SDL_Rect srcRect = {0, 0, 640, 480};
+    SDL_Rect dstRect = {0, 0, 512, 288};
+    SDL_Rect srcRect = {0, 0, 512, 288};
     SDL_RenderCopy(renderer, atlasTexture, &srcRect, &dstRect);
 }
 

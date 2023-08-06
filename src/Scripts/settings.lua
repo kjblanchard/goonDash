@@ -1,9 +1,9 @@
-require('window')
+require("Core.window")
 
 return {
     windowName = "Goon Dash",
-    windowWidth = 648,
-    windowHeight = 480
+    windowWidth = 512,
+    windowHeight = 288
 }
 
 -- Create atlas 1

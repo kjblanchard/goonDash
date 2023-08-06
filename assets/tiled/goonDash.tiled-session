@@ -102,7 +102,7 @@
         "/Users/kevin/Downloads/Free/Terrain/Terrain (16x16)-sheet.tsx",
         "/Users/kevin/Documents/tiled/sdl_dash/Terrain.tsx"
     ],
-    "resizeMap.removeObjects": false,
+    "resizeMap.removeObjects": true,
     "tileset.embedInMap": false,
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {

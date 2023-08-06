@@ -51,38 +51,46 @@ function TileMap.LoadTilemap(filename)
     end
 
 
-    -- Create atlas 0
+    -- Create atlas 0 for now
     local layer0Atlas = surface.LoadTextureAtlas(levelSizeX, levelSizeY)
     -- Loop through data, and blit to it based on tilemaps
-    for _, layer in ipairs(loadedFile.layers) do
-        if layer.type == "objectgroup" then
-            for _, object in ipairs(layer.objects) do
-                -- Need to get the tileset and src rect based on the gid
-                local objId = object.gid
-                local tileTileset = checkIfTileInTilesetList(objId, tilesets)
-                local tilePngName = nil
-                if tileTileset then
-                    tilePngName = tileTileset:GetTile(objId)
+    local x, y = 0, 0
+    for layerDepth, layer in ipairs(loadedFile.layers) do
+        if layerDepth == 1 then
+            for _, gid in ipairs(layer.data) do
+                if gid ~= 0 then
+                    local tileTileset = checkIfTileInTilesetList(gid, tilesets)
+                    local tilePngName, width, height = nil, nil, nil
+                    if tileTileset then
+                        tilePngName, width, height = tileTileset:GetTile(gid)
+                    end
+                    local tileX = x * xTileSize
+                    local tileY = y * yTileSize
+                    if tileTileset.imageTileset then
+                        -- If this is an image, we need to raise it since they draw at bottom for some reason
+                        tileY = tileY - height + yTileSize
+                    end
+                    print("Drawing on " .. tileX .. " : " .. tileY)
+                    local dstRect = Rectangle:New(tileX, tileY, width, height)
+                    local srcRect = Rectangle:New(0, 0, width, height)
+                    local userdata = loadedSurfaces[tilePngName]
+                    BlitAtlasSurface(layer0Atlas, userdata, dstRect, srcRect)
                 end
-                local dstRect = Rectangle:New(object.x, object.y - 64, object.width, object.height)
-                -- print("I should load from file " .. tilePngName .. " at location " .. tostring(dstRect))
-                local srcRect = Rectangle:New(0, 0, object.width, object.height)
-                local userdata = loadedSurfaces[tilePngName]
-                BlitAtlasSurface(layer0Atlas, userdata, dstRect, srcRect)
+                if x < xNumTiles - 1 then
+                    x = x + 1
+                else
+                    x = 0
+                    y = y + 1
+                end
+                print("X is " .. x .. " Y is " .. y)
             end
-        elseif layer.type == "tilelayer" then
-            -- local tileData = layer.data
-            -- for i, tilegid in ipairs(tileData) do
-
-            -- end
-            -- local objId =
         end
+        local texture = surface.CreateTexture(layer0Atlas)
+        -- Putting global here for now.
+        -- local atlas = {}
+        -- table.insert(atlas, texture)
+        return texture
     end
-    local texture = surface.CreateTexture(layer0Atlas)
-    -- Putting global here for now.
-    -- local atlas = {}
-    -- table.insert(atlas, texture)
-    return texture
 end
 
 function TileMap.DrawAtlas(atlas)

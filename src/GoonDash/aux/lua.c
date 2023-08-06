@@ -85,7 +85,7 @@ void DumpLuaStack(lua_State *state)
   }
 }
 
-int CallEngineLuaFunction(lua_State* L, const char* functionName)
+int CallEngineLuaFunction(lua_State *L, const char *functionName)
 {
   lua_getglobal(L, "Lua");
   lua_getfield(L, -1, functionName);
@@ -93,7 +93,7 @@ int CallEngineLuaFunction(lua_State* L, const char* functionName)
   if (result != LUA_OK)
   {
     const char *error = lua_tostring(g_luaState, -1);
-    LogError("Failed script, , error result: %d, error: %s", result, error);
+    LogError("Failed script, %s, error result: %d, error: %s", functionName, result, error);
     lua_pop(g_luaState, 1);
     return false;
   }

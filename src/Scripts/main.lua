@@ -1,4 +1,4 @@
-require('mobdebug').start()
+-- require('mobdebug').start()
 Lua = {}
 local tilemap = require("Core.tilemap")
 local atlas
