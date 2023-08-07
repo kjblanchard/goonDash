@@ -36,7 +36,7 @@ function TileSet:GetTile(id)
         -- This is a tile tileset
         -- convert image to proper name instead of the full path from tiled.
         local lastSection = string.match(self.data.image, ".+/(.+)")
-        return GetFullFilepath(self.data.image), self.width, self.height
+        return GetFullFilepath(self.data.image), self.data.tilewidth, self.data.tileheight
     end
     print('Could not find tile in this tileset: ' .. id)
     return nil, nil, nil

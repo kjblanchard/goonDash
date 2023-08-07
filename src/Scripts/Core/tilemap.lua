@@ -54,9 +54,10 @@ function TileMap.LoadTilemap(filename)
     -- Create atlas 0 for now
     local layer0Atlas = surface.LoadTextureAtlas(levelSizeX, levelSizeY)
     -- Loop through data, and blit to it based on tilemaps
-    local x, y = 0, 0
     for layerDepth, layer in ipairs(loadedFile.layers) do
-        if layerDepth == 1 then
+        -- Currently limiting layerdepth as we cannot handle object layers properly, only tile layers
+        if layerDepth < 4 then
+            local x, y = 0, 0
             for _, gid in ipairs(layer.data) do
                 if gid ~= 0 then
                     local tileTileset = checkIfTileInTilesetList(gid, tilesets)
@@ -70,7 +71,6 @@ function TileMap.LoadTilemap(filename)
                         -- If this is an image, we need to raise it since they draw at bottom for some reason
                         tileY = tileY - height + yTileSize
                     end
-                    print("Drawing on " .. tileX .. " : " .. tileY)
                     local dstRect = Rectangle:New(tileX, tileY, width, height)
                     local srcRect = Rectangle:New(0, 0, width, height)
                     local userdata = loadedSurfaces[tilePngName]
@@ -82,15 +82,12 @@ function TileMap.LoadTilemap(filename)
                     x = 0
                     y = y + 1
                 end
-                print("X is " .. x .. " Y is " .. y)
             end
+        layerDepth = layerDepth + 1
         end
-        local texture = surface.CreateTexture(layer0Atlas)
-        -- Putting global here for now.
-        -- local atlas = {}
-        -- table.insert(atlas, texture)
-        return texture
     end
+    local texture = surface.CreateTexture(layer0Atlas)
+    return texture
 end
 
 function TileMap.DrawAtlas(atlas)
