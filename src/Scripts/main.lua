@@ -10,18 +10,18 @@ function Lua.Initialize()
 end
 
 function Lua.Start()
-    print("Hello from Lua Start!")
+    -- print("Hello from Lua Start!")
     atlas = tilemap.LoadTilemap("level1")
 
 
 end
 
 function Lua.Update()
-    print("Hello from Lua Update!")
+    -- print("Hello from Lua Update!")
 end
 
 function Lua.Draw()
-    print("Hello from Lua Draw!")
+    -- print("Hello from Lua Draw!")
     tilemap.DrawAtlas(atlas)
 
 end

@@ -61,20 +61,19 @@ function TileMap.LoadTilemap(filename)
             for i, gid in ipairs(layer.data) do
                 if gid ~= 0 then
                     local tileTileset = checkIfTileInTilesetList(gid, tilesets)
-                    local tilePngName, width, height, srcX, srcY
                     if tileTileset then
-                        tilePngName, srcX, srcY, width, height = tileTileset:GetTile(gid)
+                        local tilePngName, srcX, srcY, width, height = tileTileset:GetTile(gid)
+                        local dstX = x * xTileSize
+                        local dstY = y * yTileSize
+                        if tileTileset.imageTileset then
+                            -- If this is an image, we need to raise it since they draw at bottom for some reason
+                            dstY = dstY - height + yTileSize
+                        end
+                        local dstRect = Rectangle:New(dstX, dstY, width, height)
+                        local srcRect = Rectangle:New(srcX, srcY, width, height)
+                        local userdata = loadedSurfaces[tilePngName]
+                        BlitAtlasSurface(layer0Atlas, userdata, dstRect, srcRect)
                     end
-                    local dstX = x * xTileSize
-                    local dstY = y * yTileSize
-                    if tileTileset.imageTileset then
-                        -- If this is an image, we need to raise it since they draw at bottom for some reason
-                        dstY = dstY - height + yTileSize
-                    end
-                    local dstRect = Rectangle:New(dstX, dstY, width, height)
-                    local srcRect = Rectangle:New(srcX, srcY, width, height)
-                    local userdata = loadedSurfaces[tilePngName]
-                    BlitAtlasSurface(layer0Atlas, userdata, dstRect, srcRect)
                 end
                 if x < xNumTiles - 1 then
                     x = x + 1
