@@ -116,6 +116,7 @@ static int DrawSurface(lua_State *L)
     SDL_Rect dstRect = {0, 0, 512, 288};
     SDL_Rect srcRect = {0, 0, 512, 288};
     SDL_RenderCopy(renderer, atlasTexture, &srcRect, &dstRect);
+    return 0;
 }
 
 static int FreeSurface(lua_State *L)
