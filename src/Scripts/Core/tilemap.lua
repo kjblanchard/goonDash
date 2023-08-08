@@ -51,28 +51,28 @@ function TileMap.LoadTilemap(filename)
     end
 
 
-    -- Create atlas 0 for now
+    -- Create atlas 0 for now and draw everything on it.
     local layer0Atlas = surface.LoadTextureAtlas(levelSizeX, levelSizeY)
     -- Loop through data, and blit to it based on tilemaps
     for layerDepth, layer in ipairs(loadedFile.layers) do
         -- Currently limiting layerdepth as we cannot handle object layers properly, only tile layers
         if layerDepth < 4 then
             local x, y = 0, 0
-            for _, gid in ipairs(layer.data) do
+            for i, gid in ipairs(layer.data) do
                 if gid ~= 0 then
                     local tileTileset = checkIfTileInTilesetList(gid, tilesets)
-                    local tilePngName, width, height = nil, nil, nil
+                    local tilePngName, width, height, srcX, srcY
                     if tileTileset then
-                        tilePngName, width, height = tileTileset:GetTile(gid)
+                        tilePngName, srcX, srcY, width, height = tileTileset:GetTile(gid)
                     end
-                    local tileX = x * xTileSize
-                    local tileY = y * yTileSize
+                    local dstX = x * xTileSize
+                    local dstY = y * yTileSize
                     if tileTileset.imageTileset then
                         -- If this is an image, we need to raise it since they draw at bottom for some reason
-                        tileY = tileY - height + yTileSize
+                        dstY = dstY - height + yTileSize
                     end
-                    local dstRect = Rectangle:New(tileX, tileY, width, height)
-                    local srcRect = Rectangle:New(0, 0, width, height)
+                    local dstRect = Rectangle:New(dstX, dstY, width, height)
+                    local srcRect = Rectangle:New(srcX, srcY, width, height)
                     local userdata = loadedSurfaces[tilePngName]
                     BlitAtlasSurface(layer0Atlas, userdata, dstRect, srcRect)
                 end
@@ -83,7 +83,7 @@ function TileMap.LoadTilemap(filename)
                     y = y + 1
                 end
             end
-        layerDepth = layerDepth + 1
+            layerDepth = layerDepth + 1
         end
     end
     local texture = surface.CreateTexture(layer0Atlas)

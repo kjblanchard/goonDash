@@ -5,9 +5,9 @@
     },
     "activeFile": "level1.tmx",
     "expandedProjectPaths": [
-        "/Users/kevin/Documents/tiled/sdl_dash/tilesets",
+        "/Users/kevin/Documents/tiled",
         ".",
-        "/Users/kevin/Documents/tiled"
+        "/Users/kevin/Documents/tiled/sdl_dash/tilesets"
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
@@ -62,8 +62,8 @@
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 455.6666666666667,
-                "y": 197.33333333333331
+                "x": 494.3333333333333,
+                "y": 307.99999999999994
             }
         },
         "terrain.tsx": {
@@ -87,6 +87,7 @@
     "openFiles": [
         "level1.tmx",
         "terrain.tsx",
+        "background.tsx",
         "background.tsx"
     ],
     "project": "goonDash.tiled-project",

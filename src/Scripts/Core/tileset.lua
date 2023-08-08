@@ -22,6 +22,8 @@ end
 
 ---@param id any
 ---@return string | nil image filename, nil on error
+---@return number | nil tile src x
+---@return number | nil tile src y
 ---@return number | nil tile width, nil on error
 ---@return number | nil tile height, nil on error
 function TileSet:GetTile(id)
@@ -29,14 +31,18 @@ function TileSet:GetTile(id)
         -- This is a Image tileset
         for _, value in ipairs(self.data.tiles) do
             if value.id + self.firstGid == id then
-                return GetFullFilepath(value.image), value.width, value.height
+                return GetFullFilepath(value.image), 0, 0, value.width, value.height
             end
         end
     else
         -- This is a tile tileset
         -- convert image to proper name instead of the full path from tiled.
         local lastSection = string.match(self.data.image, ".+/(.+)")
-        return GetFullFilepath(self.data.image), self.data.tilewidth, self.data.tileheight
+        local indexInTileset = id - 1 --This needs to be offset by 1 due to gid0 being empty
+        local srcX, srcY = 0,0
+        srcX = math.floor(indexInTileset % self.data.columns) * self.data.tilewidth
+        srcY = math.floor(indexInTileset / self.data.columns) * self.data.tileheight
+        return GetFullFilepath(self.data.image), srcX, srcY, self.data.tilewidth, self.data.tileheight
     end
     print('Could not find tile in this tileset: ' .. id)
     return nil, nil, nil
