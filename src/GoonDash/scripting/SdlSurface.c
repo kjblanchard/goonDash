@@ -145,6 +145,7 @@ static int luaopen_LuaTileAtlas(lua_State *L)
     luaL_Reg luaTileAtlasLib[] = {
         {"NewAtlas", LoadTextureAtlas},
         {"BlitAtlas", BlitAtlasSurface},
+        {"CreateTexture", CreateTextureFromSurface},
         {"DrawAtlas", DrawSurface},
         {NULL, NULL} // Sentinel value to indicate the end of the table
     };
@@ -171,4 +172,5 @@ static int luaopen_LuaSurface(lua_State *L)
 int RegisterLuaSurfaceFunctions(lua_State *L)
 {
     luaL_requiref(L, "LuaSurface", luaopen_LuaSurface, 0);
+    luaL_requiref(L, "LuaTileAtlas", luaopen_LuaTileAtlas, 0);
 }

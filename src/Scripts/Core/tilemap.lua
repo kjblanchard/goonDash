@@ -4,6 +4,7 @@ local TileMap = {
 local surface = require("Core.surface")
 local ctileset = require("Core.tileset")
 local Rectangle = require("Core.rectangle")
+local textureAtlas = require("Core.textureAtlas")
 
 local function sortByGid(a, b)
     return a.firstGid < b.firstGid
@@ -28,9 +29,8 @@ function TileMap.LoadTilemap(filename)
     local levelSizeX = xNumTiles * xTileSize
     local levelSizeY = yNumTiles * yTileSize
 
-    local loadedSurfaces = {}
+    -- Create a table of all the tilesets so that we can look up tiles in them after loading
     local tilesets = {}
-    -- Create a table of all the tilesets so that we can look up tiles in them.
     for i, tileset in ipairs(loadedFile.tilesets) do
         local localTileset = require(tileset.name)
         local set = ctileset:New(tileset.firstgid, localTileset)
@@ -38,21 +38,24 @@ function TileMap.LoadTilemap(filename)
     end
     table.sort(tilesets, sortByGid)
 
-
     -- Load all the surfaces and get their userdata so that we can use them when creating the atlas
+    local loadedTilemapSurfaces = {}
     for _, tileset in ipairs(tilesets) do
         local filenames = tileset:GetAllFileNames()
         for _, value in ipairs(filenames) do
             local surfaceUserdata = surface.NewFromFile(value)
             if surfaceUserdata then
-                loadedSurfaces[value] = surfaceUserdata
+                loadedTilemapSurfaces[value] = surfaceUserdata
             end
         end
     end
 
-
     -- Create atlas 0 for now and draw everything on it.
-    local layer0Atlas = surface.LoadTextureAtlas(levelSizeX, levelSizeY)
+    -- local layer0Atlas = textureAtlas.LoadTextureAtlas(levelSizeX, levelSizeY)
+    -- local layer0Atlas = textureAtlas:Create(levelSizeX, levelSizeY)
+    local layer0Atlas = textureAtlas.New(levelSizeX, levelSizeY)
+
+
     -- Loop through data, and blit to it based on tilemaps
     for layerDepth, layer in ipairs(loadedFile.layers) do
         -- Currently limiting layerdepth as we cannot handle object layers properly, only tile layers
@@ -71,8 +74,9 @@ function TileMap.LoadTilemap(filename)
                         end
                         local dstRect = Rectangle:New(dstX, dstY, width, height)
                         local srcRect = Rectangle:New(srcX, srcY, width, height)
-                        local userdata = loadedSurfaces[tilePngName]
-                        BlitAtlasSurface(layer0Atlas, userdata, dstRect, srcRect)
+                        local userdata = loadedTilemapSurfaces[tilePngName]
+                        layer0Atlas:BlitAtlasSurface(userdata, dstRect, srcRect)
+                        -- BlitAtlasSurface(layer0Atlas, userdata, dstRect, srcRect)
                     end
                 end
                 if x < xNumTiles - 1 then
@@ -85,12 +89,15 @@ function TileMap.LoadTilemap(filename)
             layerDepth = layerDepth + 1
         end
     end
-    local texture = surface.CreateTexture(layer0Atlas)
-    return texture
+    -- local texture = surface.CreateTexture(layer0Atlas)
+    -- return texture
+    layer0Atlas:CreateTextureFromSurface()
+    return layer0Atlas
 end
 
 function TileMap.DrawAtlas(atlas)
-    surface.DrawAtlas(atlas)
+    -- surface.DrawAtlas(atlas)
+    atlas:DrawAtlas()
 end
 
 TileMap.__index = TileMap
