@@ -1,7 +1,7 @@
 -- require('mobdebug').start()
 Lua = {}
 local tilemap = require("Core.tilemap")
-local atlas
+local loadedTilemap
 
 function Lua.Initialize()
     local renderer = require("Core.renderer")
@@ -11,7 +11,7 @@ end
 
 function Lua.Start()
     -- print("Hello from Lua Start!")
-    atlas = tilemap.LoadTilemap("level1")
+    loadedTilemap = tilemap.LoadTilemap("level1")
 
 
 end
@@ -22,6 +22,6 @@ end
 
 function Lua.Draw()
     -- print("Hello from Lua Draw!")
-    tilemap.DrawAtlas(atlas)
+    loadedTilemap:Draw()
 
 end

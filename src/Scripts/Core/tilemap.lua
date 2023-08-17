@@ -1,6 +1,5 @@
-local TileMap = {
-    tileAtlases = nil
-}
+local TileMap = {}
+TileMap.tileSets = nil
 local surface = require("Core.surface")
 local ctileset = require("Core.tileset")
 local Rectangle = require("Core.rectangle")
@@ -21,6 +20,10 @@ local function checkIfTileInTilesetList(id, tilesetList)
 end
 
 function TileMap.LoadTilemap(filename)
+    local tilemap = {}
+    setmetatable(tilemap, TileMap)
+    tilemap.__index = TileMap
+    tilemap.tileSets = {}
     local loadedFile = require(filename)
     local xNumTiles = loadedFile.width
     local yNumTiles = loadedFile.height
@@ -53,11 +56,11 @@ function TileMap.LoadTilemap(filename)
     -- Create atlas 0 for now and draw everything on it.
     -- local layer0Atlas = textureAtlas.LoadTextureAtlas(levelSizeX, levelSizeY)
     -- local layer0Atlas = textureAtlas:Create(levelSizeX, levelSizeY)
-    local layer0Atlas = textureAtlas.New(levelSizeX, levelSizeY)
 
 
     -- Loop through data, and blit to it based on tilemaps
     for layerDepth, layer in ipairs(loadedFile.layers) do
+        local layerAtlas = textureAtlas.New(levelSizeX, levelSizeY)
         -- Currently limiting layerdepth as we cannot handle object layers properly, only tile layers
         if layerDepth < 4 then
             local x, y = 0, 0
@@ -75,7 +78,7 @@ function TileMap.LoadTilemap(filename)
                         local dstRect = Rectangle:New(dstX, dstY, width, height)
                         local srcRect = Rectangle:New(srcX, srcY, width, height)
                         local userdata = loadedTilemapSurfaces[tilePngName]
-                        layer0Atlas:BlitAtlasSurface(userdata, dstRect, srcRect)
+                        layerAtlas:BlitAtlasSurface(userdata, dstRect, srcRect)
                         -- BlitAtlasSurface(layer0Atlas, userdata, dstRect, srcRect)
                     end
                 end
@@ -88,16 +91,23 @@ function TileMap.LoadTilemap(filename)
             end
             layerDepth = layerDepth + 1
         end
+        layerAtlas:CreateTextureFromSurface()
+        table.insert(tilemap.tileSets, layerAtlas)
     end
     -- local texture = surface.CreateTexture(layer0Atlas)
     -- return texture
-    layer0Atlas:CreateTextureFromSurface()
-    return layer0Atlas
+    return tilemap
 end
 
-function TileMap.DrawAtlas(atlas)
+function TileMap:Draw()
     -- surface.DrawAtlas(atlas)
-    atlas:DrawAtlas()
+    -- print("Drawing")
+    for index, value in ipairs(self.tileSets) do
+        -- print(value)
+        value:DrawAtlas()
+
+    end
+    -- atlas:DrawAtlas()
 end
 
 TileMap.__index = TileMap
