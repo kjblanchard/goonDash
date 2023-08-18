@@ -1,14 +1,22 @@
 local TileMap = {}
 TileMap.tileSets = nil
-local surface = require("Core.surface")
-local ctileset = require("Core.tileset")
+local Tileset = require("Tiled.tileset")
 local Rectangle = require("Core.rectangle")
-local textureAtlas = require("Core.textureAtlas")
+local TileAtlas = require("Graphics.textureAtlas")
+local Surface = require("Graphics.surface")
 
+---Used to sort It's tilemaps so that they are ordered by GID
+---@param a any
+---@param b any
+---@return boolean
 local function sortByGid(a, b)
     return a.firstGid < b.firstGid
 end
 
+---Checks to see if a tile is inside of a tileset.
+---@param id number The tile id to checkfor
+---@param tilesetList table list of tilesets
+---@return table|nil The tileset that contains the tile, otherwise nil
 local function checkIfTileInTilesetList(id, tilesetList)
     for i, tileset in ipairs(tilesetList) do
         if id >= tileset.firstGid and (tilesetList[i + 1] == nil or id < tilesetList[i + 1].firstGid) then
@@ -19,7 +27,14 @@ local function checkIfTileInTilesetList(id, tilesetList)
     return nil
 end
 
-function TileMap.LoadTilemap(filename)
+function TileMap:Draw()
+    for index, value in ipairs(self.tileSets) do
+        -- print(value)
+        value:DrawAtlas()
+    end
+end
+
+function TileMap.New(filename)
     local tilemap = {}
     setmetatable(tilemap, TileMap)
     tilemap.__index = TileMap
@@ -36,31 +51,26 @@ function TileMap.LoadTilemap(filename)
     local tilesets = {}
     for i, tileset in ipairs(loadedFile.tilesets) do
         local localTileset = require(tileset.name)
-        local set = ctileset:New(tileset.firstgid, localTileset)
+        local set = Tileset:New(tileset.firstgid, localTileset)
         table.insert(tilesets, set)
     end
     table.sort(tilesets, sortByGid)
 
-    -- Load all the surfaces and get their userdata so that we can use them when creating the atlas
+    -- Load all the tile surfaces and get their userdata so that we can use them when creating the atlas
     local loadedTilemapSurfaces = {}
     for _, tileset in ipairs(tilesets) do
         local filenames = tileset:GetAllFileNames()
         for _, value in ipairs(filenames) do
-            local surfaceUserdata = surface.NewFromFile(value)
+            local surfaceUserdata = Surface.NewFromFile(value)
             if surfaceUserdata then
                 loadedTilemapSurfaces[value] = surfaceUserdata
             end
         end
     end
 
-    -- Create atlas 0 for now and draw everything on it.
-    -- local layer0Atlas = textureAtlas.LoadTextureAtlas(levelSizeX, levelSizeY)
-    -- local layer0Atlas = textureAtlas:Create(levelSizeX, levelSizeY)
-
-
     -- Loop through data, and blit to it based on tilemaps
     for layerDepth, layer in ipairs(loadedFile.layers) do
-        local layerAtlas = textureAtlas.New(levelSizeX, levelSizeY)
+        local layerAtlas = TileAtlas.New(levelSizeX, levelSizeY)
         -- Currently limiting layerdepth as we cannot handle object layers properly, only tile layers
         if layerDepth < 4 then
             local x, y = 0, 0
@@ -94,20 +104,13 @@ function TileMap.LoadTilemap(filename)
         layerAtlas:CreateTextureFromSurface()
         table.insert(tilemap.tileSets, layerAtlas)
     end
-    -- local texture = surface.CreateTexture(layer0Atlas)
-    -- return texture
-    return tilemap
-end
 
-function TileMap:Draw()
-    -- surface.DrawAtlas(atlas)
-    -- print("Drawing")
-    for index, value in ipairs(self.tileSets) do
-        -- print(value)
-        value:DrawAtlas()
+    -- Cleanup the Surfaces we loaded from the tilemaps for ths level.
+    for index, value in ipairs(loadedTilemapSurfaces) do
+        Surface.Delete(value)
 
     end
-    -- atlas:DrawAtlas()
+    return tilemap
 end
 
 TileMap.__index = TileMap

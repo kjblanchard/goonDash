@@ -4,7 +4,6 @@ local LuaTextureAtlas = {
     _atlasUserdataTexture = nil
 }
 
-
 function LuaTextureAtlas:CreateTextureFromSurface()
     if self._atlasUserdataSurface and not self._atlasUserdataTexture then
         self._atlasUserdataTexture = textureAtlas.CreateTexture(self._atlasUserdataSurface)
