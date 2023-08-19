@@ -44,3 +44,4 @@ doc/
 imgui.ini
 Testing/
 .vscode/
+*.log
