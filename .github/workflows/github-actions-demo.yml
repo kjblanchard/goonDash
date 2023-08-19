@@ -17,6 +17,6 @@ jobs:
           ls ${{ github.workspace }}
       - name: Configure CMake
         run: |
-          make rebuild
+          make brebuild
 
       - run: echo "🍏 This job's status is ${{ job.status }}."
