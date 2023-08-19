@@ -123,16 +123,16 @@ else()
         add_subdirectory(./external/SDL_image)
         add_subdirectory(./external/Lua EXCLUDE_FROM_ALL)
 
-        target_include_directories(SupergoonDash
-            PUBLIC
-            $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/external/SDL/include>
-            $<INSTALL_INTERFACE:include/SDL2>
-        )
-        target_include_directories(SupergoonDash
-            PUBLIC
-            $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/external/SDL_image>
-            $<INSTALL_INTERFACE:include/SDL2>
-        )
+        # target_include_directories(SupergoonDash
+        #     PUBLIC
+        #     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/external/SDL/include>
+        #     $<INSTALL_INTERFACE:include/SDL2>
+        # )
+        # target_include_directories(SupergoonDash
+        #     PUBLIC
+        #     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/external/SDL_image>
+        #     $<INSTALL_INTERFACE:include/SDL2>
+        # )
         target_link_libraries(SupergoonDash PRIVATE lua_static)
     else()
         message(STATUS "Could not init git for some reason")
