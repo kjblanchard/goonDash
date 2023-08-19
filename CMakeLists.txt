@@ -63,7 +63,8 @@ include(CTest)
 option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" OFF)
 option(GOON_BUILD_PCH "Uses a PCH file to try and speed up compilation" ON)
 option(GOON_DEBUG_LUA "Includes socket so that we can debug lua remotely" OFF)
-set(BUILD_TESTING OFF)
+# Should we enable testing
+set(BUILD_TESTING ON)
 
 # #########################################
 # Packages
@@ -112,29 +113,11 @@ else()
         add_subdirectory(./external/SDL_image)
         add_subdirectory(./external/Lua EXCLUDE_FROM_ALL)
 
-        target_include_directories(SupergoonDash
-            PUBLIC
-            ${CMAKE_SOURCE_DIR}/external/SDL/include>
-            # $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/external/SDL/include>
-            # $<INSTALL_INTERFACE:include/SDL2>
-        )
-        target_include_directories(SupergoonDash
-            PUBLIC
-            ${CMAKE_SOURCE_DIR}/external/SDL_image>
-            # $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/external/SDL_image>
-            # $<INSTALL_INTERFACE:include/SDL2>
-        )
         target_link_libraries(SupergoonDash PRIVATE lua_static)
     else()
         message(STATUS "Could not init git for some reason")
     endif()
 endif(MACOS)
-
-# Update submodules
-
-# If we don't have it installed, init the submodule and add it to the build to install it
-if(NOT SDL2_image_FOUND)
-endif(NOT SDL2_image_FOUND)
 
 # #########################################
 # Compile Definitions
@@ -224,9 +207,8 @@ install(DIRECTORY ${FOLDERS_TO_COPY}
 # #########################################
 # Test
 # #########################################
-# if(BUILD_TESTING AND NOT WIN32)
-# message(STATUS "Enabling and starting tests")
-# enable_testing()
-# endif(BUILD_TESTING AND NOT WIN32)
-
-# add_test(NAME cppclean COMMAND ${CMAKE_SOURCE_DIR}/tests/cppclean.sh ${CMAKE_SOURCE_DIR})
+if(BUILD_TESTING AND NOT WIN32)
+message(STATUS "Enabling and starting tests")
+enable_testing()
+endif(BUILD_TESTING AND NOT WIN32)
+add_test(NAME cppclean COMMAND ${CMAKE_SOURCE_DIR}/tests/cppclean.sh ${CMAKE_SOURCE_DIR})
