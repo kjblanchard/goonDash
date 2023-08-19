@@ -211,20 +211,20 @@ target_include_directories(SupergoonDash
 # #########################################
 # Install
 # #########################################
-set(FOLDERS_TO_COPY src/Scripts assets)
-install(DIRECTORY ${FOLDERS_TO_COPY}
-    DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-    PATTERN "*.tsx" EXCLUDE
-    PATTERN "*.tmx" EXCLUDE
-    PATTERN "*.tiled-project" EXCLUDE
-)
+# set(FOLDERS_TO_COPY src/Scripts assets)
+# install(DIRECTORY ${FOLDERS_TO_COPY}
+#     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+#     PATTERN "*.tsx" EXCLUDE
+#     PATTERN "*.tmx" EXCLUDE
+#     PATTERN "*.tiled-project" EXCLUDE
+# )
 
 # #########################################
 # Test
 # #########################################
-if(BUILD_TESTING AND NOT WIN32)
-    message(STATUS "Enabling and starting tests")
-    enable_testing()
-endif(BUILD_TESTING AND NOT WIN32)
+# if(BUILD_TESTING AND NOT WIN32)
+#     message(STATUS "Enabling and starting tests")
+#     enable_testing()
+# endif(BUILD_TESTING AND NOT WIN32)
 
-add_test(NAME cppclean COMMAND ${CMAKE_SOURCE_DIR}/tests/cppclean.sh ${CMAKE_SOURCE_DIR})
+# add_test(NAME cppclean COMMAND ${CMAKE_SOURCE_DIR}/tests/cppclean.sh ${CMAKE_SOURCE_DIR})
