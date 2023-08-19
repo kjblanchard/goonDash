@@ -196,8 +196,8 @@ endif()
 target_link_libraries(SupergoonDash
     PUBLIC
     PRIVATE
-    SDL2::SDL2
-    SDL2_image::SDL2_image
+    SDL2::SDL2-static
+    SDL2_image::SDL2_image-static
     ${LUA_LIBRARIES}
     ${LIB_SOCKET}
 )
