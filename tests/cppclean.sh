@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 # Root directory to cd into.
 dir=$1
 excluded=""
