@@ -1,0 +1,62 @@
+{
+    "automappingRulesFile": "",
+    "commands": [
+    ],
+    "extensionsPath": ".",
+    "folders": [
+        "."
+    ],
+    "objectTypesFile": "",
+    "propertyTypes": [
+        {
+            "id": 2,
+            "members": [
+                {
+                    "name": "h",
+                    "type": "float",
+                    "value": 0
+                },
+                {
+                    "name": "w",
+                    "type": "float",
+                    "value": 0
+                },
+                {
+                    "name": "x",
+                    "type": "float",
+                    "value": 0
+                },
+                {
+                    "name": "y",
+                    "type": "float",
+                    "value": 0
+                }
+            ],
+            "name": "BoxRect",
+            "type": "class"
+        },
+        {
+            "id": 1,
+            "name": "Direction",
+            "storageType": "int",
+            "type": "enum",
+            "values": [
+                "Up",
+                "Down",
+                "Left",
+                "Right"
+            ],
+            "valuesAsFlags": false
+        },
+        {
+            "id": 3,
+            "name": "FileOverride",
+            "storageType": "string",
+            "type": "enum",
+            "values": [
+                "banana"
+            ],
+            "valuesAsFlags": false
+        }
+    ]
+}

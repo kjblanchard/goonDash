@@ -63,6 +63,7 @@ include(CTest)
 # #########################################
 option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" OFF)
 option(GOON_BUILD_PCH "Uses a PCH file to try and speed up compilation" ON)
+option(GOON_DEBUG_LUA "Includes socket so that we can debug lua remotely" ON)
 set(BUILD_TESTING OFF)
 
 # #########################################
@@ -82,13 +83,19 @@ find_package(SDL2_image REQUIRED CONFIG COMPONENTS SDL2_image)
 # 1. Look for a SDL2 package, 2. Look for the SDL2maincomponent and 3. DO NOT fail when SDL2main is not available
 find_package(SDL2 REQUIRED CONFIG COMPONENTS SDL2main)
 
-
 # Find lua static (non homebrew on mac)
 find_library(LIB_LUA
     NAMES liblua_static lua_static liblua_static.a lua_static.a liblua.a
     HINTS /usr/local/lib
     REQUIRED)
 set(LUA_LIBRARIES ${LIB_LUA})
+
+if(GOON_DEBUG_LUA)
+    find_library(LIB_SOCKET
+        NAMES socket-3.0.0.so
+        HINTS /Users/kevin/git/lua/luasocket/build/lib/lua/5.4/socket
+        REQUIRED)
+endif(GOON_DEBUG_LUA)
 
 # #########################################
 # Compile Definitions
@@ -100,6 +107,10 @@ elseif(WIN32)
 elseif(LINUX)
     target_compile_definitions(SupergoonDash PRIVATE -DGN_PLATFORM_LINUX)
 endif(APPLE)
+
+if(GOON_DEBUG_LUA)
+    target_compile_definitions(SupergoonDash PRIVATE -DGN_DEBUG_LUA)
+endif(GOON_DEBUG_LUA)
 
 # #########################################
 # Precompiled headers
@@ -144,6 +155,7 @@ if(TARGET SDL2::SDL2main)
     # It has an implicit dependency on SDL2 functions, so it MUST be added before SDL2::SDL2 (or SDL2::SDL2-static)
     target_link_libraries(SupergoonDash PRIVATE SDL2::SDL2main)
 endif()
+
 # Link to the actual SDL2 library. SDL2::SDL2 is the shared SDL library, SDL2::SDL2-static is the static SDL libarary.
 target_link_libraries(SupergoonDash
     PUBLIC
@@ -151,6 +163,7 @@ target_link_libraries(SupergoonDash
     SDL2::SDL2-static
     SDL2_image::SDL2_image-static
     ${LUA_LIBRARIES}
+    ${LIB_SOCKET}
 )
 
 target_include_directories(SupergoonDash
@@ -162,9 +175,12 @@ target_include_directories(SupergoonDash
 # #########################################
 # Install
 # #########################################
-set(FOLDERS_TO_COPY src/Scripts)
+set(FOLDERS_TO_COPY src/Scripts assets)
 install(DIRECTORY ${FOLDERS_TO_COPY}
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    PATTERN "*.tsx" EXCLUDE
+    PATTERN "*.tmx" EXCLUDE
+    PATTERN "*.tiled-project" EXCLUDE
 )
 
 # #########################################
@@ -176,4 +192,3 @@ if(BUILD_TESTING AND NOT WIN32)
 endif(BUILD_TESTING AND NOT WIN32)
 
 add_test(NAME cppclean COMMAND ${CMAKE_SOURCE_DIR}/tests/cppclean.sh ${CMAKE_SOURCE_DIR})
-

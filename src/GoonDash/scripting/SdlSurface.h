@@ -1,14 +1,14 @@
 /**
- * @file luaGlue.h
+ * @file SdlSurface.h
  * @author your name (you@domain.com)
  * @brief
  * @version 0.1
- * @date 2023-07-26
+ * @date 2023-07-29
  *
  * @copyright Copyright (c) 2023
  *
  */
 #pragma once
+typedef struct lua_State lua_State;
 
-void InitializeBotLuaL();
-void UpdateBotLuaL();
+int RegisterLuaSurfaceFunctions(lua_State* L);

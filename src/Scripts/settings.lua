@@ -1,8 +1,15 @@
-local main = require("main")
-local stubs = require("stubs")
-Settings = {
+require("Core.window")
+
+return {
     windowName = "Goon Dash",
-    windowWidth = 648,
-    windowHeight = 480
+    windowWidth = 512,
+    windowHeight = 288
 }
-InitializeWindow(Settings.windowName, Settings.windowWidth, Settings.windowHeight)
+
+-- Create atlas 1
+-- Create atlas 2
+-- Create atlas 3
+-- Create Solid
+-- Create Objects
+-- Create atlas 6
+-- Create atlas 7
