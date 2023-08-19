@@ -118,13 +118,11 @@ else()
         if(NOT GIT_SUBMOD_RESULT EQUAL "0")
             message(FATAL_ERROR "git submodule update --init --recursive failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
         endif()
+        add_subdirectory(./external/SDL_image)
+        add_subdirectory(./external/SDL)
+    else()
+        message(STATUS "Could not init git for some reason")
     endif()
-
-    message(STATUS "Could not init git for some reason")
-endif()
-
-add_subdirectory(./external/SDL_image)
-add_subdirectory(./external/SDL)
 endif(MACOS)
 
 # Update submodules
