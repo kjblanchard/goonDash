@@ -3,7 +3,7 @@
 
 // This could possibly need to be : instead of ; on Windows, we will find out when building there.
 #define SCRIPT_PATH "./Scripts/?.lua;./assets/tiled/?.lua;/Users/kevin/.luarocks/share/lua/5.4/?.lua;/Users/kevin/build/macosx/share/lua/5.4/?.lua;/Users/kevin/build/macosx/share/lua/5.4/socket/?.lua"
-#define BUFFER_SIZE 1000
+// #define BUFFER_SIZE 1000
 
 static lua_State *g_luaState;
 
@@ -21,12 +21,14 @@ static int SetLuaPath(lua_State *state, const char *path)
     LogWarn("Borked");
   lua_getfield(state, -1, "path");                    // get field "path" from table at top of stack (-1)
   const char *current_path = lua_tostring(state, -1); // grab path string from top of stack
-  // size_t full_str_len = strlen(current_path) + strlen(path) + 2;
+  size_t full_str_len = strlen(current_path) + strlen(path) + 2;
   // Change windows
-  char full_str[BUFFER_SIZE];
+  // char full_str[BUFFER_SIZE];
+  char *full_str = calloc(1, full_str_len * sizeof(char));
   sprintf(full_str, "%s;%s", current_path, path);
   lua_pop(state, 1);               // get rid of the string on the stack we just pushed on line 5
   lua_pushstring(state, full_str); // push the new one
+  free(full_str);
   lua_setfield(state, -2, "path"); // set the field "path" in table at -2 with value at top of stack
   lua_settop(state, 0);
   return 0;
@@ -46,12 +48,13 @@ lua_State *GetGlobalLuaState()
 }
 int LuaLoadFileIntoGlobalState(const char *file)
 {
-  static const int bufferSize = 100;
+  size_t bufferSize = sizeof(*file);
   // change windows
   // char buf[bufferSize];
-  char buf[BUFFER_SIZE];
-  snprintf(buf, BUFFER_SIZE, "./Scripts/%s", file);
+  char *buf = calloc(1, bufferSize);
+  snprintf(buf, 100, "./Scripts/%s", file);
   luaL_loadfile(g_luaState, buf);
+  free(buf);
   int result = lua_pcall(g_luaState, 0, 0, 0);
   if (result != LUA_OK)
   {
