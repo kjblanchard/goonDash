@@ -120,7 +120,7 @@ else()
         endif()
         add_subdirectory(./external/SDL_image)
         add_subdirectory(./external/SDL)
-        add_subdirectory(./external/Lua)
+        add_subdirectory(./external/Lua EXCLUDE_FROM_ALL)
 
         target_link_libraries(SupergoonDash PRIVATE lua_static)
     else()
