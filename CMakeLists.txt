@@ -105,7 +105,7 @@ if(MACOS)
 
 # Build everything, useful for runners, etc.
 else()
-    find_package(Git QUIET)
+    find_package(Git REQUIRED QUIET)
     message(STATUS "Cloning and updating submodules")
 
     if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
