@@ -18,7 +18,7 @@
 #include <stdbool.h>
 // External libs that we link to with large headers.
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include <SDL_image.h>
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>

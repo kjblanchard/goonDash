@@ -4,7 +4,8 @@ BUILD_SYSTEM = Ninja
 XCODE_BUILD_SYSTEM = Xcode
 BACKUP_BUILD_SYSTEM = 'Unix Makefiles'
 WINDOWS_BUILD_SYSTEM = 'MinGW Makefiles'
-BUILD_FOLDER = build/bin
+BUILD_FOLDER = build
+BINARY_FOLDER = bin
 BINARY_NAME = SupergoonDash
 BINARY_PATH = $(BUILD_FOLDER)/$(BINARY_NAME)
 TILED_PATH = /Applications/Tiled.app/Contents/MacOS/Tiled
@@ -43,9 +44,12 @@ tiled:
 clean:
 	@ - rm -rf build
 
-rebuild: clean configure build install
-brebuild: clean bconfigure build install
+rebuild: clean configure build install test
+brebuild: clean bconfigure build install test
 wrebuild: clean wconfigure build install
 
 run:
-	@cd ./$(BUILD_FOLDER) && ./$(BINARY_NAME)
+	@cd ./$(BUILD_FOLDER)/$(BINARY_FOLDER) && ./$(BINARY_NAME)
+
+test:
+	@cd ./$(BUILD_FOLDER) && ctest --verbose --output-on-failure

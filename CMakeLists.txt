@@ -29,7 +29,6 @@ endif(APPLE)
 
 if(WIN32)
     set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} /c/cmake)
-
     # Disable testing until we install cppclean on windows builder.
     set(GOON_ENABLE_TESTING OFF)
     list(FILTER FILES EXCLUDE REGEX ".*platform/Mac.*$")
@@ -55,7 +54,7 @@ add_executable(SupergoonDash
 
 # Using 11 instead of 99 for forward declaring typedef
 set_property(TARGET SupergoonDash PROPERTY C_STANDARD 11)
-find_package(PkgConfig)
+find_package(PkgConfig REQUIRED)
 include(CTest)
 
 # #########################################
@@ -63,39 +62,62 @@ include(CTest)
 # #########################################
 option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" OFF)
 option(GOON_BUILD_PCH "Uses a PCH file to try and speed up compilation" ON)
-option(GOON_DEBUG_LUA "Includes socket so that we can debug lua remotely" ON)
-set(BUILD_TESTING OFF)
+option(GOON_DEBUG_LUA "Includes socket so that we can debug lua remotely" OFF)
+# Should we enable testing
+set(BUILD_TESTING ON)
 
 # #########################################
 # Packages
 # #########################################
-if(WIN32)
-    message(STATUS "Windows")
-    set(LUA_INCLUDE_DIR /usr/local/include/)
-else()
-    set(LUA_INCLUDE_DIR /opt/homebrew/include/lua/)
-endif(WIN32)
+# Most dev is done here, so to speed up builds don't rebuild all packages, must have them installed.
+if(MACOS)
+    # 1. Look for a SDL2 package, 2. look for the SDL2 component and 3. fail if none can be found
+    find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2)
+    find_package(SDL2_image
 
-# 1. Look for a SDL2 package, 2. look for the SDL2 component and 3. fail if none can be found
-find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2)
-find_package(SDL2_image REQUIRED CONFIG COMPONENTS SDL2_image HINTS /usr/local/lib)
+        NAMES SDL2_Image libSDL2_Image SDL2_image libSDL2_image libSDL2_image
+        CONFIG COMPONENTS SDL2_image
+        HINTS /usr/local/lib)
 
-# 1. Look for a SDL2 package, 2. Look for the SDL2maincomponent and 3. DO NOT fail when SDL2main is not available
-find_package(SDL2 REQUIRED CONFIG COMPONENTS SDL2main)
+    # 1. Look for a SDL2 package, 2. Look for the SDL2maincomponent and 3. DO NOT fail when SDL2main is not available
+    find_package(SDL2 REQUIRED CONFIG COMPONENTS SDL2main)
 
-# Find lua static (non homebrew on mac)
-find_library(LIB_LUA
-    NAMES liblua_static lua_static liblua_static.a lua_static.a liblua.a
-    HINTS /usr/local/lib
-    REQUIRED)
-set(LUA_LIBRARIES ${LIB_LUA})
-
-if(GOON_DEBUG_LUA)
-    find_library(LIB_SOCKET
-        NAMES socket-3.0.0.so
-        HINTS /Users/kevin/git/lua/luasocket/build/lib/lua/5.4/socket
+    # Find lua static (non homebrew on mac)
+    find_library(LIB_LUA
+        NAMES liblua_static lua_static liblua_static.a lua_static.a liblua.a
+        HINTS /usr/local/lib
         REQUIRED)
-endif(GOON_DEBUG_LUA)
+    set(LUA_LIBRARIES ${LIB_LUA})
+
+    if(GOON_DEBUG_LUA)
+        find_library(LIB_SOCKET
+            NAMES socket-3.0.0.so
+            HINTS /Users/kevin/git/lua/luasocket/build/lib/lua/5.4/socket
+            REQUIRED)
+    endif(GOON_DEBUG_LUA)
+
+# Build everything, useful for runners, and builds we don't care take a little longer.
+else()
+    find_package(Git REQUIRED QUIET)
+    message(STATUS "Cloning and updating submodules")
+    if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
+        execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            RESULT_VARIABLE GIT_SUBMOD_RESULT)
+
+        if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+            message(FATAL_ERROR "git submodule update --init --recursive failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+        endif()
+
+        add_subdirectory(./external/SDL)
+        add_subdirectory(./external/SDL_image)
+        add_subdirectory(./external/Lua EXCLUDE_FROM_ALL)
+
+        target_link_libraries(SupergoonDash PRIVATE lua_static)
+    else()
+        message(STATUS "Could not init git for some reason")
+    endif()
+endif(MACOS)
 
 # #########################################
 # Compile Definitions
@@ -138,7 +160,6 @@ endif(CMAKE_DEBUG_VARIABLES)
 # Compile Options
 # #########################################
 target_compile_options(SupergoonDash PRIVATE
-    -std=11
     -Wall
     -Wextra
     -Wpedantic
@@ -187,8 +208,7 @@ install(DIRECTORY ${FOLDERS_TO_COPY}
 # Test
 # #########################################
 if(BUILD_TESTING AND NOT WIN32)
-    message(STATUS "Enabling and starting tests")
-    enable_testing()
+message(STATUS "Enabling and starting tests")
+enable_testing()
 endif(BUILD_TESTING AND NOT WIN32)
-
 add_test(NAME cppclean COMMAND ${CMAKE_SOURCE_DIR}/tests/cppclean.sh ${CMAKE_SOURCE_DIR})
