@@ -17,5 +17,5 @@ function Lua.Update()
 end
 
 function Lua.Draw()
-    currentLevel:Draw()
+    currentLevel:DrawBackground()
 end
