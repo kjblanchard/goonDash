@@ -21,11 +21,11 @@ static int SetLuaPath(lua_State *state, const char *path)
     LogWarn("Borked");
   lua_getfield(state, -1, "path");                    // get field "path" from table at top of stack (-1)
   const char *current_path = lua_tostring(state, -1); // grab path string from top of stack
-  size_t full_str_len = strlen(current_path) + strlen(path) + 2;
+  size_t full_str_len = strlen(current_path) + strlen(path) + 1;
   // Change windows
   // char full_str[BUFFER_SIZE];
   char *full_str = calloc(1, full_str_len * sizeof(char));
-  sprintf(full_str, "%s;%s", current_path, path);
+  snprintf(full_str, full_str_len, "%s;%s", current_path, path);
   lua_pop(state, 1);               // get rid of the string on the stack we just pushed on line 5
   lua_pushstring(state, full_str); // push the new one
   free(full_str);
@@ -48,11 +48,12 @@ lua_State *GetGlobalLuaState()
 }
 int LuaLoadFileIntoGlobalState(const char *file)
 {
-  size_t bufferSize = strlen(file);
+  const char *prefix = "./Scripts/";
+  size_t bufferSize = strlen(file) + strlen(prefix) + 1;
   // change windows
   // char buf[bufferSize];
-  char *buf = calloc(1, bufferSize);
-  snprintf(buf, 100, "./Scripts/%s", file);
+  char *buf = calloc(1, bufferSize * sizeof(char));
+  snprintf(buf, bufferSize, "%s%s", prefix, file);
   luaL_loadfile(g_luaState, buf);
   free(buf);
   int result = lua_pcall(g_luaState, 0, 0, 0);
