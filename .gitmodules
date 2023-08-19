@@ -1,9 +1,9 @@
 [submodule "external/SDL_image"]
 	path = external/SDL_image
-	url = git@github.com:kjblanchard/SDL_image.git
+	url = https://github.com:kjblanchard/SDL_image.git
 [submodule "external/SDL"]
 	path = external/SDL
-	url = git@github.com:kjblanchard/SDL.git
+	url = https://github.com:kjblanchard/SDL.git
 [submodule "external/Lua"]
 	path = external/Lua
-	url = git@github.com:kjblanchard/Lua.git
+	url = https://github.com:kjblanchard/Lua.git
