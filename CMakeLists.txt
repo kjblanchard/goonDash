@@ -122,7 +122,7 @@ else()
         add_subdirectory(./external/SDL)
         add_subdirectory(./external/Lua)
 
-        target_link_libraries(SupergoonDash lua_static)
+        target_link_libraries(SupergoonDash PRIVATE lua_static)
     else()
         message(STATUS "Could not init git for some reason")
     endif()
