@@ -102,9 +102,11 @@ if(MACOS)
             HINTS /Users/kevin/git/lua/luasocket/build/lib/lua/5.4/socket
             REQUIRED)
     endif(GOON_DEBUG_LUA)
+
 # Build everything, useful for runners, etc.
 else()
     find_package(Git QUIET)
+    message(STATUS "Cloning and updating submodules")
 
     if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
         if(GOON_GIT_SUBMODULE)
@@ -117,6 +119,7 @@ else()
                 message(FATAL_ERROR "git submodule update --init --recursive failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
             endif()
         endif()
+        message(STATUS "Could not init git for some reason")
     endif()
 
     add_subdirectory(./external/SDL_image)
