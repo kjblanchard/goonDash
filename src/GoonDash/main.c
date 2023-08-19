@@ -8,10 +8,14 @@ int main()
 {
     InitializeDebugLogFile();
     InitializeLua();
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) != 0)
     {
         LogError("Could not Initialize SDL!\nError: %s", SDL_GetError());
         return 1;
+    }
+    if (IMG_Init(IMG_INIT_PNG) == 0)
+    {
+        LogError("Could not initialize SDL_IMAGE\nError: %s", IMG_GetError());
     }
     lua_State *L = GetGlobalLuaState();
     RegisterLuaSocketFunctions(L);
