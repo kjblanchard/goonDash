@@ -110,22 +110,21 @@ else()
 
     # if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
-        if(GOON_GIT_SUBMODULE)
-            message(STATUS "Updating git submodules")
-            execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                RESULT_VARIABLE GIT_SUBMOD_RESULT)
+        message(STATUS "Updating git submodules")
+        execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            RESULT_VARIABLE GIT_SUBMOD_RESULT)
 
-            if(NOT GIT_SUBMOD_RESULT EQUAL "0")
-                message(FATAL_ERROR "git submodule update --init --recursive failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
-            endif()
+        if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+            message(FATAL_ERROR "git submodule update --init --recursive failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
         endif()
-    else()
-        message(STATUS "Could not init git for some reason")
     endif()
 
-    add_subdirectory(./external/SDL_image)
-    add_subdirectory(./external/SDL)
+    message(STATUS "Could not init git for some reason")
+endif()
+
+add_subdirectory(./external/SDL_image)
+add_subdirectory(./external/SDL)
 endif(MACOS)
 
 # Update submodules
