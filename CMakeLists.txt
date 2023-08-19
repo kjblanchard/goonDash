@@ -78,7 +78,8 @@ endif(WIN32)
 
 # 1. Look for a SDL2 package, 2. look for the SDL2 component and 3. fail if none can be found
 find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2)
-find_package(SDL2_image REQUIRED CONFIG COMPONENTS SDL2_image)
+# find_package(SDL2_image REQUIRED CONFIG COMPONENTS SDL2_image)
+find_package(SDL2_image REQUIRED)
 
 # 1. Look for a SDL2 package, 2. Look for the SDL2maincomponent and 3. DO NOT fail when SDL2main is not available
 find_package(SDL2 REQUIRED CONFIG COMPONENTS SDL2main)
