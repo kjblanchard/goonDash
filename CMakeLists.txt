@@ -164,7 +164,6 @@ endif(CMAKE_DEBUG_VARIABLES)
 # Compile Options
 # #########################################
 target_compile_options(SupergoonDash PRIVATE
-    -std=11
     -Wall
     -Wextra
     -Wpedantic
