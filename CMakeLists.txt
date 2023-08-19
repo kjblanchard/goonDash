@@ -76,6 +76,23 @@ else()
     set(LUA_INCLUDE_DIR /opt/homebrew/include/lua/)
 endif(WIN32)
 
+# Submodules
+# Update submodules
+find_package(Git QUIET)
+
+if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
+        if(GOON_GIT_SUBMODULE)
+                message(STATUS "Updating git submodules")
+                execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
+                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                        RESULT_VARIABLE GIT_SUBMOD_RESULT)
+
+                if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+                        message(FATAL_ERROR "git submodule update --init --recursive failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+                endif()
+        endif()
+endif()
+
 # 1. Look for a SDL2 package, 2. look for the SDL2 component and 3. fail if none can be found
 find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2)
 find_package(SDL2_image
@@ -83,6 +100,11 @@ find_package(SDL2_image
     NAMES SDL2_Image libSDL2_Image SDL2_image libSDL2_image libSDL2_image
     CONFIG COMPONENTS SDL2_image
     HINTS /usr/local/lib)
+
+    # If we don't have it installed, init the submodule and add it to the build to install it
+if(NOT SDL2_image_FOUND)
+    add_subdirectory(./external/SDL_image)
+endif(NOT SDL2_image_FOUND)
 
 # 1. Look for a SDL2 package, 2. Look for the SDL2maincomponent and 3. DO NOT fail when SDL2main is not available
 find_package(SDL2 REQUIRED CONFIG COMPONENTS SDL2main)

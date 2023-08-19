@@ -1,0 +1,3 @@
+[submodule "external/SDL_image"]
+	path = external/SDL_image
+	url = git@github.com:kjblanchard/SDL_image.git
