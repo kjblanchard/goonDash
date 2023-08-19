@@ -63,7 +63,7 @@ include(CTest)
 # #########################################
 option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" OFF)
 option(GOON_BUILD_PCH "Uses a PCH file to try and speed up compilation" ON)
-option(GOON_DEBUG_LUA "Includes socket so that we can debug lua remotely" ON)
+option(GOON_DEBUG_LUA "Includes socket so that we can debug lua remotely" OFF)
 set(BUILD_TESTING OFF)
 
 # #########################################
@@ -79,8 +79,8 @@ endif(WIN32)
 # 1. Look for a SDL2 package, 2. look for the SDL2 component and 3. fail if none can be found
 find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2)
 find_package(SDL2_image
-    REQUIRED
-    NAMES SDL2_Image libSDL2_Image SDL2_image libSDL2_image
+
+    NAMES SDL2_Image libSDL2_Image SDL2_image libSDL2_image libSDL2_image
     CONFIG COMPONENTS SDL2_image
     HINTS /usr/local/lib)
 
