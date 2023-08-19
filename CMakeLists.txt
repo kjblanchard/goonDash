@@ -29,7 +29,6 @@ endif(APPLE)
 
 if(WIN32)
     set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} /c/cmake)
-
     # Disable testing until we install cppclean on windows builder.
     set(GOON_ENABLE_TESTING OFF)
     list(FILTER FILES EXCLUDE REGEX ".*platform/Mac.*$")
@@ -69,14 +68,7 @@ set(BUILD_TESTING OFF)
 # #########################################
 # Packages
 # #########################################
-if(WIN32)
-    message(STATUS "Windows")
-    set(LUA_INCLUDE_DIR /usr/local/include/)
-else()
-    set(LUA_INCLUDE_DIR /opt/homebrew/include/lua/)
-endif(WIN32)
-
-# Most dev is done here, so to speed up builds don't rebuild
+# Most dev is done here, so to speed up builds don't rebuild all packages, must have them installed.
 if(MACOS)
     # 1. Look for a SDL2 package, 2. look for the SDL2 component and 3. fail if none can be found
     find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2)
@@ -103,14 +95,11 @@ if(MACOS)
             REQUIRED)
     endif(GOON_DEBUG_LUA)
 
-# Build everything, useful for runners, etc.
+# Build everything, useful for runners, and builds we don't care take a little longer.
 else()
     find_package(Git REQUIRED QUIET)
     message(STATUS "Cloning and updating submodules")
-
-    # if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
-        message(STATUS "Updating git submodules")
         execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
             RESULT_VARIABLE GIT_SUBMOD_RESULT)
@@ -123,16 +112,18 @@ else()
         add_subdirectory(./external/SDL_image)
         add_subdirectory(./external/Lua EXCLUDE_FROM_ALL)
 
-        # target_include_directories(SupergoonDash
-        #     PUBLIC
-        #     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/external/SDL/include>
-        #     $<INSTALL_INTERFACE:include/SDL2>
-        # )
-        # target_include_directories(SupergoonDash
-        #     PUBLIC
-        #     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/external/SDL_image>
-        #     $<INSTALL_INTERFACE:include/SDL2>
-        # )
+        target_include_directories(SupergoonDash
+            PUBLIC
+            ${CMAKE_SOURCE_DIR}/external/SDL/include>
+            # $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/external/SDL/include>
+            # $<INSTALL_INTERFACE:include/SDL2>
+        )
+        target_include_directories(SupergoonDash
+            PUBLIC
+            ${CMAKE_SOURCE_DIR}/external/SDL_image>
+            # $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/external/SDL_image>
+            # $<INSTALL_INTERFACE:include/SDL2>
+        )
         target_link_libraries(SupergoonDash PRIVATE lua_static)
     else()
         message(STATUS "Could not init git for some reason")
