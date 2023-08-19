@@ -120,6 +120,7 @@ else()
     endif()
 
     add_subdirectory(./external/SDL_image)
+    add_subdirectory(./external/SDL)
 endif(MACOS)
 
 # Update submodules
