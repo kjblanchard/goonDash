@@ -80,7 +80,7 @@ endif(WIN32)
 find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2)
 find_package(SDL2_image
     REQUIRED
-    NAMES SDL2_Image libSDL2_Image
+    NAMES SDL2_Image libSDL2_Image SDL2_image libSDL2_image
     CONFIG COMPONENTS SDL2_image
     HINTS /usr/local/lib)
 
