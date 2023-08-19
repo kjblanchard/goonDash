@@ -159,6 +159,11 @@ endif(CMAKE_DEBUG_VARIABLES)
 # #########################################
 # Compile Options
 # #########################################
+if(WIN32)
+target_compile_options(SupergoonDash PRIVATE
+    /std:c11
+)
+else()
 target_compile_options(SupergoonDash PRIVATE
     -Wall
     -Wextra
@@ -166,6 +171,7 @@ target_compile_options(SupergoonDash PRIVATE
     -Wdeprecated
     -Wno-newline-eof
 )
+endif(WIN32)
 
 # #########################################
 # Linking Options
