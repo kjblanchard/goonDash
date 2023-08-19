@@ -48,7 +48,7 @@ lua_State *GetGlobalLuaState()
 }
 int LuaLoadFileIntoGlobalState(const char *file)
 {
-  size_t bufferSize = sizeof(*file);
+  size_t bufferSize = strlen(file);
   // change windows
   // char buf[bufferSize];
   char *buf = calloc(1, bufferSize);
