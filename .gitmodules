@@ -4,3 +4,6 @@
 [submodule "external/SDL"]
 	path = external/SDL
 	url = git@github.com:kjblanchard/SDL.git
+[submodule "external/Lua"]
+	path = external/Lua
+	url = git@github.com:kjblanchard/Lua.git
