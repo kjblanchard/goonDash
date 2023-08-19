@@ -5,6 +5,7 @@ XCODE_BUILD_SYSTEM = Xcode
 BACKUP_BUILD_SYSTEM = 'Unix Makefiles'
 # WINDOWS_BUILD_SYSTEM = 'MinGW Makefiles'
 WINDOWS_BUILD_SYSTEM = 'Visual Studio 17 2022'
+MSVC_CONFIG_TYPE = Debug
 BUILD_FOLDER = build
 BINARY_FOLDER = bin
 BINARY_NAME = SupergoonDash
@@ -29,10 +30,10 @@ wconfigure:
 	@cmake . -B build -D CMAKE_PREFIX_PATH=/c/cmake -G $(WINDOWS_BUILD_SYSTEM)
 
 build:
-	@cmake --build build
+	@cmake --build build --config $(MSVC_CONFIG_TYPE)
 
 install:
-	@cmake --install build
+	@cmake --install build --config $(MSVC_CONFIG_TYPE)
 
 tiled:
 	@$(foreach file,$(TILED_EXPORT_TILESETS),\

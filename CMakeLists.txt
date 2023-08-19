@@ -8,6 +8,7 @@ set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
+
 # #########################################
 # File globbing
 # #########################################
@@ -29,6 +30,7 @@ endif(APPLE)
 
 if(WIN32)
     set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} /c/cmake)
+
     # Disable testing until we install cppclean on windows builder.
     set(GOON_ENABLE_TESTING OFF)
     list(FILTER FILES EXCLUDE REGEX ".*platform/Mac.*$")
@@ -56,6 +58,7 @@ add_executable(SupergoonDash
 set_property(TARGET SupergoonDash PROPERTY C_STANDARD 11)
 find_package(PkgConfig REQUIRED)
 include(CTest)
+
 
 # #########################################
 # Options
@@ -156,6 +159,21 @@ if(CMAKE_DEBUG_VARIABLES)
     endforeach()
 endif(CMAKE_DEBUG_VARIABLES)
 
+# Platform specific Build options
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_SOURCE_DIR}/build/bin>)
+# set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build)
+if ( MSVC )
+set_target_properties( ${targetname}
+PROPERTIES
+LIBRARY_OUTPUT_DIRECTORY
+${CMAKE_SOURCE_DIR}/build/bin
+)
+set_target_properties( SupergoonDash PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG
+${CMAKE_SOURCE_DIR}/build/bin)
+set_target_properties( SupergoonDash PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE
+${CMAKE_SOURCE_DIR}/build/bin )    # etc for the other available configuration types (MinSizeRel, RelWithDebInfo)endif ( MSVC )if ( MSVC )    set_target_properties( ${targetname} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${youroutputdirectory} )    set_target_properties( ${targetname} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${youroutputdirectory} )    set_target_properties( ${targetname} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${youroutputdirectory} )    # etc for the other available configuration types (MinSizeRel, RelWithDebInfo)endif ( MSVC )if ( MSVC )    set_target_properties( ${targetname} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${youroutputdirectory} )    set_target_properties( ${targetname} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${youroutputdirectory} )    set_target_properties( ${targetname} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${youroutputdirectory} )    # etc for the other available configuration types (MinSizeRel, RelWithDebInfo)endif ( MSVC )
+endif(MSVC)
+
 # #########################################
 # Compile Options
 # #########################################
@@ -203,8 +221,15 @@ target_include_directories(SupergoonDash
 # Install
 # #########################################
 set(FOLDERS_TO_COPY src/Scripts assets)
+
+if(MSVC)
+set(INSTALL_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIG>)
+else()
+set(INSTALL_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+endif(MSVC)
+
 install(DIRECTORY ${FOLDERS_TO_COPY}
-    DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    DESTINATION ${INSTALL_DIR}
     PATTERN "*.tsx" EXCLUDE
     PATTERN "*.tmx" EXCLUDE
     PATTERN "*.tiled-project" EXCLUDE
