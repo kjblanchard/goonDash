@@ -42,9 +42,11 @@ jobs:
       - name: Install emscripten
         run: cd emsdk && ./emsdk install latest && ./emsdk activate latest && echo '/home/runner/work/goonDash/goonDash/emsdk' >> $GITHUB_PATH && echo '/home/runner/work/goonDash/goonDash/emsdk/upstream/emscripten' >> $GITHUB_PATH && echo $GITHUB_PATH
       - name: Test path
-        run: echo "$PATH"
+        run: echo "$PATH" && ls /home/runner/work/goonDash/goonDash/emsdk/upstream/emscripten
       - name: Check out repository code
         uses: actions/checkout@v3
+      - name: Test cmake
+        run: where cmake && where emcmake && where emrun
       - name: Configure CMake
         run: make erebuild
   # Build-Windows:
