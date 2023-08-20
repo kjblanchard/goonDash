@@ -1,7 +1,8 @@
 # GoonDash
 A C engine with Lua scripting, that utilizes Tiled and Aseprite for the game.
+https://github.com/kjblanchard/goonDash/actions/workflows/build.yml/badge.svg
 
-![Picture didn't load idiot](https://github.com/kjblanchard/GoonEngine/blob/master/img/new.gif?raw=true)
+![Picture didn't load idiot](https://github.com/kjblanchard/goonDash/blob/master/img/status.png?raw=true)
 
 ## Development
 - Mostly developed on macos apple silicon
