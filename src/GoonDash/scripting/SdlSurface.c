@@ -67,9 +67,16 @@ static int BlitAtlasSurface(lua_State *L)
     }
     SDL_Surface *atlasSurface = (SDL_Surface *)lua_touserdata(L, 1);
     SDL_Surface *tileSurface = (SDL_Surface *)lua_touserdata(L, 2);
+    if(!atlasSurface || !tileSurface)
+    {
+        LogError("Somehow these are null. Atlas: %d, Tile: %d", atlasSurface, tileSurface);
+        lua_pushnil(L);
+        return 0;
+    }
     SDL_Rect dstRect = GetRectFromLuaTable(L, 3);
     SDL_Rect srcRect = GetRectFromLuaTable(L, 4);
     SDL_BlitSurface(tileSurface, &srcRect, atlasSurface, &dstRect);
+    return 0;
 }
 
 /**

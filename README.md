@@ -6,3 +6,7 @@
 +LDFLAGS_macosx=  -undefined dynamic_lookup -dynamiclib -o
 - Had to rename the files and put in a shared lib local location, as for some reason it references core in different places (socket-3.0.0)
 - Now when you run (with make run) it will trigger breakpoints set in zerobrane after you start the server.
+
+###
+EMCC
+- If I copy assets and scripts to the build folder, it build successfully.

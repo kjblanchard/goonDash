@@ -50,7 +50,6 @@ end
 
 function TileSet:GetAllFileNames()
     local tilesets = {}
-    print("Image tileset is " .. tostring(self.imageTileset))
     if self.imageTileset then
         for _, tile in ipairs(self.data.tiles) do
             table.insert(tilesets, GetFullFilepath(tile.image))

@@ -4,6 +4,45 @@
 #include <GoonDash/scripting/SdlWindow.h>
 #include <GoonDash/scripting/SdlSurface.h>
 
+// EMSCRIPTEN
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
+static SDL_Event event;
+static SDL_Renderer *renderer;
+static lua_State *L;
+static bool shouldQuit = false;
+
+void loop_func()
+{
+    // Event loop
+    while (SDL_PollEvent(&event))
+    {
+        switch (event.type)
+        {
+        case SDL_QUIT:
+            shouldQuit = true; // Quit the loop if the window close button is clicked
+            break;
+        case SDL_KEYDOWN:
+            if (event.key.keysym.sym == SDLK_q)
+            {
+                shouldQuit = true; // Quit the loop if 'q' key is pressed
+            }
+            break;
+        default:
+            break;
+        }
+    }
+    if (shouldQuit)
+        return;
+    CallEngineLuaFunction(L, "Update");
+    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+    SDL_RenderClear(renderer);
+    CallEngineLuaFunction(L, "Draw");
+    SDL_RenderPresent(renderer);
+}
+
 int main()
 {
     InitializeDebugLogFile();
@@ -17,55 +56,31 @@ int main()
     {
         LogError("Could not initialize SDL_IMAGE\nError: %s", IMG_GetError());
     }
-    lua_State *L = GetGlobalLuaState();
+    L = GetGlobalLuaState();
     RegisterLuaSocketFunctions(L);
     InitializeSdlWindowLuaFunctions(L);
     RegisterLuaSurfaceFunctions(L);
 
-    // Start lua
-    LuaLoadFileIntoGlobalState("main.lua");
+    if (!LuaLoadFileIntoGlobalState("main.lua"))
+    {
+        return false;
+    }
     CallEngineLuaFunction(L, "Initialize");
 
     // Set event loop
-    static bool shouldQuit = false;
-    static SDL_Event event;
-    SDL_Renderer *renderer = GetGlobalRenderer();
+    renderer = GetGlobalRenderer();
 
     // Lua Start
-    CallEngineLuaFunction(L, "Start");
-
-    // Update loop
+    int startResult = CallEngineLuaFunction(L, "Start");
+#ifdef __EMSCRIPTEN__
+    emscripten_set_main_loop(loop_func, 60, 1);
+#else
     while (!shouldQuit)
     {
-        // Event loop
-        while (SDL_PollEvent(&event))
-        {
-            switch (event.type)
-            {
-            case SDL_QUIT:
-                shouldQuit = true; // Quit the loop if the window close button is clicked
-                break;
-            case SDL_KEYDOWN:
-                if (event.key.keysym.sym == SDLK_q)
-                {
-                    shouldQuit = true; // Quit the loop if 'q' key is pressed
-                }
-                break;
-            default:
-                break;
-            }
-        }
-        // Lua Update
-        CallEngineLuaFunction(L, "Update");
-
-        // Lua Draw
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderClear(renderer);
-        CallEngineLuaFunction(L, "Draw");
-        SDL_RenderPresent(renderer);
-
-        // Delay currently
+        loop_func();
         SDL_Delay(16);
     }
+#endif
+
     SDL_Quit();
 }
