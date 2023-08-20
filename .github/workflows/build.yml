@@ -44,7 +44,8 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
       - name: Configure CMake
-        run: export emcmake='/home/runner/work/goonDash/goonDash/emsdk/upstream/emscripten/emcmake' make erebuild
+        # run: export emcmake='/home/runner/work/goonDash/goonDash/emsdk/upstream/emscripten/emcmake' make erebuild
+        run: export make erebuild
   # Build-Windows:
   #   runs-on: windows-latest
   #   steps:
