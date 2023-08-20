@@ -1,6 +1,6 @@
 #include <GoonDash/gnpch.h>
-#include <GoonDash/aux/lua.h>
-#include <GoonDash/aux/luaDebug.h>
+#include <GoonDash/misc/lua.h>
+#include <GoonDash/misc/luaDebug.h>
 #include <GoonDash/scripting/SdlWindow.h>
 #include <GoonDash/scripting/SdlSurface.h>
 

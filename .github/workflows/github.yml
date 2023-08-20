@@ -34,8 +34,6 @@ jobs:
   Build-Windows:
     runs-on: windows-latest
     steps:
-      - name: Configure git to not break
-        run: git config --system core.protectNTFS false
       - name: Check out repository code
         uses: actions/checkout@v3
       - name: Configure CMake

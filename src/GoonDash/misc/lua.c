@@ -1,5 +1,5 @@
 #include <GoonDash/gnpch.h>
-#include <GoonDash/aux/lua.h>
+#include <GoonDash/misc/lua.h>
 
 // This could possibly need to be : instead of ; on Windows, we will find out when building there.
 #define SCRIPT_PATH "./Scripts/?.lua;./assets/tiled/?.lua;/Users/kevin/.luarocks/share/lua/5.4/?.lua;/Users/kevin/build/macosx/share/lua/5.4/?.lua;/Users/kevin/build/macosx/share/lua/5.4/socket/?.lua"
