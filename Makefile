@@ -24,7 +24,7 @@ mconfigure:
 	@cmake . -B build -D CMAKE_BUILD_TYPE=Debug -G $(BACKUP_BUILD_SYSTEM) -DGOON_FULL_MACOS_BUILD=ON
 # Macos Runner Future
 xconfigure:
-	@cmake . -B build -D CMAKE_BUILD_TYPE=Debug -G $(XCODE_BUILD_SYSTEM)
+	@cmake . -B build -D CMAKE_BUILD_TYPE=Debug -G $(XCODE_BUILD_SYSTEM) -DGOON_FULL_MACOS_BUILD=ON
 # Linux/Runner / MacosDev backup
 bconfigure:
 	@cmake . -B build -D CMAKE_BUILD_TYPE=Debug -G $(BACKUP_BUILD_SYSTEM)
@@ -53,6 +53,7 @@ rebuild: clean configure build install test
 brebuild: clean bconfigure build install test
 wrebuild: clean wconfigure build install
 mrebuild: clean mconfigure build install
+xrebuild: clean xconfigure build install
 
 # MacosDev
 run:
