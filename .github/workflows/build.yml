@@ -31,6 +31,20 @@ jobs:
         uses: actions/checkout@v3
       - name: Configure CMake
         run: make xrebuild
+  Build-Emscripten:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: emscripten-core/emsdk
+          ref: 3.1.44
+          path: emsdk
+      - name: Install emscripten
+        run: cd emsdk && ./emsdk install latest && ./emsdk activate latest && echo '/home/runner/work/goonDash/goonDash/emsdk' >> $GITHUB_PATH && echo '/home/runner/work/goonDash/goonDash/emsdk/upstream/emscripten' >> $GITHUB_PATH && echo $GITHUB_PATH && echo 'source "/home/runner/work/goonDash/goonDash/emsdk/emsdk_env.sh"' >> $HOME/.bash_profile
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Configure CMake
+        run: export make erebuild
   Build-Windows:
     runs-on: windows-latest
     steps:
