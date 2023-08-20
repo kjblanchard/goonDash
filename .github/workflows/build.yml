@@ -39,7 +39,7 @@ jobs:
           repository: emscripten-core/emsdk
           ref: 3.1.44
       - name: Install emscripten
-        run: cd emsdk && ./emsdk install latest && ./emsdk activate latest &&
+        run: cd emsdk && ./emsdk install latest && ./emsdk activate latest
       - name: Check out repository code
         uses: actions/checkout@v3
       - name: Configure CMake

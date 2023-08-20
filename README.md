@@ -1,8 +1,7 @@
 # GoonDash
 A C engine with Lua scripting, that utilizes Tiled and Aseprite for the game.
-https://github.com/kjblanchard/goonDash/actions/workflows/build.yml/badge.svg
-
-![Picture didn't load idiot](https://github.com/kjblanchard/goonDash/blob/master/img/status.png?raw=true)
+![Build All Platforms]( https://github.com/kjblanchard/goonDash/actions/workflows/build.yml/badge.svg)
+![Status Picture](https://github.com/kjblanchard/goonDash/blob/master/img/status.png?raw=true)
 
 ## Development
 - Mostly developed on macos apple silicon
@@ -46,6 +45,7 @@ Libraries:
 - [doxygen](https://doxygen.nl) - GPL | Automatic documentation
 - [LUA](https://www.lua.org/license.html) - MIT - Scripting
 - [openalsoft](https://github.com/kcat/openal-soft/blob/master/COPYING) - LGPLv2 | OpenAL implementation
+
 ### ZeroBrane Debugging notes
 - Had to build luasocket from source, as the one from luarocks didn't build right for arm
 - Had to get the build command from the mac.cmd file, and use that
