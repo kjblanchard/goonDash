@@ -1,12 +1,12 @@
 name: Build and Test Linux
-run-name: 'Linux Build: ${{ github.actor }} 🚀'
+run-name: "Linux Build: ${{ github.actor }} 🚀"
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 jobs:
-  Explore-GitHub-Actions:
+  Build-Linux:
     runs-on: ubuntu-latest
     steps:
       - run: pip install --upgrade cppclean
@@ -23,5 +23,18 @@ jobs:
       - name: Configure CMake
         run: |
           make brebuild
-
       - run: echo "🍏 This job's status is ${{ job.status }}."
+  Build-Macos:
+    runs-on: macos-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Configure CMake
+        run: make mrebuild
+  Build-Windows:
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Configure CMake
+        run: make wrebuild
