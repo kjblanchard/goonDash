@@ -24,11 +24,16 @@ if(APPLE)
     if(NOT IOS)
         set(MACOS ON)
         list(FILTER FILES EXCLUDE REGEX ".*platform/Windows.*$")
+
+        if(CMAKE_GENERATOR STREQUAL "Xcode")
+            set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE STRING "" FORCE)
+        endif(CMAKE_GENERATOR STREQUAL "Xcode")
     endif(NOT IOS)
 endif(APPLE)
 
 if(WIN32)
     set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} /c/cmake)
+
     # Disable testing until we install cppclean on windows builder.
     set(GOON_ENABLE_TESTING OFF)
     list(FILTER FILES EXCLUDE REGEX ".*platform/Mac.*$")
@@ -63,14 +68,16 @@ include(CTest)
 option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" OFF)
 option(GOON_BUILD_PCH "Uses a PCH file to try and speed up compilation" ON)
 option(GOON_DEBUG_LUA "Includes socket so that we can debug lua remotely" OFF)
-# Should we enable testing
-set(BUILD_TESTING ON)
+
+# option(GOON_FULL_MACOS_BUILD "Full builds of all libraries, used for runners mostly." ON)
+option(GOON_BUILD_TESTING "Should we enable testing" ON)
+set(BUILD_TESTING GOON_BUILD_TESTING)
 
 # #########################################
 # Packages
 # #########################################
 # Most dev is done here, so to speed up builds don't rebuild all packages, must have them installed.
-if(MACOS)
+if(MACOS AND NOT GOON_FULL_MACOS_BUILD)
     # 1. Look for a SDL2 package, 2. look for the SDL2 component and 3. fail if none can be found
     find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2)
     find_package(SDL2_image
@@ -100,6 +107,7 @@ if(MACOS)
 else()
     find_package(Git REQUIRED QUIET)
     message(STATUS "Cloning and updating submodules")
+
     if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
         execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -109,15 +117,15 @@ else()
             message(FATAL_ERROR "git submodule update --init --recursive failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
         endif()
 
-        add_subdirectory(./external/SDL)
-        add_subdirectory(./external/SDL_image)
+        add_subdirectory(./external/SDL EXCLUDE_FROM_ALL)
+        add_subdirectory(./external/SDL_image EXCLUDE_FROM_ALL)
         add_subdirectory(./external/Lua EXCLUDE_FROM_ALL)
 
         target_link_libraries(SupergoonDash PRIVATE lua_static)
     else()
         message(STATUS "Could not init git for some reason")
     endif()
-endif(MACOS)
+endif(MACOS AND NOT GOON_FULL_MACOS_BUILD)
 
 # #########################################
 # Compile Definitions
@@ -156,16 +164,35 @@ if(CMAKE_DEBUG_VARIABLES)
     endforeach()
 endif(CMAKE_DEBUG_VARIABLES)
 
+# Platform specific Build options
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_SOURCE_DIR}/build/bin>)
+# set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build)
+    # set_target_properties(${targetname}
+    #     PROPERTIES
+    #     LIBRARY_OUTPUT_DIRECTORY
+    #     ${CMAKE_SOURCE_DIR}/build/bin
+    # )
+    # set_target_properties(SupergoonDash PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG
+    #     ${CMAKE_SOURCE_DIR}/build/bin)
+    # set_target_properties(SupergoonDash PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE
+    #     ${CMAKE_SOURCE_DIR}/build/bin) # etc for the other available configuration types (MinSizeRel, RelWithDebInfo)endif ( MSVC )if ( MSVC )    set_target_properties( ${targetname} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${youroutputdirectory} )    set_target_properties( ${targetname} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${youroutputdirectory} )    set_target_properties( ${targetname} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${youroutputdirectory} )    # etc for the other available configuration types (MinSizeRel, RelWithDebInfo)endif ( MSVC )if ( MSVC )    set_target_properties( ${targetname} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${youroutputdirectory} )    set_target_properties( ${targetname} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${youroutputdirectory} )    set_target_properties( ${targetname} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${youroutputdirectory} )    # etc for the other available configuration types (MinSizeRel, RelWithDebInfo)endif ( MSVC )
+
 # #########################################
 # Compile Options
 # #########################################
-target_compile_options(SupergoonDash PRIVATE
-    -Wall
-    -Wextra
-    -Wpedantic
-    -Wdeprecated
-    -Wno-newline-eof
-)
+if(WIN32)
+    target_compile_options(SupergoonDash PRIVATE
+        /std:c11
+    )
+else()
+    target_compile_options(SupergoonDash PRIVATE
+        -Wall
+        -Wextra
+        -Wpedantic
+        -Wdeprecated
+        -Wno-newline-eof
+    )
+endif(WIN32)
 
 # #########################################
 # Linking Options
@@ -197,8 +224,15 @@ target_include_directories(SupergoonDash
 # Install
 # #########################################
 set(FOLDERS_TO_COPY src/Scripts assets)
+
+if(MSVC OR CMAKE_GENERATOR STREQUAL "Xcode")
+    set(INSTALL_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIG>)
+else()
+    set(INSTALL_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+endif(MSVC OR CMAKE_GENERATOR STREQUAL "Xcode")
+
 install(DIRECTORY ${FOLDERS_TO_COPY}
-    DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    DESTINATION ${INSTALL_DIR}
     PATTERN "*.tsx" EXCLUDE
     PATTERN "*.tmx" EXCLUDE
     PATTERN "*.tiled-project" EXCLUDE
@@ -208,7 +242,8 @@ install(DIRECTORY ${FOLDERS_TO_COPY}
 # Test
 # #########################################
 if(BUILD_TESTING AND NOT WIN32)
-message(STATUS "Enabling and starting tests")
-enable_testing()
+    message(STATUS "Enabling and starting tests")
+    enable_testing()
 endif(BUILD_TESTING AND NOT WIN32)
+
 add_test(NAME cppclean COMMAND ${CMAKE_SOURCE_DIR}/tests/cppclean.sh ${CMAKE_SOURCE_DIR})

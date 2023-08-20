@@ -1,0 +1,8 @@
+name: UpdateSemVer
+run-name: "Updates the sem versioning"
+on: workflow_dispatch
+jobs:
+  Hello:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Hello world!"

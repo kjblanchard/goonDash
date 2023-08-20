@@ -59,8 +59,11 @@
             "scaleInEditor": 1
         },
         "level1.tmx": {
+            "expandedGroupLayers": [
+                12
+            ],
             "scale": 1.5,
-            "selectedLayer": 0,
+            "selectedLayer": 2,
             "viewCenter": {
                 "x": 494.3333333333333,
                 "y": 307.99999999999994
@@ -87,7 +90,6 @@
     "openFiles": [
         "level1.tmx",
         "terrain.tsx",
-        "background.tsx",
         "background.tsx"
     ],
     "project": "goonDash.tiled-project",

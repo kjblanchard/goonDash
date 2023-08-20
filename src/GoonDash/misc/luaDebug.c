@@ -1,5 +1,5 @@
 #include <GoonDash/gnpch.h>
-#include <GoonDash/aux/luaDebug.h>
+#include <GoonDash/misc/luaDebug.h>
 
 #ifdef GN_DEBUG_LUA
 extern int luaopen_socket_core(lua_State *L);
