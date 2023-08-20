@@ -66,14 +66,15 @@ include(CTest)
 option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" OFF)
 option(GOON_BUILD_PCH "Uses a PCH file to try and speed up compilation" ON)
 option(GOON_DEBUG_LUA "Includes socket so that we can debug lua remotely" OFF)
-# Should we enable testing
-set(BUILD_TESTING ON)
+# option(GOON_FULL_MACOS_BUILD "Full builds of all libraries, used for runners mostly." ON)
+option(GOON_BUILD_TESTING "Should we enable testing" ON)
+set(BUILD_TESTING GOON_BUILD_TESTING)
 
 # #########################################
 # Packages
 # #########################################
 # Most dev is done here, so to speed up builds don't rebuild all packages, must have them installed.
-if(MACOS)
+if(MACOS AND NOT GOON_FULL_MACOS_BUILD)
     # 1. Look for a SDL2 package, 2. look for the SDL2 component and 3. fail if none can be found
     find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2)
     find_package(SDL2_image
@@ -112,15 +113,15 @@ else()
             message(FATAL_ERROR "git submodule update --init --recursive failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
         endif()
 
-        add_subdirectory(./external/SDL)
-        add_subdirectory(./external/SDL_image)
+        add_subdirectory(./external/SDL EXCLUDE_FROM_ALL)
+        add_subdirectory(./external/SDL_image EXCLUDE_FROM_ALL)
         add_subdirectory(./external/Lua EXCLUDE_FROM_ALL)
 
         target_link_libraries(SupergoonDash PRIVATE lua_static)
     else()
         message(STATUS "Could not init git for some reason")
     endif()
-endif(MACOS)
+endif(MACOS AND NOT GOON_FULL_MACOS_BUILD)
 
 # #########################################
 # Compile Definitions
