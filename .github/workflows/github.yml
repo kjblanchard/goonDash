@@ -1,5 +1,5 @@
-name: Build and Test Linux
-run-name: "Linux Build: ${{ github.actor }} 🚀"
+name: Build All Platforms
+run-name: "Build All Platforms: ${{ github.actor }} 🚀"
 on:
   push:
     branches: [master]
@@ -38,3 +38,12 @@ jobs:
         uses: actions/checkout@v3
       - name: Configure CMake
         run: make wrebuild
+---
+name: UpdateSemVer
+run-name: "Updates the sem versioning"
+on: workflow_dispatch
+jobs:
+  Hello:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Hello world!"
