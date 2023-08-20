@@ -49,18 +49,26 @@ lua_State *GetGlobalLuaState()
 int LuaLoadFileIntoGlobalState(const char *file)
 {
   const char *prefix = "./Scripts/";
+  // const char *prefix = "";
   size_t bufferSize = strlen(file) + strlen(prefix) + 1;
   // change windows
   // char buf[bufferSize];
   char *buf = calloc(1, bufferSize * sizeof(char));
   snprintf(buf, bufferSize, "%s%s", prefix, file);
-  luaL_loadfile(g_luaState, buf);
+  int luaLoadResult = luaL_loadfile(g_luaState, buf);
+  if (luaLoadResult != LUA_OK)
+  {
+    const char *error = lua_tostring(g_luaState, -1);
+    LogError("Could not load file %s, error result: %d, error: %s", buf, luaLoadResult, error);
+    lua_pop(g_luaState, 1);
+    return false;
+  }
   free(buf);
   int result = lua_pcall(g_luaState, 0, 0, 0);
   if (result != LUA_OK)
   {
     const char *error = lua_tostring(g_luaState, -1);
-    LogError("Could not load file %s, error result: %d, error: %s", buf, result, error);
+    LogError("Could not run file %s, error result: %d, error: %s", buf, result, error);
     lua_pop(g_luaState, 1);
     return false;
   }
@@ -105,6 +113,6 @@ int CallEngineLuaFunction(lua_State *L, const char *functionName)
     lua_pop(g_luaState, 1);
     return false;
   }
-  return true;
   lua_settop(L, 0);
+  return true;
 }

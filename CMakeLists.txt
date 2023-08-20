@@ -8,6 +8,14 @@ set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
+# This exports a file that clangd can use so that we know what compile/include flags so that we can use clangd language server properly with our cmake attributes.
+message(STATUS "Project initializing")
+set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+include(FindPkgConfig)
+project(goonDash
+    VERSION 0.1.0
+    LANGUAGES C)
+
 # #########################################
 # File globbing
 # #########################################
@@ -19,41 +27,39 @@ file(GLOB_RECURSE FILES src/*.c* src/*.h*)
 # #########################################
 message(STATUS "Changing the platform specific settings")
 
-if(APPLE)
+if(EMSCRIPTEN)
+    message(STATUS "Configuring Emscripten")
+
+    # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s --preload-file Scripts -s --preload-file assets")
+    set(CMAKE_EXECUTABLE_SUFFIX ".html")
+    set(GOON_ENABLE_TESTING OFF)
+elseif(APPLE)
     # MACOS
     if(NOT IOS)
+        message(STATUS "Configuring Macos")
         set(MACOS ON)
         list(FILTER FILES EXCLUDE REGEX ".*platform/Windows.*$")
 
         if(CMAKE_GENERATOR STREQUAL "Xcode")
+            message(STATUS "Setting Build to Universal Binary")
             set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE STRING "" FORCE)
         endif(CMAKE_GENERATOR STREQUAL "Xcode")
     endif(NOT IOS)
-endif(APPLE)
-
-if(WIN32)
+elseif(WIN32)
+    message(STATUS "Configuring Windows")
     set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} /c/cmake)
-
-    # Disable testing until we install cppclean on windows builder.
     set(GOON_ENABLE_TESTING OFF)
     list(FILTER FILES EXCLUDE REGEX ".*platform/Mac.*$")
-endif(WIN32)
-
-if(UNIX AND NOT APPLE)
+elseif(UNIX AND NOT APPLE)
+    message(STATUS "Configuring Linux")
     set(LINUX ON)
-endif(UNIX AND NOT APPLE)
+endif(EMSCRIPTEN)
 
 # #########################################
 # Initialize
 # #########################################
 message(STATUS "Initializing the project")
 
-# This exports a file that clangd can use so that we know what compile/include flags so that we can use clangd language server properly with our cmake attributes.
-set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
-include(FindPkgConfig)
-project(goonDash
-    VERSION 0.1.0
-    LANGUAGES C)
 add_executable(SupergoonDash
     ${FILES})
 
@@ -69,7 +75,7 @@ option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting"
 option(GOON_BUILD_PCH "Uses a PCH file to try and speed up compilation" ON)
 option(GOON_DEBUG_LUA "Includes socket so that we can debug lua remotely" OFF)
 
-# option(GOON_FULL_MACOS_BUILD "Full builds of all libraries, used for runners mostly." ON)
+# option(GOON_FULL_MACOS_BUILD "Full builds of all libraries, used for runners mostly, and passed in to override." OFF)
 option(GOON_BUILD_TESTING "Should we enable testing" ON)
 set(BUILD_TESTING GOON_BUILD_TESTING)
 
@@ -164,18 +170,12 @@ if(CMAKE_DEBUG_VARIABLES)
     endforeach()
 endif(CMAKE_DEBUG_VARIABLES)
 
-# Platform specific Build options
-# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_SOURCE_DIR}/build/bin>)
-# set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build)
-    # set_target_properties(${targetname}
-    #     PROPERTIES
-    #     LIBRARY_OUTPUT_DIRECTORY
-    #     ${CMAKE_SOURCE_DIR}/build/bin
-    # )
-    # set_target_properties(SupergoonDash PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG
-    #     ${CMAKE_SOURCE_DIR}/build/bin)
-    # set_target_properties(SupergoonDash PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE
-    #     ${CMAKE_SOURCE_DIR}/build/bin) # etc for the other available configuration types (MinSizeRel, RelWithDebInfo)endif ( MSVC )if ( MSVC )    set_target_properties( ${targetname} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${youroutputdirectory} )    set_target_properties( ${targetname} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${youroutputdirectory} )    set_target_properties( ${targetname} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${youroutputdirectory} )    # etc for the other available configuration types (MinSizeRel, RelWithDebInfo)endif ( MSVC )if ( MSVC )    set_target_properties( ${targetname} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${youroutputdirectory} )    set_target_properties( ${targetname} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${youroutputdirectory} )    set_target_properties( ${targetname} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${youroutputdirectory} )    # etc for the other available configuration types (MinSizeRel, RelWithDebInfo)endif ( MSVC )
+# PROPERTIES
+# set_target_properties(SupergoonDash PROPERTIES LINK_FLAGS ${LINK_FLAGS} "-s USE_FREETYPE=1 -s DISABLE_EXCEPTION_CATCHING=0 -s DEMANGLE_SUPPORT=1 -s SAFE_HEAP=1 --bind -s WASM=1 -O2 -s LEGACY_GL_EMULATION=0  -s GL_UNSAFE_OPTS=0 -s ASSERTIONS=1 -s GL_ASSERTIONS=1 -s INVOKE_RUN=0 -s USE_WEBGL2=1 --preload-file assets --preload-file scripts ")
+if(EMSCRIPTEN)
+    set_target_properties(SupergoonDash PROPERTIES LINK_FLAGS ${LINK_FLAGS} "-O0 -g -s SAFE_HEAP=1 -s STACK_OVERFLOW_CHECK=1 --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets --preload-file ${CMAKE_SOURCE_DIR}/src/Scripts@/Scripts")
+endif(EMSCRIPTEN)
+
 
 # #########################################
 # Compile Options
