@@ -40,7 +40,7 @@ jobs:
           ref: 3.1.44
           path: emsdk
       - name: Install emscripten
-        run: cd emsdk && ./emsdk install latest && ./emsdk activate latest && echo /home/runner/work/goonDash/goonDash/emsdk >> $GITHUB_PATH && echo /home/runner/work/goonDash/goonDash/emsdk/upstream/emscripten >> $GITHUB_PATH
+        run: cd emsdk && ./emsdk install latest && ./emsdk activate latest && echo '/home/runner/work/goonDash/goonDash/emsdk' >> $GITHUB_PATH && echo '/home/runner/work/goonDash/goonDash/emsdk/upstream/emscripten' >> $GITHUB_PATH && echo $GITHUB_PATH
       - name: Check out repository code
         uses: actions/checkout@v3
       - name: Configure CMake
