@@ -47,6 +47,11 @@ jobs:
           echo "GITHUB_PATH: $GITHUB_PATH"
       - name: Check out repository code
         uses: actions/checkout@v3
+      - name: Actuall build
+        run: |
+          source $HOME/.bash_profile && source $HOME/.bash_profile
+          echo "PATH: $PATH"
+          echo "GITHUB_PATH: $GITHUB_PATH"
           make erebuild
   Build-Windows:
     runs-on: windows-latest
