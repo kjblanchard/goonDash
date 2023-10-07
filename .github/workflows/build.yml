@@ -42,7 +42,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          path: repo
+          submodules: recursive
       - name: Install CMake
         run: |
           cmake --version
@@ -55,6 +58,7 @@ jobs:
       - name: Actuall build
         run:  |
           cmake --version
+          cd repo
           make erebuild
           ls -lah
           ls -lah build
@@ -62,7 +66,7 @@ jobs:
         name: Upload to S3
         with:
           name: s3Artifact
-          path: build/bin
+          path: repo/build/bin
   Push-Files-To-S3:
     uses: supergoongaming/sharedWorkflows/.github/workflows/push_to_s3.yml@master
     needs: Build-Emscripten
