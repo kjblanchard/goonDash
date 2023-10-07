@@ -20,7 +20,7 @@ all: build run
 configure:
 	@cmake . -B build -D CMAKE_BUILD_TYPE=Debug -G $(BUILD_SYSTEM)
 econfigure:
-	@emcmake cmake . -B build -D CMAKE_BUILD_TYPE=Debug -G $(BUILD_SYSTEM) -DGOON_FULL_MACOS_BUILD=ON -DCMAKE_VERBOSE_MAKEFILE=ON
+	@emcmake cmake . -B build -D CMAKE_BUILD_TYPE=Debug -G $(BACKUP_BUILD_SYSTEM) -DGOON_FULL_MACOS_BUILD=ON -DCMAKE_VERBOSE_MAKEFILE=ON
 # Macos Runner
 mconfigure:
 	@cmake . -B build -D CMAKE_BUILD_TYPE=Debug -G $(BACKUP_BUILD_SYSTEM) -DGOON_FULL_MACOS_BUILD=ON
