@@ -35,7 +35,8 @@ wconfigure:
 	@cmake . -B build -D CMAKE_PREFIX_PATH=/c/cmake -G $(WINDOWS_BUILD_SYSTEM)
 
 build:
-	@cmake --build build --config $(MSVC_CONFIG_TYPE)
+# For some reason, needs sudo on emscripten builds, haven't figured this one out...
+	@sudo cmake --build build --config $(MSVC_CONFIG_TYPE)
 
 install:
 	@cmake --install build --config $(MSVC_CONFIG_TYPE)
