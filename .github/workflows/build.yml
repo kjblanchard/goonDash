@@ -48,11 +48,16 @@ jobs:
           # cd emsdk && ./emsdk install latest && ./emsdk activate latest && echo '/home/runner/work/goonDash/goonDash/emsdk' >> $GITHUB_PATH && echo '/home/runner/work/goonDash/goonDash/emsdk/upstream/emscripten' >> $GITHUB_PATH && echo $GITHUB_PATH && echo 'source "/home/runner/work/goonDash/goonDash/emsdk/emsdk_env.sh"' >> $HOME/.bash_profile
           cd emsdk && ./emsdk install latest && ./emsdk activate latest
           echo 'source "/home/runner/work/goonDash/goonDash/emsdk/emsdk_env.sh"' >> $HOME/.bash_profile
+          which cmake
+          cmake --version
       - name: Actuall build
         run: |
+          which cmake
           source $HOME/.bash_profile && source $HOME/.bash_profile
           source "/home/runner/work/goonDash/goonDash/emsdk/emsdk_env.sh"
           cd buildr
+          which cmake
+          cmake --version
           make erebuild
       - uses: actions/upload-artifact@v3
         name: Upload to S3
