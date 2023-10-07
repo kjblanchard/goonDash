@@ -46,3 +46,5 @@ Testing/
 .vscode/
 *.log
 *drawio.bkp
+*.terraform*
+*terraform.tfvars

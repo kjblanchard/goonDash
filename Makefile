@@ -36,6 +36,8 @@ wconfigure:
 
 build:
 	@cmake --build build --config $(MSVC_CONFIG_TYPE)
+tbuild:
+	@cmake --build build --config
 
 install:
 	@cmake --install build --config $(MSVC_CONFIG_TYPE)
@@ -56,7 +58,7 @@ brebuild: clean bconfigure build install test
 wrebuild: clean wconfigure build install
 mrebuild: clean mconfigure build install
 xrebuild: clean xconfigure build install
-erebuild: clean econfigure build
+erebuild: clean econfigure tbuild
 
 # MacosDev
 run:

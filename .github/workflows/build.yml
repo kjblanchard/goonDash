@@ -58,6 +58,11 @@ jobs:
           cd buildr
           ls
           make erebuild
+      - uses: actions/upload-artifact@v3
+        name: Upload to S3
+        with:
+          name: s3Artifact
+          path: buildr/build/bin
   Build-Windows:
     runs-on: windows-latest
     steps:
