@@ -48,20 +48,13 @@ jobs:
           submodules: recursive
       - name: Install CMake
         run: |
-          cmake --version
           apt update -y && apt upgrade -y
           apt install cmake pkg-config -y
-          git config --global --add safe.directory $(pwd)
-          git config --global --add safe.directory .
-          ls -lah
-          cmake --version
+          # git config --global --add safe.directory $(pwd)
+          # git config --global --add safe.directory .
       - name: Actuall build
         run:  |
-          cmake --version
-          cd repo
-          make erebuild
-          ls -lah
-          ls -lah build
+          sudo make erebuild
       - uses: actions/upload-artifact@v3
         name: Upload to S3
         with:
