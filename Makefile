@@ -37,6 +37,7 @@ wconfigure:
 build:
 	@cmake --build build --config $(MSVC_CONFIG_TYPE)
 tbuild:
+	ls -lah
 	ls -lah build
 	chmod 777 build
 	cmake --version
