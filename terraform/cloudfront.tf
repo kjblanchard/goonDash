@@ -43,7 +43,7 @@ resource "aws_cloudfront_distribution" "supergoon_dash_distribution" {
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
-    cached_methods   = ["HEAD"]
+    cached_methods   = ["HEAD", "GET"]
     target_origin_id = local.s3_origin
 
     forwarded_values {

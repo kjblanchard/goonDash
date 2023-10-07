@@ -42,7 +42,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
         with:
-            path: buildr
+          path: buildr
       - name: Install emscripten
         run: |
           cd emsdk && ./emsdk install latest && ./emsdk activate latest && echo '/home/runner/work/goonDash/goonDash/emsdk' >> $GITHUB_PATH && echo '/home/runner/work/goonDash/goonDash/emsdk/upstream/emscripten' >> $GITHUB_PATH && echo $GITHUB_PATH && echo 'source "/home/runner/work/goonDash/goonDash/emsdk/emsdk_env.sh"' >> $HOME/.bash_profile
@@ -55,6 +55,7 @@ jobs:
           source "/home/runner/work/goonDash/goonDash/emsdk/emsdk_env.sh"
           pwd
           ls
+          chmod 777 buildr
           cd buildr
           ls
           make erebuild
@@ -63,6 +64,15 @@ jobs:
         with:
           name: s3Artifact
           path: buildr/build/bin
+  Push-Files-To-S3:
+    uses: supergoongaming/sharedWorkflows/.github/workflows/push_to_s3.yml@master
+    needs: Build-Emscripten
+    secrets:
+      IAM_SECRET: ${{ secrets.IAM_SECRET }}
+    with:
+      IAM_USER: ${{ vars.IAM_USER }}
+      bucket_region: "us-east-1"
+      bucket_name: "supergoon-dash-external-site"
   Build-Windows:
     runs-on: windows-latest
     steps:
