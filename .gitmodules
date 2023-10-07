@@ -3,7 +3,7 @@
 	url = https://github.com/kjblanchard/SDL_image.git
 [submodule "external/SDL"]
 	path = external/SDL
-	url = d
+	url = https://github.com/kjblanchard/SDL.git
 [submodule "external/Lua"]
 	path = external/Lua
 	url = https://github.com/kjblanchard/Lua.git
