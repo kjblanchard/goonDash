@@ -44,9 +44,10 @@ jobs:
       - name: Install emscripten
         run: |
           cd emsdk && ./emsdk install latest && ./emsdk activate latest && echo '/home/runner/work/goonDash/goonDash/emsdk' >> $GITHUB_PATH && echo '/home/runner/work/goonDash/goonDash/emsdk/upstream/emscripten' >> $GITHUB_PATH && echo $GITHUB_PATH && echo 'source "/home/runner/work/goonDash/goonDash/emsdk/emsdk_env.sh"' >> $HOME/.bash_profile
+          echo 'source "/home/runner/work/goonDash/goonDash/emsdk/emsdk_env.sh"' >> $HOME/.bash_profile && source $HOME/.bash_profile
+          echo "PATH: $PATH"
+          echo "GITHUB_PATH: $GITHUB_PATH"
           make erebuild
-      # - name: Configure CMake
-      #   run: make erebuild
   Build-Windows:
     runs-on: windows-latest
     steps:
