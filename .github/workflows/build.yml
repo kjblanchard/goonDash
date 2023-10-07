@@ -33,37 +33,49 @@ jobs:
         run: make xrebuild
   Build-Emscripten:
     runs-on: ubuntu-latest
+    container:
+      image: emscripten/emsdk:3.1.46
+      env:
+        thing: thing
+      credentials:
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
     steps:
-      - uses: actions/checkout@v3
-        with:
-          repository: emscripten-core/emsdk
-          ref: 3.1.44
-          path: emsdk
+      # - uses: actions/checkout@v3
+      #   with:
+      #     repository: emscripten-core/emsdk
+      #     ref: 3.1.44
+      #     path: emsdk
       - name: Check out repository code
         uses: actions/checkout@v3
-        with:
-          path: buildr
-      - name: Install emscripten
+        # with:
+        #   path: buildr
+      # - name: Install emscripten
+      #   run: |
+      #     # cd emsdk && ./emsdk install latest && ./emsdk activate latest && echo '/home/runner/work/goonDash/goonDash/emsdk' >> $GITHUB_PATH && echo '/home/runner/work/goonDash/goonDash/emsdk/upstream/emscripten' >> $GITHUB_PATH && echo $GITHUB_PATH && echo 'source "/home/runner/work/goonDash/goonDash/emsdk/emsdk_env.sh"' >> $HOME/.bash_profile
+      #     cd emsdk && ./emsdk install latest && ./emsdk activate latest
+      #     echo 'source "/home/runner/work/goonDash/goonDash/emsdk/emsdk_env.sh"' >> $HOME/.bash_profile
+      #     which cmake
+      #     cmake --version
+      - name: Install CMake
         run: |
-          # cd emsdk && ./emsdk install latest && ./emsdk activate latest && echo '/home/runner/work/goonDash/goonDash/emsdk' >> $GITHUB_PATH && echo '/home/runner/work/goonDash/goonDash/emsdk/upstream/emscripten' >> $GITHUB_PATH && echo $GITHUB_PATH && echo 'source "/home/runner/work/goonDash/goonDash/emsdk/emsdk_env.sh"' >> $HOME/.bash_profile
-          cd emsdk && ./emsdk install latest && ./emsdk activate latest
-          echo 'source "/home/runner/work/goonDash/goonDash/emsdk/emsdk_env.sh"' >> $HOME/.bash_profile
-          which cmake
-          cmake --version
+          apt update -y && apt upgrade -y
+          apt install cmake -y
       - name: Actuall build
-        run: |
-          which cmake
-          source $HOME/.bash_profile && source $HOME/.bash_profile
-          source "/home/runner/work/goonDash/goonDash/emsdk/emsdk_env.sh"
-          cd buildr
-          which cmake
-          cmake --version
-          make erebuild
+        run: make erebuild
+        # run: |
+        #   which cmake
+        #   source $HOME/.bash_profile && source $HOME/.bash_profile
+        #   source "/home/runner/work/goonDash/goonDash/emsdk/emsdk_env.sh"
+        #   cd buildr
+        #   which cmake
+        #   cmake --version
+        #   make erebuild
       - uses: actions/upload-artifact@v3
         name: Upload to S3
         with:
           name: s3Artifact
-          path: buildr/build/bin
+          path: build/bin
   Push-Files-To-S3:
     uses: supergoongaming/sharedWorkflows/.github/workflows/push_to_s3.yml@master
     needs: Build-Emscripten
