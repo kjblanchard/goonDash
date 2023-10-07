@@ -46,6 +46,8 @@ jobs:
         run: |
           apt update -y && apt upgrade -y
           apt install cmake pkg-config -y
+          git config --global --add safe.directory $(pwd)
+          git config --global --add safe.directory .
       - name: Actuall build
         run: make erebuild
       - uses: actions/upload-artifact@v3
