@@ -21,8 +21,7 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - name: Configure CMake
-        run: |
-          make brebuild
+        run: make brebuild
       - run: echo "🍏 This job's status is ${{ job.status }}."
   Build-Macos:
     runs-on: macos-latest
@@ -46,7 +45,7 @@ jobs:
       - name: Install CMake
         run: |
           apt update -y && apt upgrade -y
-          apt install cmake -y
+          apt install cmake pkg-config -y
       - name: Actuall build
         run: make erebuild
       - uses: actions/upload-artifact@v3
