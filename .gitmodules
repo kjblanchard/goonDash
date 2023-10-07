@@ -9,4 +9,4 @@
 	url = https://github.com/kjblanchard/Lua.git
 [submodule "external/sg_sound"]
 	path = external/sg_sound
-	url = git@github.com:supergoongaming/sg_sound.git
+	url = https://github.com/supergoongaming/sg_sound.git
