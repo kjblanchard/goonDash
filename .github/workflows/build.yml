@@ -38,8 +38,8 @@ jobs:
       env:
         thing: thing
       credentials:
-          username: ${{ vars.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+        username: ${{ vars.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
@@ -52,9 +52,8 @@ jobs:
           apt install cmake pkg-config -y
           # git config --global --add safe.directory $(pwd)
           # git config --global --add safe.directory .
-      - name: Actuall build
-        run:  |
-          make erebuild
+      - name: Actual build
+        run: make erebuild
       - uses: actions/upload-artifact@v3
         name: Upload to S3
         with:
