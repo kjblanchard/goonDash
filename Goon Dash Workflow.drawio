@@ -1,0 +1,37 @@
+<mxfile host="Electron" modified="2023-08-28T00:20:46.992Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.6.8 Chrome/114.0.5735.289 Electron/25.5.0 Safari/537.36" etag="in2gvNVB_lfIrLswZ3rQ" version="21.6.8" type="device">
+  <diagram name="Page-1" id="s4fy736E-KH9lIqaCPfS">
+    <mxGraphModel dx="1026" dy="674" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="JIkSRBk_ICKi2N8FGDJR-1" value="Master" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="120" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="JIkSRBk_ICKi2N8FGDJR-2" value="Shows the current state of development" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="JIkSRBk_ICKi2N8FGDJR-3" value="Release" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="220" y="60" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="JIkSRBk_ICKi2N8FGDJR-4" value="Will tag and create Release once merged to master, increments feature semver" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="220" y="10" width="160" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="JIkSRBk_ICKi2N8FGDJR-5" value="Patch" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="220" y="180" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="JIkSRBk_ICKi2N8FGDJR-6" value="Will tag and create release once merged to master, increments patch semver" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="220" y="135" width="150" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="JIkSRBk_ICKi2N8FGDJR-8" value="&lt;h1&gt;Build&lt;/h1&gt;&lt;p&gt;Runs on all pull requests. This just runs a CMAKE build on each platform&lt;/p&gt;&lt;p&gt;On linux - Runs CTEST and valgrind as well.&lt;/p&gt;&lt;p&gt;On Mac - Runs CTEST&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;Conditional Job - If release or patch branch:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;Increment semver for build artifact.&lt;br&gt;Upload build artifact with rc prefix&amp;nbsp;&lt;br&gt;Email / Discord webhook out artifact URLs.&lt;br&gt;Update stage s3&lt;/span&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;Conditional Job - If Merge to master:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;Increment semver variable&lt;br&gt;Upload build artifact&lt;br&gt;Email/discord webhook out artifact urls&lt;br&gt;Create github release w/tagging&lt;br&gt;Update s3&lt;/span&gt;&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="530" y="15" width="300" height="395" as="geometry" />
+        </mxCell>
+        <mxCell id="JIkSRBk_ICKi2N8FGDJR-12" value="New Work / Feature" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="390" y="120" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="JIkSRBk_ICKi2N8FGDJR-13" value="Will PR into release or patch" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="390" y="75" width="120" height="25" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

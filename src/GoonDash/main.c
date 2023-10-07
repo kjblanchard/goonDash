@@ -3,6 +3,7 @@
 #include <GoonDash/misc/luaDebug.h>
 #include <GoonDash/scripting/SdlWindow.h>
 #include <GoonDash/scripting/SdlSurface.h>
+#include <SupergoonSound/sound/sound.h>
 
 // EMSCRIPTEN
 #ifdef __EMSCRIPTEN__
@@ -37,6 +38,7 @@ void loop_func()
     if (shouldQuit)
         return;
     CallEngineLuaFunction(L, "Update");
+    UpdateSound();
     SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
     SDL_RenderClear(renderer);
     CallEngineLuaFunction(L, "Draw");
@@ -66,6 +68,11 @@ int main()
         return false;
     }
     CallEngineLuaFunction(L, "Initialize");
+    int result = InitializeSound();
+    printf("Result is %d\n", result);
+    Bgm *mainBgm = LoadBgm("audio/test.ogg", 20.397, 43.08);
+    result = PlayBgm(mainBgm, 1.0);
+    printf("Result is %d\n", result);
 
     // Set event loop
     renderer = GetGlobalRenderer();

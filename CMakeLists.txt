@@ -109,6 +109,8 @@ if(MACOS AND NOT GOON_FULL_MACOS_BUILD)
             REQUIRED)
     endif(GOON_DEBUG_LUA)
 
+    add_subdirectory(./external/sg_sound)
+
 # Build everything, useful for runners, and builds we don't care take a little longer.
 else()
     find_package(Git REQUIRED QUIET)
@@ -126,6 +128,7 @@ else()
         add_subdirectory(./external/SDL EXCLUDE_FROM_ALL)
         add_subdirectory(./external/SDL_image EXCLUDE_FROM_ALL)
         add_subdirectory(./external/Lua EXCLUDE_FROM_ALL)
+        add_subdirectory(./external/sg_sound)
 
         target_link_libraries(SupergoonDash PRIVATE lua_static)
     else()
@@ -174,8 +177,9 @@ endif(CMAKE_DEBUG_VARIABLES)
 # set_target_properties(SupergoonDash PROPERTIES LINK_FLAGS ${LINK_FLAGS} "-s USE_FREETYPE=1 -s DISABLE_EXCEPTION_CATCHING=0 -s DEMANGLE_SUPPORT=1 -s SAFE_HEAP=1 --bind -s WASM=1 -O2 -s LEGACY_GL_EMULATION=0  -s GL_UNSAFE_OPTS=0 -s ASSERTIONS=1 -s GL_ASSERTIONS=1 -s INVOKE_RUN=0 -s USE_WEBGL2=1 --preload-file assets --preload-file scripts ")
 if(EMSCRIPTEN)
     set_target_properties(SupergoonDash PROPERTIES LINK_FLAGS ${LINK_FLAGS} "-O0 -g -s SAFE_HEAP=1 -s STACK_OVERFLOW_CHECK=1 --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets --preload-file ${CMAKE_SOURCE_DIR}/src/Scripts@/Scripts")
+    # set_target_properties(supergoonSound PROPERTIES LINK_FLAGS ${LINK_FLAGS} "-O0 -g -s SAFE_HEAP=1 -s STACK_OVERFLOW_CHECK=1 --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets --preload-file ${CMAKE_SOURCE_DIR}/src/Scripts@/Scripts")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s 'DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\"$$autoResumeAudioContext\",\"$$dynCall\"]'")
 endif(EMSCRIPTEN)
-
 
 # #########################################
 # Compile Options
@@ -204,6 +208,10 @@ if(TARGET SDL2::SDL2main)
     target_link_libraries(SupergoonDash PRIVATE SDL2::SDL2main)
 endif()
 
+if(TARGET SDL2::SDL2-static)
+    target_link_libraries(SupergoonDash PRIVATE SDL2::SDL2-static)
+endif(TARGET SDL2::SDL2-static)
+
 # Link to the actual SDL2 library. SDL2::SDL2 is the shared SDL library, SDL2::SDL2-static is the static SDL libarary.
 target_link_libraries(SupergoonDash
     PUBLIC
@@ -219,6 +227,12 @@ target_include_directories(SupergoonDash
     ${CMAKE_CURRENT_SOURCE_DIR}/src/
     ${LUA_INCLUDE_DIR}
 )
+
+# Supergoon sound
+target_link_libraries(SupergoonDash
+    PUBLIC
+    supergoonSound)
+target_include_directories(SupergoonDash PUBLIC external/sg_sound/src)
 
 # #########################################
 # Install

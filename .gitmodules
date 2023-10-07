@@ -3,7 +3,10 @@
 	url = https://github.com/kjblanchard/SDL_image.git
 [submodule "external/SDL"]
 	path = external/SDL
-	url = https://github.com/kjblanchard/SDL.git
+	url = d
 [submodule "external/Lua"]
 	path = external/Lua
 	url = https://github.com/kjblanchard/Lua.git
+[submodule "external/sg_sound"]
+	path = external/sg_sound
+	url = git@github.com:supergoongaming/sg_sound.git
