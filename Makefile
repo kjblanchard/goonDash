@@ -39,7 +39,7 @@ build:
 tbuild:
 	ls -lah
 	ls -lah build
-	chmod 777 build
+	chmod -R 777 .
 	cmake --version
 	cmake --build build
 
