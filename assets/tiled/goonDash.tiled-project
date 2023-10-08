@@ -57,6 +57,18 @@
                 "banana"
             ],
             "valuesAsFlags": false
+        },
+        {
+            "id": 4,
+            "members": [
+                {
+                    "name": "name",
+                    "type": "string",
+                    "value": ""
+                }
+            ],
+            "name": "Player",
+            "type": "class"
         }
     ]
 }
