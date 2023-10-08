@@ -4,7 +4,6 @@
 local Sound = {}
 local sound = require("Sound")
 local debug = require("Core.debug")
-
 local loadedBgms = {}
 local filePath = "assets/audio/"
 local currentPlayingBgm = ""

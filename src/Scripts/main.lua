@@ -9,11 +9,11 @@ function Lua.Initialize()
     local gameSettings = require("settings")
     local renderer = require("Graphics.renderer")
     renderer.InitializeWindow(gameSettings.windowName, gameSettings.windowWidth, gameSettings.windowHeight)
-    sound.Load("test", 20.397, 43.08)
 end
 
 function Lua.Start()
     currentLevel = tilemap.New("level1")
+    sound.Load("test", 20.397, 43.08)
     sound.Play("test")
 end
 
