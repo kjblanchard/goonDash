@@ -3,6 +3,7 @@
 #include <GoonDash/misc/luaDebug.h>
 #include <GoonDash/scripting/SdlWindow.h>
 #include <GoonDash/scripting/SdlSurface.h>
+#include <GoonDash/scripting/Debug.h>
 #include <SupergoonSound/sound/sound.h>
 
 // EMSCRIPTEN
@@ -62,6 +63,7 @@ int main()
     RegisterLuaSocketFunctions(L);
     InitializeSdlWindowLuaFunctions(L);
     RegisterLuaSurfaceFunctions(L);
+    RegisterDebugFunctions(L);
 
     if (!LuaLoadFileIntoGlobalState("main.lua"))
     {
