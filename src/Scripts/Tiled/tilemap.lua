@@ -3,6 +3,7 @@ local Tileset = require("Tiled.tileset")
 local Rectangle = require("Core.rectangle")
 local TileAtlas = require("Graphics.textureAtlas")
 local Surface = require("Graphics.surface")
+local debug = require("Core.debug")
 
 ---Used to sort It's tilemaps so that they are ordered by GID
 ---@param a any
@@ -92,11 +93,17 @@ function TileMap.New(filename)
             end
             layerAtlas:CreateTextureFromSurface()
             tilemap.tileAtlases[groupName] = layerAtlas
+        elseif tilemapLayer.type == "objectgroup" and tilemapLayer.name == "entities" then
+            debug.Debug("Entity layer found! adding to entity layer.")
+            tilemap.entityLayer = tilemapLayer
         end
     end
     -- Cleanup the Surfaces we loaded from the tilemaps for ths level.
     for _, surfaceUserdata in ipairs(loadedTilemapSurfaces) do
         Surface.Delete(surfaceUserdata)
+    end
+    if tilemap.entityLayer == nil then
+        debug.Warn("No entity layer found in this tilemap, guess there is no gameobjects to load?")
     end
     return tilemap
 end
