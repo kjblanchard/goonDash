@@ -1,6 +1,10 @@
 name: UpdateSemVer
 run-name: "Updates the sem versioning"
 on: workflow_dispatch
+env:
+  CURRENT_MAJOR_VERSION: 0
+  CURRENT_MINOR_VERSION: 0
+  CURRENT_PATCH_VERSION: 0
 jobs:
   Hello:
     runs-on: ubuntu-latest
