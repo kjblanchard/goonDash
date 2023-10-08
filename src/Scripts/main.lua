@@ -3,16 +3,18 @@ Lua = {}
 local tilemap = require("Tiled.tilemap")
 local debug = require("Core.debug")
 local currentLevel
+local sound = require("Core.sound")
 
 function Lua.Initialize()
     local gameSettings = require("settings")
     local renderer = require("Graphics.renderer")
     renderer.InitializeWindow(gameSettings.windowName, gameSettings.windowWidth, gameSettings.windowHeight)
-    debug.Warn("Hello from debug messages!")
+    sound.Load("test", 20.397, 43.08)
 end
 
 function Lua.Start()
     currentLevel = tilemap.New("level1")
+    sound.Play("test")
 end
 
 function Lua.Update()

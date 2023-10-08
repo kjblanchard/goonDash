@@ -64,6 +64,7 @@ static int luaopen_Sound(lua_State *L)
     luaL_Reg luaDebugLib[] = {
         {"PlayBgm", BgmPlay},
         {"LoadBgm", BgmLoad},
+        {"FreeBgm", DestroyBgm},
         {NULL, NULL} // Sentinel value to indicate the end of the table
     };
     luaL_newlib(L, luaDebugLib);

@@ -1,8 +1,6 @@
 #include <GoonDash/gnpch.h>
 #include <GoonDash/misc/lua.h>
-
 #include <SupergoonSound/sound/sound.h>
-
 #include <GoonDash/scripting/LuaScripting.h>
 
 // EMSCRIPTEN
@@ -17,7 +15,13 @@ static bool shouldQuit = false;
 // TODO this should be different, it is inside of SDLwindow.c
 extern SDL_Renderer *g_pRenderer;
 
-void loop_func()
+/**
+ * @brief Handles all SDL events every frame.
+ *
+ * @return true If we should quit or not
+ * @return false If we should quit or not
+ */
+static bool sdlEventLoop()
 {
     // Event loop, Handle SDL events.
     while (SDL_PollEvent(&event))
@@ -25,27 +29,30 @@ void loop_func()
         switch (event.type)
         {
         case SDL_QUIT:
-            shouldQuit = true; // Quit the loop if the window close button is clicked
+            return true;
             break;
         case SDL_KEYDOWN:
             if (event.key.keysym.sym == SDLK_q)
             {
-                shouldQuit = true; // Quit the loop if 'q' key is pressed
+                return true;
             }
             break;
         default:
             break;
         }
     }
+    return false;
+}
+
+static void loop_func()
+{
+    shouldQuit = sdlEventLoop();
     if (shouldQuit)
         return;
-
-    // Update functions
-    CallEngineLuaFunction(L, "Update");
-
-    // Sound
+    // Engine Updates
     UpdateSound();
-
+    // Lua Update
+    CallEngineLuaFunction(L, "Update");
     // Rendering
     SDL_SetRenderDrawColor(g_pRenderer, 100, 100, 100, 255);
     SDL_RenderClear(g_pRenderer);

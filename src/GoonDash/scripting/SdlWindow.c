@@ -44,7 +44,7 @@ SDL_Window *GetGlobalWindow()
     return g_pWindow;
 }
 
-int InitializeSdlWindowLuaFunctions(lua_State *L)
+int RegisterSdlWindowFunctions(lua_State *L)
 {
     lua_pushcfunction(L, LuaCreateSdlWindow);
     lua_setglobal(L, "InitializeWindows");

@@ -1,6 +1,6 @@
 /**
  * @file LuaScripting.c
- * @author your name (you@domain.com)
+ * @author Kevin Blanchard (kevin@supergoon.com)
  * @brief
  * @version 0.1
  * @date 2023-10-08
@@ -11,4 +11,9 @@
 
 #pragma once
 typedef struct lua_State lua_State;
-int RegisterAllLuaFunctions(lua_State *L);
+/**
+ * @brief Registers all the C functions exposed to lua.
+ *
+ * @param L The lua state to register all of these into.
+ */
+void RegisterAllLuaFunctions(lua_State *L);

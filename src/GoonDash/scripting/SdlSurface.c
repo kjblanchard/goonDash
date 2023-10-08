@@ -176,7 +176,7 @@ static int luaopen_LuaSurface(lua_State *L)
     return 1;
 }
 
-int RegisterLuaSurfaceFunctions(lua_State *L)
+int RegisterSurfaceFunctions(lua_State *L)
 {
     luaL_requiref(L, "LuaSurface", luaopen_LuaSurface, 0);
     luaL_requiref(L, "LuaTileAtlas", luaopen_LuaTileAtlas, 0);
