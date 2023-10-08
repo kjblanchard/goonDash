@@ -62,7 +62,7 @@ static int BlitAtlasSurface(lua_State *L)
     if (!lua_islightuserdata(L, 1) || !lua_islightuserdata(L, 2))
     {
         LogError("Bad argument passed into blit surface, expected a userdata ptr to surface");
-        lua_pushnil(L);
+        // lua_pushnil(L);
         return 0;
     }
     SDL_Surface *atlasSurface = (SDL_Surface *)lua_touserdata(L, 1);
@@ -70,7 +70,7 @@ static int BlitAtlasSurface(lua_State *L)
     if(!atlasSurface || !tileSurface)
     {
         LogError("Somehow these are null. Atlas: %d, Tile: %d", atlasSurface, tileSurface);
-        lua_pushnil(L);
+        // lua_pushnil(L);
         return 0;
     }
     SDL_Rect dstRect = GetRectFromLuaTable(L, 3);
