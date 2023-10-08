@@ -35,8 +35,9 @@ wconfigure:
 	@cmake . -B build -D CMAKE_PREFIX_PATH=/c/cmake -G $(WINDOWS_BUILD_SYSTEM)
 
 build:
-# For some reason, needs sudo on emscripten builds, haven't figured this one out...
-	@sudo cmake --build build --config $(MSVC_CONFIG_TYPE)
+	@cmake --build build --config $(MSVC_CONFIG_TYPE)
+ebuild:
+	@sudo cmake --build build
 
 install:
 	@cmake --install build --config $(MSVC_CONFIG_TYPE)
@@ -57,7 +58,7 @@ brebuild: clean bconfigure build install test
 wrebuild: clean wconfigure build install
 mrebuild: clean mconfigure build install
 xrebuild: clean xconfigure build install
-erebuild: clean econfigure build
+erebuild: clean econfigure ebuild
 
 # MacosDev
 run:
