@@ -17,7 +17,6 @@ function LuaTextureAtlas:DrawAtlas()
 end
 
 ---Draw onto the texture atlas, used when preparing the tilemap surface.
----@param atlasSurface lightuserdata The loaded atlas surface ptr
 ---@param tileSurface lightuserdata The loaded tile surface ptr
 ---@param destRect table the rectangle to use for the dest
 ---@param srcRect table the rectangle to use from the tile

@@ -1,9 +1,7 @@
 #include <GoonDash/gnpch.h>
 #include <GoonDash/misc/lua.h>
-#include <GoonDash/misc/luaDebug.h>
-#include <GoonDash/scripting/SdlWindow.h>
-#include <GoonDash/scripting/SdlSurface.h>
 #include <SupergoonSound/sound/sound.h>
+#include <GoonDash/scripting/LuaScripting.h>
 
 // EMSCRIPTEN
 #ifdef __EMSCRIPTEN__
@@ -11,42 +9,60 @@
 #endif
 
 static SDL_Event event;
-static SDL_Renderer *renderer;
 static lua_State *L;
 static bool shouldQuit = false;
 
-void loop_func()
+// TODO this should be different, it is inside of SDLwindow.c
+extern SDL_Renderer *g_pRenderer;
+
+/**
+ * @brief Handles all SDL events every frame.
+ *
+ * @return true If we should quit or not
+ * @return false If we should quit or not
+ */
+static bool sdlEventLoop()
 {
-    // Event loop
+    // Event loop, Handle SDL events.
     while (SDL_PollEvent(&event))
     {
         switch (event.type)
         {
         case SDL_QUIT:
-            shouldQuit = true; // Quit the loop if the window close button is clicked
+            return true;
             break;
         case SDL_KEYDOWN:
             if (event.key.keysym.sym == SDLK_q)
             {
-                shouldQuit = true; // Quit the loop if 'q' key is pressed
+                return true;
             }
             break;
         default:
             break;
         }
     }
+    return false;
+}
+
+static void loop_func()
+{
+    shouldQuit = sdlEventLoop();
     if (shouldQuit)
         return;
-    CallEngineLuaFunction(L, "Update");
+    // Engine Updates
     UpdateSound();
-    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
-    SDL_RenderClear(renderer);
+    // Lua Update
+    CallEngineLuaFunction(L, "Update");
+    // Rendering
+    SDL_SetRenderDrawColor(g_pRenderer, 100, 100, 100, 255);
+    SDL_RenderClear(g_pRenderer);
     CallEngineLuaFunction(L, "Draw");
-    SDL_RenderPresent(renderer);
+    SDL_RenderPresent(g_pRenderer);
 }
 
 int main()
 {
+    // Initialize Engine
     InitializeDebugLogFile();
     InitializeLua();
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) != 0)
@@ -59,26 +75,26 @@ int main()
         LogError("Could not initialize SDL_IMAGE\nError: %s", IMG_GetError());
     }
     L = GetGlobalLuaState();
-    RegisterLuaSocketFunctions(L);
-    InitializeSdlWindowLuaFunctions(L);
-    RegisterLuaSurfaceFunctions(L);
+    int result = InitializeSound();
+    if (!result)
+    {
+        LogError("Could not initialize Sound for some reason!");
+    }
 
+    RegisterAllLuaFunctions(L);
+
+    // Load Main.lua
     if (!LuaLoadFileIntoGlobalState("main.lua"))
     {
         return false;
     }
+
     CallEngineLuaFunction(L, "Initialize");
-    int result = InitializeSound();
-    printf("Result is %d\n", result);
-    Bgm *mainBgm = LoadBgm("audio/test.ogg", 20.397, 43.08);
-    result = PlayBgm(mainBgm, 1.0);
-    printf("Result is %d\n", result);
 
-    // Set event loop
-    renderer = GetGlobalRenderer();
+    // Start
+    CallEngineLuaFunction(L, "Start");
 
-    // Lua Start
-    int startResult = CallEngineLuaFunction(L, "Start");
+    // Main loop
 #ifdef __EMSCRIPTEN__
     emscripten_set_main_loop(loop_func, 60, 1);
 #else
@@ -89,5 +105,6 @@ int main()
     }
 #endif
 
+    // Exit
     SDL_Quit();
 }

@@ -59,11 +59,8 @@
             "scaleInEditor": 1
         },
         "level1.tmx": {
-            "expandedGroupLayers": [
-                12
-            ],
             "scale": 1.5,
-            "selectedLayer": 2,
+            "selectedLayer": 5,
             "viewCenter": {
                 "x": 494.3333333333333,
                 "y": 307.99999999999994
@@ -78,7 +75,7 @@
     "last.executablePath": "/Applications/Tiled.app",
     "last.exportedFilePath": "/Users/kevin/git/c/goonDash/assets/tiled",
     "last.imagePath": "/Users/kevin/git/c/goonDash/assets/img",
-    "last.objectTemplatePath": "/Users/kevin/Documents/tiled/sdl_dash",
+    "last.objectTemplatePath": "/Users/kevin/git/c/goonDash/assets/tiled/templates",
     "lastUsedTilesetExportFilter": "Lua files (*.lua)",
     "map.height": 18,
     "map.lastUsedExportFilter": "Lua files (*.lua)",
@@ -93,7 +90,7 @@
         "background.tsx"
     ],
     "project": "goonDash.tiled-project",
-    "property.type": "BoxRect",
+    "property.type": "Player",
     "recentFiles": [
         "background.tsx",
         "terrain.tsx",

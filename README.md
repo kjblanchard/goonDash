@@ -22,7 +22,6 @@ A C program with Lua scripting, that utilizes Tiled and Aseprite for the game "e
 
 ## Current State
 - Loads a tilemap and draws it to the screen.
-- Currently no gameobjects.
 - Sound implemented, loops over and over.
 - Builds on all platforms in runners.
 
