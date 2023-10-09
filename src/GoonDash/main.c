@@ -2,6 +2,7 @@
 #include <GoonDash/misc/lua.h>
 #include <SupergoonSound/sound/sound.h>
 #include <GoonDash/scripting/LuaScripting.h>
+#include <GoonDash/input/keyboard.h>
 
 // EMSCRIPTEN
 #ifdef __EMSCRIPTEN__
@@ -32,10 +33,8 @@ static bool sdlEventLoop()
             return true;
             break;
         case SDL_KEYDOWN:
-            if (event.key.keysym.sym == SDLK_q)
-            {
-                return true;
-            }
+        case SDL_KEYUP:
+            HandleKeyboardEvent(&event, L);
             break;
         default:
             break;

@@ -5,6 +5,7 @@ local debug = require("Core.debug")
 local currentLevel
 local sound = require("Core.sound")
 local gameObjectMap = require("GoonDash.GameObjects.gameobjectMap")
+local kb = require("Core.keyboardMap")
 
 function Lua.Initialize()
     local gameSettings = require("settings")
@@ -21,6 +22,13 @@ function Lua.Start()
     end
     sound.Load("test", 20.397, 43.08)
     sound.Play("test")
+end
+
+function Lua.InputEvent(buttonPressed, keyDown)
+    local boundKeyPressed = kb.SdlToBoundButtons(buttonPressed)
+    if boundKeyPressed == nil then return end
+    local keydownText = keyDown and "down" or "up"
+    debug.Info("Button pressed is " .. boundKeyPressed .. " and the key is " .. keydownText)
 end
 
 function Lua.Update()
