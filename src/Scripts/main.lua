@@ -25,10 +25,10 @@ function Lua.Start()
 end
 
 function Lua.InputEvent(buttonPressed, keyDown)
-    local boundKeyPressed = kb.SdlToBoundButtons(buttonPressed)
-    if boundKeyPressed == nil then return end
-    local keydownText = keyDown and "down" or "up"
-    debug.Info("Button pressed is " .. boundKeyPressed .. " and the key is " .. keydownText)
+    local keyevent = kb.AddKeyPressToQueue(buttonPressed, keyDown)
+    if not keyevent then return end
+    debug.Info("Key pressed is " .. keyevent.key .. " and type of keypress is " .. keyevent.type)
+
 end
 
 function Lua.Update()
