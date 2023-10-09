@@ -1,4 +1,4 @@
-.PHONY: config configure build release clean rebuild run lldb debug doc windows scripting
+.PHONY: config configure build release clean rebuild run lldb debug doc windows scripting package
 
 BUILD_SYSTEM = Ninja
 XCODE_BUILD_SYSTEM = Xcode
@@ -7,6 +7,7 @@ WINDOWS_BUILD_SYSTEM = 'Visual Studio 17 2022'
 MSVC_CONFIG_TYPE = Debug
 BUILD_FOLDER = build
 BINARY_FOLDER = bin
+BINARY_FOLDER_REL_PATH = $(BUILD_FOLDER)/$(BINARY_FOLDER)
 BINARY_NAME = SupergoonDash
 BINARY_PATH = $(BUILD_FOLDER)/$(BINARY_NAME)
 TILED_PATH = /Applications/Tiled.app/Contents/MacOS/Tiled
@@ -52,6 +53,8 @@ tiled:
 # Clean build folder
 clean:
 	@ - rm -rf build
+package:
+	@tar -czvf $(BINARY_FOLDER_REL_PATH)/$(BINARY_NAME).tgz -C $(BINARY_FOLDER_REL_PATH) .
 
 rebuild: clean configure build install test
 brebuild: clean bconfigure build install test

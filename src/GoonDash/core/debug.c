@@ -1,6 +1,8 @@
 #include <GoonDash/gnpch.h>
 #include <GoonDash/core/debug.h>
 
+#define MAX_LOG_SIZE 200
+
 /**
  * @brief The file that will be written to when logs are put.
  *
@@ -17,7 +19,7 @@ static void Log(LogLevel level, const char *data_to_write);
  * @brief The log level to log at, this should be sent in via settings.
  */
 static LogLevel logLevel = Log_LInfo;
-static const char* logFileName = "errors.log";
+static const char *logFileName = "errors.log";
 
 int InitializeDebugLogFile()
 {
@@ -44,7 +46,8 @@ static void Log(LogLevel level, const char *thing_to_write)
     struct tm *gm_time = gmtime(&current_time);
     char buf[30];
     strftime(buf, sizeof(buf), "%m-%d-%H:%M-%S", gm_time);
-    fprintf(stderr, "%s: %s end\n", buf, thing_to_write);
+    FILE* outStream = level == Log_LError ? stderr : stdout;
+    fprintf(outStream, "%s: %s end\n", buf, thing_to_write);
     if (level == Log_LError && open_debug_file)
     {
         fprintf(open_debug_file, "%s: %s\n", buf, thing_to_write);
@@ -52,11 +55,7 @@ static void Log(LogLevel level, const char *thing_to_write)
 }
 static void LogSetup(LogLevel level, const char *fmt, va_list args)
 {
-    // int size = vsnprintf(NULL, 0, fmt, args);
-    // int size = 100;
-    // char buf[size + 1];
-    // TODO this should be calloc? not sure.
-    char buf[200];
+    char buf[MAX_LOG_SIZE];
     vsnprintf(buf, sizeof(buf), fmt, args);
     va_end(args);
     Log(level, buf);
@@ -66,6 +65,7 @@ static int ShouldLog(LogLevel level)
 {
     return logLevel <= level;
 }
+
 void LogDebug(const char *fmt, ...)
 {
     if (!ShouldLog(Log_LDebug))

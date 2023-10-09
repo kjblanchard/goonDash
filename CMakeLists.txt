@@ -195,6 +195,7 @@ else()
         -Wpedantic
         -Wdeprecated
         -Wno-newline-eof
+        -Wno-strict-prototypes
     )
 endif(WIN32)
 

@@ -10,6 +10,6 @@
  */
 #pragma once
 
-int InitializeSdlWindowLuaFunctions(lua_State *L);
+int RegisterSdlWindowFunctions(lua_State *L);
 SDL_Renderer* GetGlobalRenderer();
 SDL_Window* GetGlobalWindow();

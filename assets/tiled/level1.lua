@@ -9,7 +9,7 @@ return {
   tilewidth = 16,
   tileheight = 16,
   nextlayerid = 13,
-  nextobjectid = 145,
+  nextobjectid = 148,
   properties = {},
   tilesets = {
     {
@@ -191,14 +191,29 @@ return {
       draworder = "topdown",
       id = 5,
       name = "entities",
-      visible = false,
+      visible = true,
       opacity = 1,
       offsetx = 0,
       offsety = 0,
       parallaxx = 1,
       parallaxy = 1,
       properties = {},
-      objects = {}
+      objects = {
+        {
+          id = 147,
+          name = "PlayerStart",
+          type = "Player",
+          shape = "rectangle",
+          x = 96,
+          y = 192,
+          width = 32,
+          height = 32,
+          rotation = 0,
+          gid = 30,
+          visible = true,
+          properties = {}
+        }
+      }
     },
     {
       type = "tilelayer",
