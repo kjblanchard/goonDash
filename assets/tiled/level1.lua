@@ -201,8 +201,8 @@ return {
       objects = {
         {
           id = 147,
-          name = "Player",
-          type = "",
+          name = "PlayerStart",
+          type = "Player",
           shape = "rectangle",
           x = 96,
           y = 192,
