@@ -36,19 +36,27 @@ function KeyboardFunctions.AddKeyPressToQueue(sdlkey, isKeyDown)
     local keyEvent = {}
     keyEvent.key = keybind
 
+    -- Handle keydown and up events from SDL
     local lastKeyState = KeyboardFunctions.LastFrameKeyStates[keybind]
     local keyJustPressed = not lastKeyState and isKeyDown
-    local keyHeld = lastKeyState and isKeyDown
     local keyReleased = lastKeyState and not isKeyDown
     KeyboardFunctions.LastFrameKeyStates[keybind] = isKeyDown
     if keyJustPressed then keyEvent.type = "Just pressed"
-    elseif keyHeld then keyEvent.type = "Held"
     elseif keyReleased then keyEvent.type = "Released"
     end
     return keyEvent
 end
 
+
 KeyboardFunctions.LastFrameKeyStates = {
+    [ControllerMap.UP] = false,
+    [ControllerMap.DOWN] = false,
+    [ControllerMap.LEFT] = false,
+    [ControllerMap.RIGHT] = false,
+    [ControllerMap.CONFIRM] = false,
+    [ControllerMap.CANCEL] = false,
+}
+KeyboardFunctions.CurrentFrameKeyStates = {
     [ControllerMap.UP] = false,
     [ControllerMap.DOWN] = false,
     [ControllerMap.LEFT] = false,

@@ -1,6 +1,6 @@
 /**
  * @file keyboard.h
- * @author Kevin Blanchard (kevin@supergoon.som)
+ * @author Kevin Blanchard (kevin@supergoon.com)
  * @brief Handles keyboard events
  * @version 0.1
  * @date 2023-10-09

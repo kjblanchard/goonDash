@@ -4,6 +4,8 @@ GameObject.Debug = require("Core.debug")
 GameObject.Sound = require("Core.sound")
 GameObject.CurrentId = 0
 
+---Create a new gameobject
+---@return table GameObject new gameobject instance, mainly just an id.
 function GameObject.New()
     local gameobject = setmetatable({}, GameObject)
     GameObject.CurrentId = GameObject.CurrentId + 1
@@ -11,10 +13,18 @@ function GameObject.New()
     return gameobject
 end
 
+---Gameobjects update function
 function GameObject:Update()
 end
 
+---Gameobjects Draw function
 function GameObject:Draw()
+end
+
+---Attach a controller to this gameobject.
+---comment
+---@param controller table the controller that will be used
+function GameObject:AttachController(controller)
 end
 
 GameObject.__index = GameObject

@@ -12,6 +12,12 @@ int HandleKeyboardEvent(SDL_Event *event, lua_State *L)
         return true;
     }
 
+    // Don't pass repeat keys to lua, as he handles the processing
+    if(event->key.repeat)
+    {
+        return true;
+    }
+
     lua_getglobal(L, "Lua");
     lua_getfield(L, -1, "InputEvent");
     // Place 2 things on the stack.
