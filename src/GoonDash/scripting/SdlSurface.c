@@ -67,7 +67,7 @@ static int BlitAtlasSurface(lua_State *L)
     }
     SDL_Surface *atlasSurface = (SDL_Surface *)lua_touserdata(L, 1);
     SDL_Surface *tileSurface = (SDL_Surface *)lua_touserdata(L, 2);
-    if(!atlasSurface || !tileSurface)
+    if (!atlasSurface || !tileSurface)
     {
         LogError("Somehow these are null. Atlas: %d, Tile: %d", atlasSurface, tileSurface);
         // lua_pushnil(L);
@@ -112,15 +112,18 @@ static int CreateTextureFromSurface(lua_State *L)
 static int DrawSurface(lua_State *L)
 {
     // Arg1: DstAtlasSurface
+    // Arg2: DstRect
     if (!lua_islightuserdata(L, 1))
     {
         LogError("Bad argument passed into blit surface, expected a userdata ptr to surface");
         lua_pushnil(L);
         return 0;
     }
+
     SDL_Texture *atlasTexture = (SDL_Texture *)lua_touserdata(L, 1);
     SDL_Renderer *renderer = GetGlobalRenderer();
-    SDL_Rect dstRect = {0, 0, 512, 288};
+    SDL_Rect dstRect = GetRectFromLuaTable(L, 2);
+    // SDL_Rect dstRect = {0, 0, 512, 288};
     SDL_Rect srcRect = {0, 0, 512, 288};
     SDL_RenderCopy(renderer, atlasTexture, &srcRect, &dstRect);
     return 0;

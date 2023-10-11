@@ -36,7 +36,7 @@ static int BgmPlay(lua_State *L)
         LogError("Pointer passed to playbgm is not able to be casted to a bgm");
         return 0;
     }
-    PlayBgm(bgm, 1.0);
+    PlayBgm(bgm, 0.0);
     return 0;
 }
 

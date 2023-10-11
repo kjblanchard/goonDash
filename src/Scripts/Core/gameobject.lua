@@ -2,6 +2,7 @@
 local GameObject = {}
 GameObject.Debug = require("Core.debug")
 GameObject.Sound = require("Core.sound")
+GameObject.Game = require("Core.game")
 GameObject.CurrentId = 0
 
 ---Create a new gameobject

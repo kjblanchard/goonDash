@@ -10,9 +10,8 @@ local Rectangle = {
 ---@param y number Y location
 ---@param width number Width
 ---@param height number Height
-function Rectangle:New(x, y, width, height)
-    local rect = {}
-    setmetatable(rect, self)
+function Rectangle.New(x, y, width, height)
+    local rect = setmetatable({}, Rectangle)
     rect.x = x or 0
     rect.y = y or 0
     rect.width = width or 0
@@ -23,7 +22,8 @@ end
 ---Gets this rectagle and passes a table with SDL Rect stuff only
 ---@return table Packed into a SDL_Rect, could use lightuserdata or something, but don't want dynamic alloc in C.
 function Rectangle:SdlRect()
-    return { self.x, self.y, self.width, self.height }
+    local thing = { x = self.x, y = self.y, w =  self.width, h = self.height }
+    return thing
 end
 
 Rectangle.__index = Rectangle

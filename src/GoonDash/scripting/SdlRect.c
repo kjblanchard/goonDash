@@ -1,5 +1,6 @@
 #include <GoonDash/gnpch.h>
 #include <GoonDash/scripting/SdlRect.h>
+#include <GoonDash/misc/lua.h>
 
 SDL_Rect GetRectFromLuaTable(lua_State *L, int stackPos)
 {
@@ -14,9 +15,9 @@ SDL_Rect GetRectFromLuaTable(lua_State *L, int stackPos)
     int x = luaL_checkinteger(L, -1);
     lua_getfield(L, stackPos, "y");
     int y = luaL_checkinteger(L, -1);
-    lua_getfield(L, stackPos, "width");
+    lua_getfield(L, stackPos, "w");
     int width = luaL_checkinteger(L, -1);
-    lua_getfield(L, stackPos, "height");
+    lua_getfield(L, stackPos, "h");
     int height = luaL_checkinteger(L, -1);
     SDL_Rect rect = {.x = x, .y = y, .w = width, .h = height};
     lua_pop(L, 4);

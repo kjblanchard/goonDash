@@ -28,8 +28,9 @@ local function getTilesetForTile(id, tilesetList)
 end
 
 ---Draws the background tile atlas, should be called before drawing all the gameobjects.
-function TileMap:DrawBackground()
-    self.tileAtlases["background"]:DrawAtlas()
+function TileMap:DrawBackground(camera)
+    local rect = camera:GetRect()
+    self.tileAtlases["background"]:DrawAtlas(rect)
 end
 
 function TileMap.New(filename)
@@ -83,10 +84,12 @@ function TileMap.New(filename)
                                 -- If this is an imageTileset, we need to raise it since they draw at bottom for some reason in tiled
                                 dstY = dstY - tileHeight + yTileSize
                             end
-                            local dstRect = Rectangle:New(dstX, dstY, tileWidth, tileHeight)
-                            local srcRect = Rectangle:New(srcX, srcY, tileWidth, tileHeight)
+                            local dstRect = Rectangle.New(dstX, dstY, tileWidth, tileHeight)
+                            local srcRect = Rectangle.New(srcX, srcY, tileWidth, tileHeight)
                             local srcRectSurfaceUserdata = loadedTilemapSurfaces[tilePngName]
-                            layerAtlas:BlitAtlasSurface(srcRectSurfaceUserdata, dstRect, srcRect)
+                            local dst = dstRect:SdlRect()
+                            local src = srcRect:SdlRect()
+                            layerAtlas:BlitAtlasSurface(srcRectSurfaceUserdata, dst, src)
                         end
                     end
                 end

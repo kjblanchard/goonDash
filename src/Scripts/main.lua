@@ -7,10 +7,13 @@ local sound = require("Core.sound")
 local gameObjectMap = require("GoonDash.GameObjects.gameobjectMap")
 local controller = require("Input.controller")
 local pc = require("Input.playerController")
+local game = require("Core.game")
+local gameInstance = nil
 
 function Lua.Initialize()
     local gameSettings = require("settings")
     local renderer = require("Graphics.renderer")
+    gameInstance = game.New()
     renderer.InitializeWindow(gameSettings.windowName, gameSettings.windowWidth, gameSettings.windowHeight)
 end
 
@@ -36,5 +39,5 @@ function Lua.Update()
 end
 
 function Lua.Draw()
-    currentLevel:DrawBackground()
+    currentLevel:DrawBackground(gameInstance.mainCamera)
 end

@@ -24,7 +24,6 @@ function PlayerController.New()
     end)
     -- Add to list of Player controllers
     table.insert(controller.PlayerControllers, playerController)
-    print("Thing made")
     return playerController
 end
 
