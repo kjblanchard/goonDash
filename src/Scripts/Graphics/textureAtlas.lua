@@ -12,8 +12,8 @@ function LuaTextureAtlas:CreateTextureFromSurface()
 
 end
 
-function LuaTextureAtlas:DrawAtlas()
-    return textureAtlas.DrawAtlas(self._atlasUserdataTexture)
+function LuaTextureAtlas:DrawAtlas(dstRect)
+    return textureAtlas.DrawAtlas(self._atlasUserdataTexture, dstRect)
 end
 
 ---Draw onto the texture atlas, used when preparing the tilemap surface.

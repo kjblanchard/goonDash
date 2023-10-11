@@ -1,14 +1,19 @@
 -- require('mobdebug').start()
 Lua = {}
 local tilemap = require("Tiled.tilemap")
-local debug = require("Core.debug")
+-- local debug = require("Core.debug")
 local currentLevel
 local sound = require("Core.sound")
 local gameObjectMap = require("GoonDash.GameObjects.gameobjectMap")
+local controller = require("Input.controller")
+local pc = require("Input.playerController")
+local game = require("Core.game")
+local gameInstance = nil
 
 function Lua.Initialize()
     local gameSettings = require("settings")
     local renderer = require("Graphics.renderer")
+    gameInstance = game.New()
     renderer.InitializeWindow(gameSettings.windowName, gameSettings.windowWidth, gameSettings.windowHeight)
 end
 
@@ -23,10 +28,16 @@ function Lua.Start()
     sound.Play("test")
 end
 
+function Lua.InputEvent(buttonPressed, keyDown)
+    controller.OnInput(buttonPressed, keyDown)
+end
+
 function Lua.Update()
     gameObjectMap.Update()
+    controller.UpdateControllers()
+    gameInstance:UpdateCamera()
 end
 
 function Lua.Draw()
-    currentLevel:DrawBackground()
+    currentLevel:DrawBackground(gameInstance.mainCamera)
 end

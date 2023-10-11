@@ -48,3 +48,5 @@ Testing/
 *drawio.bkp
 *.terraform*
 *terraform.tfvars
+*.drawio.dtmp
+
