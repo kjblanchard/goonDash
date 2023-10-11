@@ -14,6 +14,9 @@ function GameObject.New()
     return gameobject
 end
 
+function GameObject:GetLocation()
+end
+
 ---Gameobjects update function
 function GameObject:Update()
 end

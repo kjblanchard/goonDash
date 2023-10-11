@@ -24,7 +24,6 @@ function Lua.Start()
     for _, object in ipairs(entityObjects) do
         gameObjectMap.CreateInstance(object)
     end
-    pc_instance = pc.New()
     sound.Load("test", 20.397, 43.08)
     sound.Play("test")
 end
@@ -36,6 +35,7 @@ end
 function Lua.Update()
     gameObjectMap.Update()
     controller.UpdateControllers()
+    gameInstance:UpdateCamera()
 end
 
 function Lua.Draw()

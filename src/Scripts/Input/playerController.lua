@@ -1,10 +1,6 @@
 local PlayerController = {}
 local controller = require("Input.controller")
 
-local anonymousFunction = function()
-    print("Confirm button was pressed from the bindings!!")
-end
-
 function PlayerController.New()
     local playerController = setmetatable({}, PlayerController)
     -- Set default bindings
@@ -18,10 +14,6 @@ function PlayerController.New()
     }
 
     playerController.controller = controller.New()
-    playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.Down,  anonymousFunction)
-    playerController.controller:BindFunction(controller.Buttons.Up, controller.ButtonStates.Held, function ()
-        print("Hello world UPHELD")
-    end)
     -- Add to list of Player controllers
     table.insert(controller.PlayerControllers, playerController)
     return playerController
