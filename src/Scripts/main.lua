@@ -6,7 +6,6 @@ local currentLevel
 local sound = require("Core.sound")
 local gameObjectMap = require("GoonDash.GameObjects.gameobjectMap")
 local controller = require("Input.controller")
-local pc = require("Input.playerController")
 local game = require("Core.game")
 local gameInstance = nil
 
@@ -18,12 +17,14 @@ function Lua.Initialize()
 end
 
 function Lua.Start()
+    -- Should load the level and such from game.
     currentLevel = tilemap.New("level1")
     local entities = currentLevel.entityLayer
     local entityObjects = entities["objects"]
     for _, object in ipairs(entityObjects) do
         gameObjectMap.CreateInstance(object)
     end
+    -- Load this from the tilemap
     sound.Load("test", 20.397, 43.08)
     sound.Play("test")
 end

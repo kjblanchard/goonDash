@@ -5,9 +5,10 @@
     },
     "activeFile": "level1.tmx",
     "expandedProjectPaths": [
+        "/Users/kevin/Documents/tiled/sdl_dash/tilesets",
+        "templates",
         "/Users/kevin/Documents/tiled",
-        ".",
-        "/Users/kevin/Documents/tiled/sdl_dash/tilesets"
+        "."
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {

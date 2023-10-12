@@ -1,11 +1,11 @@
-<mxfile host="Electron" modified="2023-10-10T00:20:28.347Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.0.2 Chrome/114.0.5735.289 Electron/25.8.4 Safari/537.36" etag="jACiiWicsNljzK6alHy-" version="22.0.2" type="device">
+<mxfile host="Electron" modified="2023-10-11T23:40:54.955Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.0.2 Chrome/114.0.5735.289 Electron/25.8.4 Safari/537.36" etag="v9ZGgZboNr3s5ovHeaSL" version="22.0.2" type="device">
   <diagram name="Page-1" id="2YBvvXClWsGukQMizWep">
-    <mxGraphModel dx="1026" dy="674" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1114" dy="999" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="oOzzj28w0oqTpEVC-PLE-1" value="SDL event, getkeyupdown held etc" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="170" y="260" width="120" height="60" as="geometry" />
+          <mxGeometry x="320" y="190" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="oOzzj28w0oqTpEVC-PLE-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="oOzzj28w0oqTpEVC-PLE-2" target="oOzzj28w0oqTpEVC-PLE-4">
           <mxGeometry relative="1" as="geometry" />
@@ -72,6 +72,15 @@
         </mxCell>
         <mxCell id="oOzzj28w0oqTpEVC-PLE-20" value="Logic to Simulate keypresses" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="700" y="560" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="oOzzj28w0oqTpEVC-PLE-23" value="Input" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="355" y="138" width="50" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="oOzzj28w0oqTpEVC-PLE-24" value="Controller" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="345" y="300" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="oOzzj28w0oqTpEVC-PLE-25" value="Bind Funcs" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="325" y="340" width="120" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
