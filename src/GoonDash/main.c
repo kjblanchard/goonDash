@@ -19,8 +19,8 @@ static bool shouldQuit = false;
 // TODO this should be different, it is inside of SDLwindow.c
 extern SDL_Renderer *g_pRenderer;
 
-void* threadFunction(void* arg) {
-    // Your function code goes here
+void *MusicUpdateWrapper(void *arg)
+{
     UpdateSound();
     return NULL;
 }
@@ -57,13 +57,16 @@ static void loop_func()
     shouldQuit = sdlEventLoop();
     if (shouldQuit)
         return;
-    // Engine Updates
-    if (pthread_create(&thread, NULL, threadFunction, NULL) != 0)
+// Engine Updates
+#ifdef GN_MULTITHREADED
+    if (pthread_create(&thread, NULL, MusicUpdateWrapper, NULL) != 0)
     {
         perror("pthread_create");
         return;
     }
-    // UpdateSound();
+#else
+    UpdateSound();
+#endif
     // Lua Update
     CallEngineLuaFunction(L, "Update");
     // Rendering

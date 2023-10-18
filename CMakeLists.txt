@@ -29,8 +29,6 @@ message(STATUS "Changing the platform specific settings")
 
 if(EMSCRIPTEN)
     message(STATUS "Configuring Emscripten")
-
-    # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s --preload-file Scripts -s --preload-file assets")
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
     set(GOON_ENABLE_TESTING OFF)
 elseif(APPLE)
@@ -74,6 +72,7 @@ include(CTest)
 option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" ON)
 option(GOON_BUILD_PCH "Uses a PCH file to try and speed up compilation" ON)
 option(GOON_DEBUG_LUA "Includes socket so that we can debug lua remotely" OFF)
+option(GOON_MULTITHREADED_SOUND "Adds multithreaded support for sound updates, experimental" ON)
 
 # option(GOON_FULL_MACOS_BUILD "Full builds of all libraries, used for runners mostly, and passed in to override." OFF)
 option(GOON_BUILD_TESTING "Should we enable testing" ON)
@@ -105,6 +104,7 @@ if(MACOS AND NOT GOON_FULL_MACOS_BUILD)
     if(GOON_DEBUG_LUA)
         find_library(LIB_SOCKET
             NAMES socket-3.0.0.so
+
             # HINTS /Users/kevin/git/lua/luasocket/build/lib/lua/5.4/socket
             PATHS /Users/kevin/git/lua/luasocket/build/lib/lua/5.4/socket
             REQUIRED)
@@ -142,10 +142,19 @@ endif(MACOS AND NOT GOON_FULL_MACOS_BUILD)
 # #########################################
 if(APPLE)
     target_compile_definitions(SupergoonDash PRIVATE -DGN_PLATFORM_MACOS)
+
+    if(GOON_MULTITHREADED_SOUND)
+        target_compile_definitions(SupergoonDash PRIVATE -DGN_MULTITHREADED)
+    endif(GOON_MULTITHREADED_SOUND)
 elseif(WIN32)
     target_compile_definitions(SupergoonDash PRIVATE -DGN_PLATFORM_WINDOWS)
+elseif(EMSCRIPTEN)
 elseif(LINUX)
     target_compile_definitions(SupergoonDash PRIVATE -DGN_PLATFORM_LINUX)
+
+    if(GOON_MULTITHREADED_SOUND)
+        target_compile_definitions(SupergoonDash PRIVATE -DGN_MULTITHREADED)
+    endif(GOON_MULTITHREADED_SOUND)
 endif(APPLE)
 
 if(GOON_DEBUG_LUA)
@@ -175,12 +184,12 @@ if(CMAKE_DEBUG_VARIABLES)
 endif(CMAKE_DEBUG_VARIABLES)
 
 # PROPERTIES
-# set_target_properties(SupergoonDash PROPERTIES LINK_FLAGS ${LINK_FLAGS} "-s USE_FREETYPE=1 -s DISABLE_EXCEPTION_CATCHING=0 -s DEMANGLE_SUPPORT=1 -s SAFE_HEAP=1 --bind -s WASM=1 -O2 -s LEGACY_GL_EMULATION=0  -s GL_UNSAFE_OPTS=0 -s ASSERTIONS=1 -s GL_ASSERTIONS=1 -s INVOKE_RUN=0 -s USE_WEBGL2=1 --preload-file assets --preload-file scripts ")
 if(EMSCRIPTEN)
-    set_target_properties(SupergoonDash PROPERTIES LINK_FLAGS ${LINK_FLAGS} "-O0 -g -s USE_PTHREADS=1 -sPTHREAD_POOL_SIZE=2 -s SAFE_HEAP=1 -pthread -s STACK_OVERFLOW_CHECK=1 --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets --preload-file ${CMAKE_SOURCE_DIR}/src/Scripts@/Scripts")
-
-    # set_target_properties(supergoonSound PROPERTIES LINK_FLAGS ${LINK_FLAGS} "-O0 -g -s SAFE_HEAP=1 -s STACK_OVERFLOW_CHECK=1 --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets --preload-file ${CMAKE_SOURCE_DIR}/src/Scripts@/Scripts")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread -sPTHREAD_POOL_SIZE=2 -s USE_PTHREADS=1 -s 'DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\"$autoResumeAudioContext\",\"$dynCall\"]'")
+    # Use this for pthreads in emscripten when ready
+    # set_target_properties(SupergoonDash PROPERTIES LINK_FLAGS ${LINK_FLAGS} "-O0 -g -s USE_PTHREADS=1 -sPTHREAD_POOL_SIZE=2 -s SAFE_HEAP=1 -pthread -s STACK_OVERFLOW_CHECK=1 --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets --preload-file ${CMAKE_SOURCE_DIR}/src/Scripts@/Scripts")
+    # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread -sPTHREAD_POOL_SIZE=2 -s USE_PTHREADS=1 -s 'DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\"$autoResumeAudioContext\",\"$dynCall\"]'")
+    set_target_properties(SupergoonDash PROPERTIES LINK_FLAGS ${LINK_FLAGS} "-O0 -g -s SAFE_HEAP=1 -s STACK_OVERFLOW_CHECK=1 --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets --preload-file ${CMAKE_SOURCE_DIR}/src/Scripts@/Scripts")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s 'DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\"$autoResumeAudioContext\",\"$dynCall\"]'")
 endif(EMSCRIPTEN)
 
 # #########################################
