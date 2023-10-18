@@ -4,6 +4,9 @@
 #include <GoonDash/scripting/LuaScripting.h>
 #include <GoonDash/input/keyboard.h>
 
+#include <pthread.h>
+pthread_t thread;
+
 // EMSCRIPTEN
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -49,7 +52,12 @@ static void loop_func()
     if (shouldQuit)
         return;
     // Engine Updates
-    UpdateSound();
+    if (pthread_create(&thread, NULL, UpdateSound, NULL) != 0)
+    {
+        perror("pthread_create");
+        return;
+    }
+    // UpdateSound();
     // Lua Update
     CallEngineLuaFunction(L, "Update");
     // Rendering
@@ -57,6 +65,12 @@ static void loop_func()
     SDL_RenderClear(g_pRenderer);
     CallEngineLuaFunction(L, "Draw");
     SDL_RenderPresent(g_pRenderer);
+    // Wait for the thread to finish (optional)
+    if (pthread_join(thread, NULL) != 0)
+    {
+        perror("pthread_join");
+        return;
+    }
 }
 
 int main()
