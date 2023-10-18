@@ -27,7 +27,6 @@ function Player:KeepPlayerInLevelBounds()
     local currentLevel = self.gameobject.Game.Game.currentLevel
     local currentXnWidth = self.x + self.width
     local localcurrentLevelX = currentLevel.sizeX
-    self.gameobject.Debug.Info("Current x is " .. currentXnWidth .. " and map x is " .. localcurrentLevelX)
     if self.x + self.width > currentLevel.sizeX then
         self.x =  currentLevel.sizeX - self.width
     end

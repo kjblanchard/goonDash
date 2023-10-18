@@ -27,6 +27,7 @@ function Lua.Start()
     end
     -- Load this from the tilemap
     if currentLevel.bgm and currentLevel.bgm.bgmName ~= "" then
+        print("start " .. currentLevel.bgm.loopBegin .. " end " .. currentLevel.bgm.loopEnd)
         sound.Load(currentLevel.bgm.bgmName, currentLevel.bgm.loopBegin, currentLevel.bgm.loopEnd)
         sound.Play(currentLevel.bgm.bgmName)
     end

@@ -4,8 +4,6 @@
 #include <GoonDash/scripting/LuaScripting.h>
 #include <GoonDash/input/keyboard.h>
 
-pthread_t thread;
-
 // EMSCRIPTEN
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -58,7 +56,8 @@ static void loop_func()
         return;
 // Engine Updates
 #ifdef GN_MULTITHREADED
-    #include <pthread.h>
+#include <pthread.h>
+    static pthread_t thread;
     if (pthread_create(&thread, NULL, MusicUpdateWrapper, NULL) != 0)
     {
         perror("pthread_create");
@@ -74,12 +73,14 @@ static void loop_func()
     SDL_RenderClear(g_pRenderer);
     CallEngineLuaFunction(L, "Draw");
     SDL_RenderPresent(g_pRenderer);
+#ifdef GN_MULTITHREADED
     // Wait for the thread to finish (optional)
     if (pthread_join(thread, NULL) != 0)
     {
         perror("pthread_join");
         return;
     }
+#endif
 }
 
 int main()

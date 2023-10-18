@@ -11,6 +11,10 @@ return {
   nextlayerid = 13,
   nextobjectid = 148,
   properties = {
+    ["backup"] = {
+      ["loopBegin"] = 20.397,
+      ["loopEnd"] = 43.08
+    },
     ["bgm"] = {
       ["bgmName"] = "test",
       ["loopBegin"] = 20.397,
