@@ -3,6 +3,15 @@
  <editorsettings>
   <export target="level1.lua" format="lua"/>
  </editorsettings>
+ <properties>
+  <property name="bgm" type="class" propertytype="Bgm">
+   <properties>
+    <property name="bgmName" value="test"/>
+    <property name="loopBegin" type="float" value="20.397"/>
+    <property name="loopEnd" type="float" value="43.08"/>
+   </properties>
+  </property>
+ </properties>
  <tileset firstgid="1" source="terrain.tsx"/>
  <tileset firstgid="243" source="background.tsx"/>
  <group id="12" name="background">

@@ -9,6 +9,28 @@
     "objectTypesFile": "",
     "propertyTypes": [
         {
+            "id": 5,
+            "members": [
+                {
+                    "name": "bgmName",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "loopBegin",
+                    "type": "float",
+                    "value": 0
+                },
+                {
+                    "name": "loopEnd",
+                    "type": "float",
+                    "value": 0
+                }
+            ],
+            "name": "Bgm",
+            "type": "class"
+        },
+        {
             "id": 2,
             "members": [
                 {

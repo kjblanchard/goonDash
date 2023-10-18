@@ -94,7 +94,7 @@
         "background.tsx"
     ],
     "project": "goonDash.tiled-project",
-    "property.type": "Player",
+    "property.type": "Bgm",
     "recentFiles": [
         "background.tsx",
         "terrain.tsx",

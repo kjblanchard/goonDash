@@ -25,8 +25,10 @@ function Lua.Start()
         gameObjectMap.CreateInstance(object)
     end
     -- Load this from the tilemap
-    sound.Load("test", 20.397, 43.08)
-    sound.Play("test")
+    if currentLevel.bgm and currentLevel.bgm.bgmName ~= "" then
+        sound.Load(currentLevel.bgm.bgmName, currentLevel.bgm.loopBegin, currentLevel.bgm.loopEnd)
+        sound.Play(currentLevel.bgm.bgmName)
+    end
 end
 
 function Lua.InputEvent(buttonPressed, keyDown)

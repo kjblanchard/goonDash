@@ -46,6 +46,8 @@ function TileMap.New(filename)
     local yTileSize = loadedFile.tileheight
     local levelSizeX = xNumTiles * xTileSize
     local levelSizeY = yNumTiles * yTileSize
+    -- load the bgm from the tilemap, if it isn't set it will be null
+    tilemap.bgm = loadedFile.properties.bgm
     -- Create a table of all the tilesets and sort them so that we can look up tiles in them after loading
     local tilesets = {}
     for _, tileset in ipairs(loadedFile.tilesets) do

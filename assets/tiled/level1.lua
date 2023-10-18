@@ -10,7 +10,13 @@ return {
   tileheight = 16,
   nextlayerid = 13,
   nextobjectid = 148,
-  properties = {},
+  properties = {
+    ["bgm"] = {
+      ["bgmName"] = "test",
+      ["loopBegin"] = 20.397,
+      ["loopEnd"] = 43.08
+    }
+  },
   tilesets = {
     {
       name = "terrain",
