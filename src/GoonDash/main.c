@@ -4,7 +4,6 @@
 #include <GoonDash/scripting/LuaScripting.h>
 #include <GoonDash/input/keyboard.h>
 
-#include <pthread.h>
 pthread_t thread;
 
 // EMSCRIPTEN
@@ -59,6 +58,7 @@ static void loop_func()
         return;
 // Engine Updates
 #ifdef GN_MULTITHREADED
+    #include <pthread.h>
     if (pthread_create(&thread, NULL, MusicUpdateWrapper, NULL) != 0)
     {
         perror("pthread_create");
