@@ -19,6 +19,7 @@ end
 function Lua.Start()
     -- Should load the level and such from game.
     currentLevel = tilemap.New("level1")
+    gameInstance:SetLevel(currentLevel)
     local entities = currentLevel.entityLayer
     local entityObjects = entities["objects"]
     for _, object in ipairs(entityObjects) do

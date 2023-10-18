@@ -13,6 +13,7 @@ local function sortByGid(a, b)
     return a.firstGid < b.firstGid
 end
 
+
 ---Checks to see if a tile is inside of a tileset.
 ---@param id number The tile id to checkfor
 ---@param tilesetList table list of tilesets
@@ -48,6 +49,9 @@ function TileMap.New(filename)
     local levelSizeY = yNumTiles * yTileSize
     -- load the bgm from the tilemap, if it isn't set it will be null
     tilemap.bgm = loadedFile.properties.bgm
+    -- set the size of the tilemap, for camera purposes
+    tilemap.sizeX = levelSizeX
+    tilemap.sizeY = levelSizeY
     -- Create a table of all the tilesets and sort them so that we can look up tiles in them after loading
     local tilesets = {}
     for _, tileset in ipairs(loadedFile.tilesets) do

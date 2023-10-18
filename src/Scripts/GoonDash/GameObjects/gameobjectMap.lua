@@ -28,8 +28,8 @@ end
 
 function GameObjectMap.Update()
     for _, value in ipairs(GameObjectMap.GameObjects) do
-        value.gameobject.Update()
-        -- if value.Update then value:Update() end
+        -- Call update on the gameobject, but pass in the actual instance, probably don't need to do it this way.
+        value.gameobject.Update(value)
     end
 end
 

@@ -30,5 +30,10 @@ function Camera:AttachToGameObject(gameobject)
     self.followTarget = gameobject
 end
 
+function Camera:SetCameraToMapBounds(levelSizeX, levelSizeY)
+    self.mapBounds.x = levelSizeX
+    self.mapBounds.y = levelSizeY
+end
+
 Camera.__index = Camera
 return Camera
