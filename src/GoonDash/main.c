@@ -19,6 +19,12 @@ static bool shouldQuit = false;
 // TODO this should be different, it is inside of SDLwindow.c
 extern SDL_Renderer *g_pRenderer;
 
+void* threadFunction(void* arg) {
+    // Your function code goes here
+    UpdateSound();
+    return NULL;
+}
+
 /**
  * @brief Handles all SDL events every frame.
  *
@@ -52,7 +58,7 @@ static void loop_func()
     if (shouldQuit)
         return;
     // Engine Updates
-    if (pthread_create(&thread, NULL, UpdateSound, NULL) != 0)
+    if (pthread_create(&thread, NULL, threadFunction, NULL) != 0)
     {
         perror("pthread_create");
         return;
