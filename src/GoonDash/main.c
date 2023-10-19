@@ -3,11 +3,14 @@
 #include <SupergoonSound/sound/sound.h>
 #include <GoonDash/scripting/LuaScripting.h>
 #include <GoonDash/input/keyboard.h>
+#include <pthread.h>
 
 // EMSCRIPTEN
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
+
+#define MAX_STARTUP_FRAMES 1000
 
 static SDL_Event event;
 static lua_State *L;
@@ -49,19 +52,19 @@ static bool sdlEventLoop()
     return false;
 }
 
-static void loop_func()
+static int loop_func()
 {
+    Uint64 beginFrame = SDL_GetTicks64();
     shouldQuit = sdlEventLoop();
     if (shouldQuit)
-        return;
+        return 0;
 // Engine Updates
 #ifdef GN_MULTITHREADED
-#include <pthread.h>
     static pthread_t thread;
     if (pthread_create(&thread, NULL, MusicUpdateWrapper, NULL) != 0)
     {
         perror("pthread_create");
-        return;
+        return 0;
     }
 #else
     UpdateSound();
@@ -73,12 +76,13 @@ static void loop_func()
     SDL_RenderClear(g_pRenderer);
     CallEngineLuaFunction(L, "Draw");
     SDL_RenderPresent(g_pRenderer);
+    return SDL_GetTicks64() - beginFrame;
 #ifdef GN_MULTITHREADED
     // Wait for the thread to finish (optional)
     if (pthread_join(thread, NULL) != 0)
     {
         perror("pthread_join");
-        return;
+        return SDL_GetTicks64() - beginFrame;
     }
 #endif
 }
@@ -111,6 +115,8 @@ int main()
     {
         return false;
     }
+    // Pump initial events out, to reduce large lag time at startup.
+    sdlEventLoop();
 
     CallEngineLuaFunction(L, "Initialize");
 
@@ -123,8 +129,10 @@ int main()
 #else
     while (!shouldQuit)
     {
-        loop_func();
-        SDL_Delay(16);
+
+        TIMED_BLOCK(int loopTime = loop_func();, "loopfunc")
+        int delayTime = 16 - loopTime;
+        SDL_Delay(delayTime > 0 ? delayTime : 0);
     }
 #endif
 

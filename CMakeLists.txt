@@ -73,6 +73,7 @@ option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting"
 option(GOON_BUILD_PCH "Uses a PCH file to try and speed up compilation" ON)
 option(GOON_DEBUG_LUA "Includes socket so that we can debug lua remotely" OFF)
 option(GOON_MULTITHREADED_SOUND "Adds multithreaded support for sound updates, experimental" ON)
+option(GOON_BENCHMARKING "Enables benchmarking functions, adds overhead" OFF)
 
 # option(GOON_FULL_MACOS_BUILD "Full builds of all libraries, used for runners mostly, and passed in to override." OFF)
 option(GOON_BUILD_TESTING "Should we enable testing" ON)
@@ -160,6 +161,10 @@ endif(APPLE)
 if(GOON_DEBUG_LUA)
     target_compile_definitions(SupergoonDash PRIVATE -DGN_DEBUG_LUA)
 endif(GOON_DEBUG_LUA)
+
+if(GOON_BENCHMARKING)
+    target_compile_definitions(SupergoonDash PRIVATE -DGN_BENCHMARKING_ENABLED)
+endif(GOON_BENCHMARKING)
 
 # #########################################
 # Precompiled headers

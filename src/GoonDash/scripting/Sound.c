@@ -17,6 +17,7 @@ static int BgmLoad(lua_State *L)
         lua_pushnil(L);
         return 1;
     }
+    int result = PreLoadBgm(bgm);
     // Returns BGM pointer, or nil, which should be free'd afterwards.
     lua_pushlightuserdata(L, bgm);
     return 1;
@@ -41,6 +42,7 @@ static int BgmPlay(lua_State *L)
     PlayBgm(bgm, volume);
     return 0;
 }
+
 
 static int DestroyBgm(lua_State *L)
 {
