@@ -52,6 +52,7 @@ static bool sdlEventLoop()
     return false;
 }
 
+
 static int loop_func()
 {
     Uint64 beginFrame = SDL_GetTicks64();
@@ -82,9 +83,14 @@ static int loop_func()
     if (pthread_join(thread, NULL) != 0)
     {
         perror("pthread_join");
-        return SDL_GetTicks64() - beginFrame;
     }
 #endif
+    return SDL_GetTicks64() - beginFrame;
+}
+
+static void loop_wrap()
+{
+    loop_func();
 }
 
 int main()
@@ -125,7 +131,7 @@ int main()
 
     // Main loop
 #ifdef __EMSCRIPTEN__
-    emscripten_set_main_loop(loop_func, 60, 1);
+    emscripten_set_main_loop(loop_wrap, 60, 1);
 #else
     while (!shouldQuit)
     {
