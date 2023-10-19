@@ -111,7 +111,13 @@ if(MACOS AND NOT GOON_FULL_MACOS_BUILD)
             REQUIRED)
     endif(GOON_DEBUG_LUA)
 
-    add_subdirectory(./external/sg_sound)
+    # find_library(LIB_GOONSOUND
+    #     NAMES libsupergoonSound libsupergoonSound.a supergoonSound supergoonSound.a
+    #     HINTS /usr/local/lib
+    #     REQUIRED)
+    # set(GOONSOUND_LIBRARIES ${LIB_GOONSOUND})
+
+add_subdirectory(./external/sg_sound)
 
 # Build everything, useful for runners, and builds we don't care take a little longer.
 else()
@@ -237,7 +243,12 @@ target_link_libraries(SupergoonDash
     SDL2::SDL2-static
     SDL2_image::SDL2_image-static
     ${LUA_LIBRARIES}
+    ${GOONSOUND_LIBRARIES}
     ${LIB_SOCKET}
+)
+target_link_directories(SupergoonDash
+    PRIVATE
+    /usr/local/lib
 )
 
 target_include_directories(SupergoonDash

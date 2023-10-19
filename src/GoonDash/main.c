@@ -1,8 +1,8 @@
 #include <GoonDash/gnpch.h>
 #include <GoonDash/misc/lua.h>
-#include <SupergoonSound/sound/sound.h>
 #include <GoonDash/scripting/LuaScripting.h>
 #include <GoonDash/input/keyboard.h>
+#include <SupergoonSound/include/sound.h>
 #include <pthread.h>
 
 // EMSCRIPTEN

@@ -1,6 +1,6 @@
 #include <GoonDash/gnpch.h>
 #include <GoonDash/scripting/Sound.h>
-#include <SupergoonSound/sound/sound.h>
+#include <SupergoonSound/include/sound.h>
 
 static int BgmLoad(lua_State *L)
 {
