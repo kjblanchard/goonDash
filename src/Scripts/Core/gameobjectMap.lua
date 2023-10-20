@@ -1,31 +1,31 @@
 local GameObjectMap = {}
 local debug = require("Core.debug")
-local player = require("GoonDash.GameObjects.player")
-
-GameObjectMap.TranslationMap = {
-    Player = player.New
-}
-
+---The map of functions per type to instantiate gameobjects
+GameObjectMap.TranslationMap = {}
+---List of all the gameobjects that are loaded currently
 GameObjectMap.GameObjects = {}
 
+---Creates an instance of a gameobject, must be added in the translation map.
+---@param data table tiled object that we should build, has type info
 function GameObjectMap.CreateInstance(data)
     if #data.type == 0 then
         debug.Warn("This object doesn't have a type, will not instantiate anything, name is  " .. data.name)
-        return nil
+        return
     end
     local spawnFunc = GameObjectMap.TranslationMap[data.type]
     if spawnFunc == nil then
         debug.Warn("Trying to instantiate something that isn't in the translation map " .. data.type)
-        return nil
+        return
     end
     local instance = spawnFunc(data)
     if instance == nil then
         debug.Warn("Instance of object is nil, something probably happened when trying to instantiate type " .. data.type)
-        return nil
+        return
     end
     table.insert(GameObjectMap.GameObjects, instance)
 end
 
+---Updates all of the gameobjects currently available
 function GameObjectMap.Update()
     for _, value in ipairs(GameObjectMap.GameObjects) do
         -- Call update on the gameobject, but pass in the actual instance, probably don't need to do it this way.

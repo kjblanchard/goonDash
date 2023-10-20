@@ -1,14 +1,11 @@
+-- Uncomment this if you need to debug with zerobrane
 -- require('mobdebug').start()
 Lua = {}
-local tilemap = require("Tiled.tilemap")
--- local debug = require("Core.debug")
-local currentLevel
-local sound = require("Core.sound")
-local gameObjectMap = require("GoonDash.GameObjects.gameobjectMap")
 local controller = require("Input.controller")
 local game = require("Core.game")
 local gameInstance = nil
 
+---Initialize Lua components
 function Lua.Initialize()
     local gameSettings = require("settings")
     local renderer = require("Graphics.renderer")
@@ -16,32 +13,22 @@ function Lua.Initialize()
     renderer.InitializeWindow(gameSettings.windowName, gameSettings.windowWidth, gameSettings.windowHeight)
 end
 
+---Run the games start function
 function Lua.Start()
-    -- Should load the level and such from game.
-    currentLevel = tilemap.New("level1")
-    gameInstance:SetLevel(currentLevel)
-    local entities = currentLevel.entityLayer
-    local entityObjects = entities["objects"]
-    for _, object in ipairs(entityObjects) do
-        gameObjectMap.CreateInstance(object)
-    end
-    -- Load this from the tilemap
-    if currentLevel.bgm and currentLevel.bgm.bgmName ~= "" then
-        sound.Load(currentLevel.bgm.bgmName, currentLevel.bgm.loopBegin, currentLevel.bgm.loopEnd)
-        sound.Play(currentLevel.bgm.bgmName)
-    end
+    gameInstance:Start()
 end
 
+---Handles a Input event from sdl by passing it into the controller
 function Lua.InputEvent(buttonPressed, keyDown)
     controller.OnInput(buttonPressed, keyDown)
 end
 
+---Updates the game
 function Lua.Update()
-    gameObjectMap.Update()
-    controller.UpdateControllers()
-    gameInstance:UpdateCamera()
+    gameInstance:Update()
 end
 
+---Draws the game
 function Lua.Draw()
-    currentLevel:DrawBackground(gameInstance.mainCamera)
+    gameInstance:Draw()
 end
