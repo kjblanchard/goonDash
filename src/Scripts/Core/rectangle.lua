@@ -30,4 +30,5 @@ Rectangle.__index = Rectangle
 Rectangle.__tostring = function(rect)
     return ("X: " .. rect.x .. " Y: " .. rect.y .. " W: " .. rect.width .. " H: " .. rect.width)
 end
+
 return Rectangle

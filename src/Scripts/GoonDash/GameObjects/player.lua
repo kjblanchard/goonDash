@@ -68,11 +68,13 @@ function Player:Update()
     -- self:KeepPlayerInLevelBounds()
 end
 function Player:Draw()
-    local screenPos = self.rectangle:SdlRect()
-    local cam = self.gameobject.Game.Game.mainCamera
-    screenPos.x = screenPos.x - cam.rectangle.x
-    screenPos.y = screenPos.y - cam.rectangle.y
-    self.gameobject.Debug.DrawRect(screenPos)
+    -- local screenPos = self.rectangle:SdlRect()
+    -- local cam = self.gameobject.Game.Game.mainCamera
+    -- screenPos.x = screenPos.x - cam.rectangle.x
+    -- screenPos.y = screenPos.y - cam.rectangle.y
+    -- self.gameobject.Debug.DrawRect(screenPos)
+    local drawRect = self.gameobject.Game.Game.mainCamera:GetCameraOffset(self.rectangle)
+    self.gameobject.Debug.DrawRect(drawRect:SdlRect())
 end
 
 Player.__index = Player
