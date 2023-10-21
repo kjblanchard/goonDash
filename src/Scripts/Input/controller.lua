@@ -19,6 +19,7 @@ Controller.ButtonStates = {
     Up = 1,
     Down = 2,
     Held = 3,
+    DownOrHeld = 4,
 }
 
 function Controller.New()
@@ -39,30 +40,7 @@ function Controller.New()
         [Controller.Buttons.Confirm] = false,
         [Controller.Buttons.Cancel] = false,
     }
-    controller.KeyUpBindFunctions = {
-        [Controller.Buttons.Up] = {},
-        [Controller.Buttons.Down] = {},
-        [Controller.Buttons.Left] = {},
-        [Controller.Buttons.Right] = {},
-        [Controller.Buttons.Confirm] = {},
-        [Controller.Buttons.Cancel] = {},
-    }
-    controller.KeyDownBindFunctions = {
-        [Controller.Buttons.Up] = {},
-        [Controller.Buttons.Down] = {},
-        [Controller.Buttons.Left] = {},
-        [Controller.Buttons.Right] = {},
-        [Controller.Buttons.Confirm] = {},
-        [Controller.Buttons.Cancel] = {},
-    }
-    controller.KeyHeldBindFunctions = {
-        [Controller.Buttons.Up] = {},
-        [Controller.Buttons.Down] = {},
-        [Controller.Buttons.Left] = {},
-        [Controller.Buttons.Right] = {},
-        [Controller.Buttons.Confirm] = {},
-        [Controller.Buttons.Cancel] = {},
-    }
+    controller.KeyBindFunctions = {}
     return controller
 end
 
@@ -73,17 +51,20 @@ end
 
 function Controller:Update()
     for i = 1, Controller.Buttons.Max do
-        if not self.LastFrameButtonsStatus[i] and self.ThisFrameButtonStatus[i] then
-            for j = 1, #self.KeyDownBindFunctions do
-                if self.KeyDownBindFunctions[i][j] then self.KeyDownBindFunctions[i][j]() end
+        if not self.LastFrameButtonsStatus[i] and self.ThisFrameButtonStatus[i] and self.KeyBindFunctions[i][Controller.ButtonStates.Down] then
+            -- Button Down
+            for j = 1, #self.KeyBindFunctions[i][Controller.ButtonStates.Down] do
+                if self.KeyBindFunctions[i][Controller.ButtonStates.Down][j] then self.KeyBindFunctions[i][Controller.ButtonStates.Down][j]() end
             end
-        elseif self.LastFrameButtonsStatus[i] and not self.ThisFrameButtonStatus[i] then
-            for j = 1, #self.KeyUpBindFunctions do
-                if self.KeyUpBindFunctions[i][j] then self.KeyUpBindFunctions[i][j]() end
+        elseif self.LastFrameButtonsStatus[i] and not self.ThisFrameButtonStatus[i] and self.KeyBindFunctions[i][Controller.ButtonStates.Up] then
+            -- button up
+            for j = 1, #self.KeyBindFunctions[i][Controller.ButtonStates.Up] do
+                if self.KeyBindFunctions[i][Controller.ButtonStates.Up][j] then self.KeyBindFunctions[i][Controller.ButtonStates.Up][j]() end
             end
-        elseif self.LastFrameButtonsStatus[i] and self.ThisFrameButtonStatus[i] then
-            for j = 1, #self.KeyHeldBindFunctions do
-                if self.KeyHeldBindFunctions[i][j] then self.KeyHeldBindFunctions[i][j]() end
+        elseif self.LastFrameButtonsStatus[i] and self.ThisFrameButtonStatus[i] and self.KeyBindFunctions[i][Controller.ButtonStates.Held] then
+            -- button held
+            for j = 1, #self.KeyBindFunctions[i][Controller.ButtonStates.Held] do
+                if self.KeyBindFunctions[i][Controller.ButtonStates.Held][j] then self.KeyBindFunctions[i][Controller.ButtonStates.Held][j]() end
             end
         end
         self.LastFrameButtonsStatus[i] = self.ThisFrameButtonStatus[i]
@@ -91,29 +72,32 @@ function Controller:Update()
 end
 
 function Controller:BindFunction(button, buttonState, func)
-    if buttonState == 1 then
-        table.insert(self.KeyUpBindFunctions[button], func)
-    elseif buttonState == 2 then
-        table.insert(self.KeyDownBindFunctions[button], func)
-    elseif buttonState == 3 then
-        table.insert(self.KeyHeldBindFunctions[button], func)
+    self.KeyBindFunctions[button] = self.KeyBindFunctions[button] or {}
+    if buttonState == Controller.ButtonStates.DownOrHeld then
+        self.KeyBindFunctions[button][Controller.ButtonStates.Down] = self.KeyBindFunctions[button][Controller.ButtonStates.Down] or {}
+        self.KeyBindFunctions[button][Controller.ButtonStates.Held] = self.KeyBindFunctions[button][Controller.ButtonStates.Held] or {}
+        table.insert(self.KeyBindFunctions[button][Controller.ButtonStates.Down], func)
+        table.insert(self.KeyBindFunctions[button][Controller.ButtonStates.Held], func)
+    else
+        self.KeyBindFunctions[button][buttonState] = self.KeyBindFunctions[button][buttonState] or {}
+        table.insert(self.KeyBindFunctions[button][buttonState], func)
     end
 end
 
 function Controller:UnbindFunction(button, buttonState, func)
-    if button == 1 then
-        for i = 1, #self.KeyUpBindFunctions do
-            if self.KeyUpBindFunctions[i] == func then table.remove(self.KeyUpBindFunctions[i]) end
-        end
-    elseif button == 2 then
-        for i = 1, #self.KeyDownBindFunctions do
-            if self.KeyDownBindFunctions[i] == func then table.remove(self.KeyDownBindFunctions[i]) end
-        end
-    elseif button == 3 then
-        for i = 1, #self.KeyHeldBindFunctions do
-            if self.KeyHeldBindFunctions[i] == func then table.remove(self.KeyHeldBindFunctions[i]) end
-        end
-    end
+    -- if button == 1 then
+    --     for i = 1, #self.KeyUpBindFunctions do
+    --         if self.KeyUpBindFunctions[i] == func then table.remove(self.KeyUpBindFunctions[i]) end
+    --     end
+    -- elseif button == 2 then
+    --     for i = 1, #self.KeyDownBindFunctions do
+    --         if self.KeyDownBindFunctions[i] == func then table.remove(self.KeyDownBindFunctions[i]) end
+    --     end
+    -- elseif button == 3 then
+    --     for i = 1, #self.KeyHeldBindFunctions do
+    --         if self.KeyHeldBindFunctions[i] == func then table.remove(self.KeyHeldBindFunctions[i]) end
+    --     end
+    -- end
 end
 
 function Controller.OnInput(sdlkey, isKeyDown)
@@ -127,7 +111,6 @@ function Controller.UpdateControllers()
     for i = 1, #Controller.PlayerControllers do
         Controller.PlayerControllers[i]:Update()
     end
-
 end
 
 Controller.__index = Controller

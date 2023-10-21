@@ -20,13 +20,13 @@ function Player.New(data)
     player.rectangle = rectagle.New(data.x, data.y, data.width, data.height)
     player.playerController = playerController.New()
     -- Have to use closures to pass in self
-    player.playerController.controller:BindFunction(controller.Buttons.Left, controller.ButtonStates.Held,
+    player.playerController.controller:BindFunction(controller.Buttons.Left, controller.ButtonStates.DownOrHeld,
         function() player:MoveLeft() end)
-    player.playerController.controller:BindFunction(controller.Buttons.Right, controller.ButtonStates.Held,
+    player.playerController.controller:BindFunction(controller.Buttons.Right, controller.ButtonStates.DownOrHeld,
         function() player:MoveRight() end)
-    player.playerController.controller:BindFunction(controller.Buttons.Up, controller.ButtonStates.Held,
+    player.playerController.controller:BindFunction(controller.Buttons.Up, controller.ButtonStates.DownOrHeld,
         function() player:MoveUp() end)
-    player.playerController.controller:BindFunction(controller.Buttons.Down, controller.ButtonStates.Held,
+    player.playerController.controller:BindFunction(controller.Buttons.Down, controller.ButtonStates.DownOrHeld,
         function() player:MoveDown() end)
     player.gameobject.Game.Game.mainCamera:AttachToGameObject(player)
     return player

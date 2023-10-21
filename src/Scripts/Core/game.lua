@@ -41,8 +41,8 @@ end
 
 function Game:Update()
     gameObjectMap.Update()
-    controller.UpdateControllers()
     self:UpdateCamera()
+    controller.UpdateControllers()
 end
 
 function Game:Draw()
