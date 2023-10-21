@@ -66,8 +66,8 @@
             "scale": 1.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 825.6666666666666,
-                "y": 298.66666666666663
+                "x": 1204,
+                "y": 396
             }
         },
         "terrain.tsx": {
@@ -96,9 +96,9 @@
     "project": "goonDash.tiled-project",
     "property.type": "Bgm",
     "recentFiles": [
+        "level1.tmx",
         "background.tsx",
         "terrain.tsx",
-        "level1.tmx",
         "/Users/kevin/Documents/tiled/sdl_dash/tilesets/backgrounds.tsx",
         "/Users/kevin/Documents/tiled/sdl_dash/tilesets/terrain.tsx",
         "/Users/kevin/Documents/tiled/sdl_dash/tilesets/actors.tsx",

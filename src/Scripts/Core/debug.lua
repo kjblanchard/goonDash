@@ -3,6 +3,7 @@
 
 local Dbg = {}
 local goonDebug = require("GoonDebug")
+local goonDrawDebug = require("GoonDraw")
 ---Sends a Debug message to the C logger
 ---@param message string message to send out
 function Dbg.Debug(message)
@@ -25,6 +26,10 @@ end
 ---@param message string message to send out
 function Dbg.Error(message)
     goonDebug.Message(message, 4)
+end
+
+function Dbg.DrawRect(rect)
+    goonDrawDebug.DrawRect(rect)
 end
 
 Dbg.__index = Dbg

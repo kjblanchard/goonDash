@@ -18,12 +18,27 @@ end
 
 function Camera:Update()
     if not self.followTarget then return end
-    local newLocation = self.followTarget:GetLocation()
-    if not newLocation then return end
-    if newLocation.x < 0 then newLocation.x = 0 end
+    local followTargetLoc = self.followTarget:GetLocation()
+    if not followTargetLoc then return end
+
+    local diff = followTargetLoc.x - self.rectangle.x
+    local middleScreenX = self.rectangle.width / 2
     local maxX = self.mapBounds.x - self.rectangle.width
-    if newLocation.x > maxX then newLocation.x = maxX end
-    self.rectangle.x = newLocation.x
+
+    if self.rectangle.x < maxX and diff >= middleScreenX then
+        local offset = diff - middleScreenX
+        self.rectangle.x = self.rectangle.x + offset
+    end
+    if self.rectangle.x > 0 and diff < middleScreenX then
+        local offset = middleScreenX - diff
+        self.rectangle.x = self.rectangle.x - offset
+    end
+
+end
+
+
+function Camera:GetCameraOffset(rect)
+    return rectangle.New(rect.x - self.rectangle.x, rect.y - self.rectangle.y, rect.width, rect.height)
 end
 
 function Camera:AttachToGameObject(gameobject)
