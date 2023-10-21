@@ -72,7 +72,7 @@ include(CTest)
 option(CMAKE_DEBUG_VARIABLES "Runs a debug on all variables for troubleshooting" ON)
 option(GOON_BUILD_PCH "Uses a PCH file to try and speed up compilation" ON)
 option(GOON_DEBUG_LUA "Includes socket so that we can debug lua remotely" OFF)
-option(GOON_MULTITHREADED_SOUND "Adds multithreaded support for sound updates, experimental" ON)
+option(GOON_MULTITHREADED_SOUND "Adds multithreaded support for sound updates, experimental and has a memory leak somehow" OFF)
 option(GOON_BENCHMARKING "Enables benchmarking functions, adds overhead" OFF)
 
 # option(GOON_FULL_MACOS_BUILD "Full builds of all libraries, used for runners mostly, and passed in to override." OFF)

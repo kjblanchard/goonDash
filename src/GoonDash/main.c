@@ -4,10 +4,6 @@
 #include <GoonDash/input/keyboard.h>
 #include <SupergoonSound/include/sound.h>
 
-#ifdef GN_MULTITHREADED
-#include <pthread.h>
-#endif
-
 // EMSCRIPTEN
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -63,12 +59,8 @@ static int loop_func()
         return 0;
 // Engine Updates
 #ifdef GN_MULTITHREADED
-    static pthread_t thread;
-    if (pthread_create(&thread, NULL, MusicUpdateWrapper, NULL) != 0)
-    {
-        perror("pthread_create");
-        return 0;
-    }
+    SDL_Thread *thread = NULL; // SDL thread handle
+    thread = SDL_CreateThread(MusicUpdateWrapper, "MusicUpdateThread", NULL);
 #else
     UpdateSound();
 #endif
@@ -81,11 +73,7 @@ static int loop_func()
     SDL_RenderPresent(g_pRenderer);
     return SDL_GetTicks64() - beginFrame;
 #ifdef GN_MULTITHREADED
-    // Wait for the thread to finish (optional)
-    if (pthread_join(thread, NULL) != 0)
-    {
-        perror("pthread_join");
-    }
+    SDL_WaitThread(thread, NULL);
 #endif
     return SDL_GetTicks64() - beginFrame;
 }
