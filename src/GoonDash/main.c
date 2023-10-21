@@ -3,7 +3,10 @@
 #include <GoonDash/scripting/LuaScripting.h>
 #include <GoonDash/input/keyboard.h>
 #include <SupergoonSound/include/sound.h>
+
+#ifdef GN_MULTITHREADED
 #include <pthread.h>
+#endif
 
 // EMSCRIPTEN
 #ifdef __EMSCRIPTEN__
@@ -51,7 +54,6 @@ static bool sdlEventLoop()
     }
     return false;
 }
-
 
 static int loop_func()
 {
