@@ -43,11 +43,11 @@ function Game:Update()
     gameObjectMap.Update()
     controller.UpdateControllers()
     self:UpdateCamera()
-
 end
 
 function Game:Draw()
     currentLevel:DrawBackground(self.mainCamera)
+    gameObjectMap.Draw()
 
 end
 
