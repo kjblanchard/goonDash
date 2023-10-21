@@ -3,6 +3,7 @@
 #include <GoonDash/scripting/LuaScripting.h>
 #include <GoonDash/input/keyboard.h>
 #include <SupergoonSound/include/sound.h>
+#include <chipmunk/chipmunk.h>
 
 // EMSCRIPTEN
 #ifdef __EMSCRIPTEN__
@@ -113,6 +114,14 @@ int main()
     }
     // Pump initial events out, to reduce large lag time at startup.
     sdlEventLoop();
+
+    // Chipmunk init
+    // cpVect is a 2D vector and cpv() is a shortcut for initializing them.
+    cpVect gravity = cpv(0, -100);
+
+    // Create an empty space.
+    cpSpace *space = cpSpaceNew();
+    cpSpaceSetGravity(space, gravity);
 
     CallEngineLuaFunction(L, "Initialize");
 

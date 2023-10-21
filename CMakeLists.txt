@@ -111,6 +111,12 @@ if(MACOS AND NOT GOON_FULL_MACOS_BUILD)
             REQUIRED)
     endif(GOON_DEBUG_LUA)
 
+    find_library(LIB_CHIPMUNK
+        NAMES libchipmunk chipmunk libchipmunk.a chipmunk.a
+        HINTS /usr/local/lib
+        REQUIRED)
+    set(CHIPMUNK_LIBRARIES ${LIB_CHIPMUNK})
+
     # find_library(LIB_GOONSOUND
     #     NAMES libsupergoonSound libsupergoonSound.a supergoonSound supergoonSound.a
     #     HINTS /usr/local/lib
@@ -137,6 +143,7 @@ else()
         add_subdirectory(./external/SDL_image EXCLUDE_FROM_ALL)
         add_subdirectory(./external/Lua EXCLUDE_FROM_ALL)
         add_subdirectory(./external/sg_sound)
+        add_subdirectory(./external/Chipmunk2D)
 
         target_link_libraries(SupergoonDash PRIVATE lua_static)
     else()
@@ -242,8 +249,10 @@ target_link_libraries(SupergoonDash
     PRIVATE
     SDL2::SDL2-static
     SDL2_image::SDL2_image-static
+    chipmunk_static
     ${LUA_LIBRARIES}
     ${GOONSOUND_LIBRARIES}
+    ${CHIPMUNK_LIBRARIES}
     ${LIB_SOCKET}
 )
 target_link_directories(SupergoonDash
@@ -254,6 +263,7 @@ target_link_directories(SupergoonDash
 target_include_directories(SupergoonDash
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/Chipmunk2D/include
     ${LUA_INCLUDE_DIR}
 )
 
