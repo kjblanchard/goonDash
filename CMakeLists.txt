@@ -146,6 +146,7 @@ else()
         add_subdirectory(./external/Chipmunk2D)
 
         target_link_libraries(SupergoonDash PRIVATE lua_static)
+        target_link_libraries(SupergoonDash PRIVATE chipmunk_static)
     else()
         message(STATUS "Could not init git for some reason")
     endif()
@@ -249,29 +250,31 @@ target_link_libraries(SupergoonDash
     PRIVATE
     SDL2::SDL2-static
     SDL2_image::SDL2_image-static
-    chipmunk_static
+    supergoonSound
+    # For local building
     ${LUA_LIBRARIES}
-    ${GOONSOUND_LIBRARIES}
     ${CHIPMUNK_LIBRARIES}
     ${LIB_SOCKET}
 )
-target_link_directories(SupergoonDash
-    PRIVATE
-    /usr/local/lib
-)
+
+# target_link_directories(SupergoonDash
+#     PRIVATE
+#     /usr/local/lib
+# )
 
 target_include_directories(SupergoonDash
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/
     ${CMAKE_CURRENT_SOURCE_DIR}/external/Chipmunk2D/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/sg_sound/include
     ${LUA_INCLUDE_DIR}
 )
 
 # Supergoon sound
-target_link_libraries(SupergoonDash
-    PUBLIC
-    supergoonSound)
-target_include_directories(SupergoonDash PUBLIC external/sg_sound/src)
+# target_link_libraries(SupergoonDash
+#     PUBLIC
+#     supergoonSound)
+# target_include_directories(SupergoonDash PUBLIC external/sg_sound/src)
 
 # #########################################
 # Install
