@@ -2,6 +2,10 @@
 #include <GoonDash/core/debug.h>
 
 #define MAX_LOG_SIZE 200
+#ifdef GN_BENCHMARKING_ENABLED
+uint64_t gGN_TIMER_TIC = 0;
+uint64_t gGN_TIMER_TOC = 0;
+#endif
 
 /**
  * @brief The file that will be written to when logs are put.
@@ -46,7 +50,7 @@ static void Log(LogLevel level, const char *thing_to_write)
     struct tm *gm_time = gmtime(&current_time);
     char buf[30];
     strftime(buf, sizeof(buf), "%m-%d-%H:%M-%S", gm_time);
-    FILE* outStream = level == Log_LError ? stderr : stdout;
+    FILE *outStream = level == Log_LError ? stderr : stdout;
     fprintf(outStream, "%s: %s end\n", buf, thing_to_write);
     if (level == Log_LError && open_debug_file)
     {

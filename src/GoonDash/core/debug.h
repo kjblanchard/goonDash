@@ -9,11 +9,27 @@
  *
  */
 
+#pragma once
+/**
+ * @brief Wraps a function, or a line (so that you can return and define a variable) and measure it and display the time it took, identifier is a descriptive name for it
+ *
+ */
+#ifdef GN_BENCHMARKING_ENABLED
+extern uint64_t gGN_TIMER_TIC;
+extern uint64_t gGN_TIMER_TOC;
+#define TIMED_BLOCK(code, identifier)     \
+                                          \
+    gGN_TIMER_TIC = SDL_GetTicks64();     \
+    code                                  \
+        gGN_TIMER_TOC = SDL_GetTicks64(); \
+    LogInfo("Elapsed: %llu mseconds for id, %s", gGN_TIMER_TOC - gGN_TIMER_TIC, identifier);
+#else
+#define TIMED_BLOCK(code, identifier) code
+#endif
 /**
  * @brief The level that we should show debug events at.
  *
  */
-#pragma once
 typedef enum LogLevel
 {
     Log_LDefault = 0,

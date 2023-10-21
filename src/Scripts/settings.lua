@@ -1,15 +1,9 @@
-require("Core.window")
-
 return {
     windowName = "Goon Dash",
     windowWidth = 512,
-    windowHeight = 288
+    windowHeight = 288,
+    volume = 0.25,
+    -- Used for loading the folder and file to set the gameobject translation map.
+    game = "GoonDash",
+    initialTilemap = "level1"
 }
-
--- Create atlas 1
--- Create atlas 2
--- Create atlas 3
--- Create Solid
--- Create Objects
--- Create atlas 6
--- Create atlas 7

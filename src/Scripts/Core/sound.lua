@@ -4,6 +4,7 @@
 local Sound = {}
 local sound = require("Sound")
 local debug = require("Core.debug")
+local settings = require("settings")
 local loadedBgms = {}
 local filePath = "assets/audio/"
 local currentPlayingBgm = ""
@@ -28,7 +29,7 @@ function Sound.Play(filename)
         debug.Warn("Could not play " .. filename .. " as it isn't loaded!")
         return
     end
-    sound.PlayBgm(loadedBgms[filename])
+    sound.PlayBgm(loadedBgms[filename], settings.volume)
     currentPlayingBgm = filename
 end
 

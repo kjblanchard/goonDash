@@ -1,6 +1,6 @@
 #include <GoonDash/gnpch.h>
 #include <GoonDash/scripting/Sound.h>
-#include <SupergoonSound/sound/sound.h>
+#include <SupergoonSound/include/sound.h>
 
 static int BgmLoad(lua_State *L)
 {
@@ -17,6 +17,7 @@ static int BgmLoad(lua_State *L)
         lua_pushnil(L);
         return 1;
     }
+    int result = PreLoadBgm(bgm);
     // Returns BGM pointer, or nil, which should be free'd afterwards.
     lua_pushlightuserdata(L, bgm);
     return 1;
@@ -24,21 +25,24 @@ static int BgmLoad(lua_State *L)
 
 static int BgmPlay(lua_State *L)
 {
-    // Arg1: Bgm*
+    // Arg1: Bgm* bgm to play
+    // Arg2  number - volume
     if (!lua_islightuserdata(L, 1))
     {
         LogError("Bad argument passed into PlayBGm, expected a userdata ptr");
         return 0;
     }
+    float volume = luaL_checknumber(L, 2);
     Bgm *bgm = (Bgm *)lua_touserdata(L, 1);
     if (!bgm)
     {
         LogError("Pointer passed to playbgm is not able to be casted to a bgm");
         return 0;
     }
-    PlayBgm(bgm, 0.0);
+    PlayBgm(bgm, volume);
     return 0;
 }
+
 
 static int DestroyBgm(lua_State *L)
 {
