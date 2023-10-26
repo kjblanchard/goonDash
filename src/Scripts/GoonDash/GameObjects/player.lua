@@ -5,7 +5,7 @@ local playerController = require("Input.playerController")
 local rectagle = require("Core.rectangle")
 local physics = require("Core.physics")
 
-local moveSpeed = 50
+local moveSpeed = 700
 
 
 

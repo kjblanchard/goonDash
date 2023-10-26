@@ -129,9 +129,24 @@ int main()
     // Create an empty space.
     g_Space = cpSpaceNew();
     cpSpaceSetGravity(g_Space, gravity);
-    cpShape *ground = cpSegmentShapeNew(cpSpaceGetStaticBody(g_Space), cpv(0, -50), cpv(100, -50), 1);
-    cpShapeSetFriction(ground, 1);
-    cpSpaceAddShape(g_Space, ground);
+    // cpShape *ground = cpSegmentShapeNew(cpSpaceGetStaticBody(g_Space), cpv(0, -50), cpv(100, -50), 1);
+    cpVect lowerLeft = cpv(-500, 200);
+    cpVect lowerRight = cpv(500, 200);
+    cpBody *groundBody = cpBodyNewStatic();
+    float radius = 3.0;
+    cpShape *groundShape = cpSegmentShapeNew(groundBody, lowerLeft, lowerRight, radius);
+
+    // 4
+    // groundShape->e = 0.5; // elasticity
+    // groundShape->u = 1.0; // friction
+    cpShapeSetFriction(groundShape, 1);
+    cpShapeSetElasticity(groundShape, 0.5);
+
+    // 5
+    cpSpaceAddBody(g_Space, groundBody);
+    cpSpaceAddShape(g_Space, groundShape);
+
+    // cpSpaceAddShape(g_Space, ground);
 
     CallEngineLuaFunction(L, "Initialize");
 

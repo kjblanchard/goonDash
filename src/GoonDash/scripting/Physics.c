@@ -10,8 +10,9 @@ static int CreateBody(lua_State *L)
     cpBB bbox = cpBBNew(16, 16, 16, 16);
     // cpBB bbox = cpBBNewForExtents(cpv(50,10), 8,8);
     cpFloat mass = 5;
-    cpFloat moment = cpMomentForBox2(1, bbox);
-    cpBody *boxBody = cpSpaceAddBody(g_Space, cpBodyNew(mass, moment));
+    // printf("The infinity is %f\n", INFINITY);
+    // cpFloat moment = cpMomentForBox2(INFINITY, bbox);
+    cpBody *boxBody = cpSpaceAddBody(g_Space, cpBodyNew(mass, INFINITY));
     cpShape *boxShape = cpSpaceAddShape(g_Space, cpBoxShapeNew2(boxBody, bbox, 0.1));
     cpBodySetPosition(boxBody, cpv(50,0));
     cpShapeSetFriction(boxShape, 0.7);
