@@ -3,6 +3,9 @@ local gameObject = require("Core.gameobject")
 local controller = require("Input.controller")
 local playerController = require("Input.playerController")
 local rectagle = require("Core.rectangle")
+local physics = require("Core.physics")
+
+local moveSpeed = 50
 
 
 
@@ -13,8 +16,8 @@ function Player.New(data)
     player.gameobject.GetLocation = Player.GetLocation
     player.gameobject.Draw = Player.Draw
     player.name = data.name
-    player.x = data.x
-    player.y = data.y
+    -- player.x = data.x
+    -- player.y = data.y
     player.width = data.width
     player.height = data.height
     player.rectangle = rectagle.New(data.x, data.y, data.width, data.height)
@@ -29,34 +32,40 @@ function Player.New(data)
     player.playerController.controller:BindFunction(controller.Buttons.Down, controller.ButtonStates.DownOrHeld,
         function() player:MoveDown() end)
     player.gameobject.Game.Game.mainCamera:AttachToGameObject(player)
+    player.body, player.shape = physics.CreateBody()
     return player
 end
 
 -- function Player:KeepPlayerInLevelBounds()
-    -- local currentLevel = self.gameobject.Game.Game.currentLevel
-    -- local currentXnWidth = self.x + self.width
-    -- local localcurrentLevelX = currentLevel.sizeX
-    -- if self.x + self.width > currentLevel.sizeX then
-    --     self.x = currentLevel.sizeX - self.width
-    -- end
+-- local currentLevel = self.gameobject.Game.Game.currentLevel
+-- local currentXnWidth = self.x + self.width
+-- local localcurrentLevelX = currentLevel.sizeX
+-- if self.x + self.width > currentLevel.sizeX then
+--     self.x = currentLevel.sizeX - self.width
+-- end
 -- end
 
 function Player:MoveRight()
-    self.rectangle.x = self.rectangle.x + 5
+    -- self.rectangle.x = self.rectangle.x + 5
+    physics.AddForce(self.body, moveSpeed, 0)
 
 end
 
 function Player:MoveLeft()
-    self.rectangle.x = self.rectangle.x - 5
+    -- self.rectangle.x = self.rectangle.x - 5
+    physics.AddForce(self.body, -moveSpeed, 0)
 
 end
+
 function Player:MoveUp()
-    self.rectangle.y = self.rectangle.y - 5
+    -- self.rectangle.y = self.rectangle.y - 5
+    physics.AddForce(self.body, 0, -moveSpeed)
 
 end
 
 function Player:MoveDown()
-    self.rectangle.y = self.rectangle.y + 5
+    -- self.rectangle.y = self.rectangle.y + 5
+    physics.AddForce(self.body, 0, moveSpeed)
 
 end
 
@@ -66,7 +75,12 @@ end
 
 function Player:Update()
     -- self:KeepPlayerInLevelBounds()
+    local x, y = physics.GetBodyPosition(self.body)
+    self.rectangle.x = x
+    self.rectangle.y = y
+    self.gameobject.Debug.Info("Location is X: " .. x .. " Y: " .. y)
 end
+
 function Player:Draw()
     -- local screenPos = self.rectangle:SdlRect()
     -- local cam = self.gameobject.Game.Game.mainCamera

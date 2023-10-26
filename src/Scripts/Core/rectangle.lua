@@ -19,10 +19,11 @@ function Rectangle.New(x, y, width, height)
     return rect
 end
 
+-- TODO this converts to an int, not sure if that is good.
 ---Gets this rectagle and passes a table with SDL Rect stuff only
 ---@return table Packed into a SDL_Rect, could use lightuserdata or something, but don't want dynamic alloc in C.
 function Rectangle:SdlRect()
-    local thing = { x = self.x, y = self.y, w =  self.width, h = self.height }
+    local thing = { x = math.floor(self.x), y = math.floor(self.y), w =  math.floor(self.width), h = math.floor(self.height) }
     return thing
 end
 

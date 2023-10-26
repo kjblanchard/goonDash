@@ -22,5 +22,6 @@
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
+#include <chipmunk/chipmunk.h>
 // My own non changing libs
 #include <GoonDash/core/debug.h>

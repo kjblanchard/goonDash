@@ -11,10 +11,15 @@
 #endif
 
 #define MAX_STARTUP_FRAMES 1000
+#define FPS 60
+#define MS_PER_FRAME (1000 / FPS)
+#define SECONDS_PER_FRAME (1.0f / FPS)
 
 static SDL_Event event;
 static lua_State *L;
 static bool shouldQuit = false;
+// Make this global for now
+cpSpace *g_Space;
 
 // TODO this should be different, it is inside of SDLwindow.c
 extern SDL_Renderer *g_pRenderer;
@@ -65,6 +70,8 @@ static int loop_func()
 #else
     UpdateSound();
 #endif
+    // Physics update
+    cpSpaceStep(g_Space, SECONDS_PER_FRAME);
     // Lua Update
     CallEngineLuaFunction(L, "Update");
     // Rendering
@@ -117,11 +124,14 @@ int main()
 
     // Chipmunk init
     // cpVect is a 2D vector and cpv() is a shortcut for initializing them.
-    cpVect gravity = cpv(0, -100);
+    cpVect gravity = cpv(0, 100);
 
     // Create an empty space.
-    cpSpace *space = cpSpaceNew();
-    cpSpaceSetGravity(space, gravity);
+    g_Space = cpSpaceNew();
+    cpSpaceSetGravity(g_Space, gravity);
+    cpShape *ground = cpSegmentShapeNew(cpSpaceGetStaticBody(g_Space), cpv(0, -50), cpv(100, -50), 1);
+    cpShapeSetFriction(ground, 1);
+    cpSpaceAddShape(g_Space, ground);
 
     CallEngineLuaFunction(L, "Initialize");
 
@@ -134,13 +144,11 @@ int main()
 #else
     while (!shouldQuit)
     {
-
         TIMED_BLOCK(int loopTime = loop_func();, "loopfunc")
-        int delayTime = 16 - loopTime;
+        int delayTime = MS_PER_FRAME - loopTime;
         SDL_Delay(delayTime > 0 ? delayTime : 0);
     }
 #endif
 
-    // Exit
     SDL_Quit();
 }
