@@ -5,7 +5,11 @@ local playerController = require("Input.playerController")
 local rectagle = require("Core.rectangle")
 local physics = require("Core.physics")
 
-local moveSpeed = 700
+local moveSpeed = 50000
+local jumpButtonHeldFrames = 0
+local jumpButtonMaxHeldFrames = 20
+local jumpSoeed = -1000000
+local jumpBoost = -70000
 
 
 
@@ -31,6 +35,11 @@ function Player.New(data)
         function() player:MoveUp() end)
     player.playerController.controller:BindFunction(controller.Buttons.Down, controller.ButtonStates.DownOrHeld,
         function() player:MoveDown() end)
+    player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.Down,
+        function() player:Jump() end)
+    player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.Held,
+        function() player:JumpBoost() end)
+
     player.gameobject.Game.Game.mainCamera:AttachToGameObject(player)
     player.body, player.shape = physics.CreateBody()
     return player
@@ -59,14 +68,24 @@ end
 
 function Player:MoveUp()
     -- self.rectangle.y = self.rectangle.y - 5
-    physics.AddForce(self.body, 0, -moveSpeed)
+    -- physics.AddForce(self.body, 0, -moveSpeed)
 
 end
 
 function Player:MoveDown()
     -- self.rectangle.y = self.rectangle.y + 5
-    physics.AddForce(self.body, 0, moveSpeed)
+    -- physics.AddForce(self.body, 0, moveSpeed)
+end
+function Player:Jump()
+    -- self.rectangle.y = self.rectangle.y + 5
+    jumpButtonHeldFrames = 0
+    physics.AddForce(self.body, 0, jumpSoeed)
+end
 
+function Player:JumpBoost()
+    if jumpButtonHeldFrames >= jumpButtonMaxHeldFrames then return end
+    physics.AddForce(self.body, 0, jumpBoost)
+    jumpButtonHeldFrames = jumpButtonHeldFrames + 1
 end
 
 function Player:GetLocation()

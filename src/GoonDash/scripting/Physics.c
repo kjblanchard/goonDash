@@ -9,13 +9,16 @@ static int CreateBody(lua_State *L)
     // shape is the shape (there can be multiple in a body, we just use one) and the body is all the shapes, we use 1:1
     cpBB bbox = cpBBNew(16, 16, 16, 16);
     // cpBB bbox = cpBBNewForExtents(cpv(50,10), 8,8);
-    cpFloat mass = 5;
+    cpFloat mass = 100.0;
     // printf("The infinity is %f\n", INFINITY);
     // cpFloat moment = cpMomentForBox2(INFINITY, bbox);
     cpBody *boxBody = cpSpaceAddBody(g_Space, cpBodyNew(mass, INFINITY));
     cpShape *boxShape = cpSpaceAddShape(g_Space, cpBoxShapeNew2(boxBody, bbox, 0.1));
-    cpBodySetPosition(boxBody, cpv(50,0));
-    cpShapeSetFriction(boxShape, 0.7);
+    cpBodySetPosition(boxBody, cpv(50, 0));
+    cpShapeSetFriction(boxShape, 0.4);
+    cpShapeSetElasticity(boxShape, 0.0f);
+    cpShapeSetCollisionType(boxShape, 1);
+
     lua_pushlightuserdata(L, boxBody);
     lua_pushlightuserdata(L, boxShape);
     return 2;
@@ -64,7 +67,7 @@ static int AddBodyVelocity(lua_State *L)
     }
     int x = luaL_checknumber(L, 2);
     int y = luaL_checknumber(L, 3);
-    cpBodyApplyForceAtLocalPoint(body, cpv(x, y), cpv(0,0));
+    cpBodyApplyForceAtLocalPoint(body, cpv(x, y), cpv(0, 0));
     return 0;
 }
 

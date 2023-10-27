@@ -26,7 +26,8 @@ static int LuaCreateSdlWindow(lua_State *L)
         LogError("Window could not be created, Error: %s", SDL_GetError());
         return 0;
     }
-    g_pRenderer = SDL_CreateRenderer(g_pWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    // g_pRenderer = SDL_CreateRenderer(g_pWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    g_pRenderer = SDL_CreateRenderer(g_pWindow, -1, SDL_RENDERER_ACCELERATED);
     if(g_pRenderer == NULL)
     {
         LogError("Renderer could not be created, Error: %s", SDL_GetError());

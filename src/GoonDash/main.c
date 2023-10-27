@@ -124,23 +124,21 @@ int main()
 
     // Chipmunk init
     // cpVect is a 2D vector and cpv() is a shortcut for initializing them.
-    cpVect gravity = cpv(0, 100);
+    cpVect gravity = cpv(0, 700);
 
     // Create an empty space.
     g_Space = cpSpaceNew();
     cpSpaceSetGravity(g_Space, gravity);
-    // cpShape *ground = cpSegmentShapeNew(cpSpaceGetStaticBody(g_Space), cpv(0, -50), cpv(100, -50), 1);
+    cpSpaceSetIterations(g_Space, 10);
     cpVect lowerLeft = cpv(-500, 200);
     cpVect lowerRight = cpv(500, 200);
     cpBody *groundBody = cpBodyNewStatic();
-    float radius = 3.0;
+    float radius = 10.0;
     cpShape *groundShape = cpSegmentShapeNew(groundBody, lowerLeft, lowerRight, radius);
 
     // 4
-    // groundShape->e = 0.5; // elasticity
-    // groundShape->u = 1.0; // friction
     cpShapeSetFriction(groundShape, 1);
-    cpShapeSetElasticity(groundShape, 0.5);
+    cpShapeSetElasticity(groundShape, 0.0);
 
     // 5
     cpSpaceAddBody(g_Space, groundBody);
