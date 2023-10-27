@@ -5,6 +5,7 @@ XCODE_BUILD_SYSTEM = Xcode
 BACKUP_BUILD_SYSTEM = 'Unix Makefiles'
 WINDOWS_BUILD_SYSTEM = 'Visual Studio 17 2022'
 MSVC_CONFIG_TYPE = Debug
+BUILD_TYPE = Release
 BUILD_FOLDER = build
 BINARY_FOLDER = bin
 BINARY_FOLDER_REL_PATH = $(BUILD_FOLDER)/$(BINARY_FOLDER)
@@ -19,21 +20,21 @@ all: build run
 
 # Macos dev
 configure:
-	@cmake . -B build -D CMAKE_BUILD_TYPE=Debug -G $(BUILD_SYSTEM)
+	@cmake . -B build -D CMAKE_BUILD_TYPE=$(BUILD_TYPE) -G $(BUILD_SYSTEM)
 econfigure:
-	@emcmake cmake . -B build -D CMAKE_BUILD_TYPE=Debug -G $(BACKUP_BUILD_SYSTEM) -DGOON_FULL_MACOS_BUILD=ON -DCMAKE_VERBOSE_MAKEFILE=ON
+	@emcmake cmake . -B build -D CMAKE_BUILD_TYPE=$(BUILD_TYPE) -G $(BACKUP_BUILD_SYSTEM) -DGOON_FULL_MACOS_BUILD=ON -DCMAKE_VERBOSE_MAKEFILE=ON
 # Macos Runner
 mconfigure:
-	@cmake . -B build -D CMAKE_BUILD_TYPE=Debug -G $(BACKUP_BUILD_SYSTEM) -DGOON_FULL_MACOS_BUILD=ON
+	@cmake . -B build -D CMAKE_BUILD_TYPE=$(BUILD_TYPE) -G $(BACKUP_BUILD_SYSTEM) -DGOON_FULL_MACOS_BUILD=ON
 # Macos Runner Future
 xconfigure:
-	@cmake . -B build -D CMAKE_BUILD_TYPE=Debug -G $(XCODE_BUILD_SYSTEM) -DGOON_FULL_MACOS_BUILD=ON
+	@cmake . -B build -D CMAKE_BUILD_TYPE=$(BUILD_TYPE) -G $(XCODE_BUILD_SYSTEM) -DGOON_FULL_MACOS_BUILD=ON
 # Linux/Runner / MacosDev backup
 bconfigure:
-	@cmake . -B build -D CMAKE_BUILD_TYPE=Debug -G $(BACKUP_BUILD_SYSTEM)
+	@cmake . -B build -D CMAKE_BUILD_TYPE=$(BUILD_TYPE) -G $(BACKUP_BUILD_SYSTEM)
 # Windows/Runner
 wconfigure:
-	@cmake . -B build -D CMAKE_PREFIX_PATH=/c/cmake -G $(WINDOWS_BUILD_SYSTEM)
+	@cmake . -B build CMAKE_BUILD_TYPE=$(BUILD_TYPE) -D CMAKE_PREFIX_PATH=/c/cmake -G $(WINDOWS_BUILD_SYSTEM)
 
 build:
 	@cmake --build build --config $(MSVC_CONFIG_TYPE)

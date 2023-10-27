@@ -8,8 +8,8 @@ return {
   height = 18,
   tilewidth = 16,
   tileheight = 16,
-  nextlayerid = 13,
-  nextobjectid = 148,
+  nextlayerid = 14,
+  nextobjectid = 151,
   properties = {
     ["backup"] = {
       ["loopBegin"] = 20.397,
@@ -193,6 +193,103 @@ return {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
           }
+        }
+      }
+    },
+    {
+      type = "objectgroup",
+      draworder = "topdown",
+      id = 13,
+      name = "solid",
+      visible = true,
+      opacity = 1,
+      offsetx = 0,
+      offsety = 0,
+      parallaxx = 1,
+      parallaxy = 1,
+      properties = {},
+      objects = {
+        {
+          id = 148,
+          name = "ground",
+          type = "",
+          shape = "polygon",
+          x = 0,
+          y = 240,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          polygon = {
+            { x = 0, y = 0 },
+            { x = 16, y = 0 },
+            { x = 16, y = -16 },
+            { x = 96, y = -16 },
+            { x = 96, y = 0 },
+            { x = 160, y = 0 },
+            { x = 160, y = -48 },
+            { x = 192, y = -48 },
+            { x = 192, y = 48 },
+            { x = 192, y = 96 },
+            { x = 224, y = 96 },
+            { x = 224, y = 32 },
+            { x = 416, y = 32 },
+            { x = 416, y = 96 },
+            { x = 432, y = 96 },
+            { x = 432, y = 16 },
+            { x = 544, y = 16 },
+            { x = 544, y = 96 },
+            { x = 592, y = 96 },
+            { x = 592, y = 16 },
+            { x = 880, y = 16 },
+            { x = 880, y = 96 },
+            { x = 976, y = 96 },
+            { x = 976, y = 0 },
+            { x = 1024, y = 0 },
+            { x = 1024, y = 96 },
+            { x = 1024, y = 128 },
+            { x = 0, y = 128 }
+          },
+          properties = {}
+        },
+        {
+          id = 149,
+          name = "platform",
+          type = "",
+          shape = "polygon",
+          x = 304,
+          y = 144,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          polygon = {
+            { x = 0, y = 0 },
+            { x = -64, y = 0 },
+            { x = -64, y = -32 },
+            { x = 48, y = -32 },
+            { x = 48, y = 0 }
+          },
+          properties = {}
+        },
+        {
+          id = 150,
+          name = "brick",
+          type = "",
+          shape = "polygon",
+          x = 944,
+          y = 176,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          polygon = {
+            { x = 0, y = 0 },
+            { x = 0, y = 48 },
+            { x = 48, y = 48 },
+            { x = 48, y = 0 }
+          },
+          properties = {}
         }
       }
     },

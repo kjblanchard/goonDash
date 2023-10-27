@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.6" orientation="orthogonal" renderorder="right-down" width="64" height="18" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="148">
+<map version="1.8" tiledversion="1.8.6" orientation="orthogonal" renderorder="right-down" width="64" height="18" tilewidth="16" tileheight="16" infinite="0" nextlayerid="14" nextobjectid="151">
  <editorsettings>
   <export target="level1.lua" format="lua"/>
  </editorsettings>
@@ -110,6 +110,17 @@
 </data>
   </layer>
  </group>
+ <objectgroup id="13" name="solid">
+  <object id="148" name="ground" x="0" y="240">
+   <polygon points="0,0 16,0 16,-16 96,-16 96,0 160,0 160,-48 192,-48 192,48 192,96 224,96 224,32 416,32 416,96 432,96 432,16 544,16 544,96 592,96 592,16 880,16 880,96 976,96 976,0 1024,0 1024,96 1024,128 0,128"/>
+  </object>
+  <object id="149" name="platform" x="304" y="144">
+   <polygon points="0,0 -64,0 -64,-32 48,-32 48,0"/>
+  </object>
+  <object id="150" name="brick" x="944" y="176">
+   <polygon points="0,0 0,48 48,48 48,0"/>
+  </object>
+ </objectgroup>
  <objectgroup id="5" name="entities">
   <object id="147" template="templates/PlayerStart.tx" x="0" y="192"/>
  </objectgroup>

@@ -55,29 +55,21 @@ end
 -- end
 
 function Player:MoveRight()
-    -- self.rectangle.x = self.rectangle.x + 5
     physics.AddForce(self.body, moveSpeed, 0)
 
 end
 
 function Player:MoveLeft()
-    -- self.rectangle.x = self.rectangle.x - 5
     physics.AddForce(self.body, -moveSpeed, 0)
 
 end
 
 function Player:MoveUp()
-    -- self.rectangle.y = self.rectangle.y - 5
-    -- physics.AddForce(self.body, 0, -moveSpeed)
-
 end
 
 function Player:MoveDown()
-    -- self.rectangle.y = self.rectangle.y + 5
-    -- physics.AddForce(self.body, 0, moveSpeed)
 end
 function Player:Jump()
-    -- self.rectangle.y = self.rectangle.y + 5
     jumpButtonHeldFrames = 0
     physics.AddForce(self.body, 0, jumpSoeed)
 end
@@ -93,19 +85,12 @@ function Player:GetLocation()
 end
 
 function Player:Update()
-    -- self:KeepPlayerInLevelBounds()
     local x, y = physics.GetBodyPosition(self.body)
     self.rectangle.x = x
     self.rectangle.y = y
-    self.gameobject.Debug.Info("Location is X: " .. x .. " Y: " .. y)
 end
 
 function Player:Draw()
-    -- local screenPos = self.rectangle:SdlRect()
-    -- local cam = self.gameobject.Game.Game.mainCamera
-    -- screenPos.x = screenPos.x - cam.rectangle.x
-    -- screenPos.y = screenPos.y - cam.rectangle.y
-    -- self.gameobject.Debug.DrawRect(screenPos)
     local drawRect = self.gameobject.Game.Game.mainCamera:GetCameraOffset(self.rectangle)
     self.gameobject.Debug.DrawRect(drawRect:SdlRect())
 end
