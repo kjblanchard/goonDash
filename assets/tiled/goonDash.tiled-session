@@ -64,10 +64,10 @@
                 12
             ],
             "scale": 1.5,
-            "selectedLayer": 2,
+            "selectedLayer": 5,
             "viewCenter": {
-                "x": 1204,
-                "y": 396
+                "x": 456,
+                "y": 119.99999999999999
             }
         },
         "terrain.tsx": {

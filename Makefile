@@ -5,7 +5,6 @@ XCODE_BUILD_SYSTEM = Xcode
 BACKUP_BUILD_SYSTEM = 'Unix Makefiles'
 WINDOWS_BUILD_SYSTEM = 'Visual Studio 17 2022'
 MSVC_CONFIG_TYPE = Debug
-BUILD_TYPE = Release
 BUILD_FOLDER = build
 BINARY_FOLDER = bin
 BINARY_FOLDER_REL_PATH = $(BUILD_FOLDER)/$(BINARY_FOLDER)
@@ -15,6 +14,12 @@ TILED_PATH = /Applications/Tiled.app/Contents/MacOS/Tiled
 TILED_FOLDER_PATH = ./assets/tiled
 TILED_EXPORT_TILESETS = background terrain
 TILED_EXPORT_MAPS = level1
+
+# Make variables
+BUILD_TYPE := Debug
+ifdef RELEASE_BUILD
+BUILD_TYPE := Release
+endif
 
 all: build run
 
