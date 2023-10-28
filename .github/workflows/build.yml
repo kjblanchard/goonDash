@@ -54,7 +54,8 @@ jobs:
           # git config --global --add safe.directory $(pwd)
           # git config --global --add safe.directory .
       - name: Actual build
-        run: cd repo && make erebuild RELEASE_BUILD=1
+        # run: cd repo && make erebuild RELEASE_BUILD=1
+        run: cd repo && make erebuild
       - uses: actions/upload-artifact@v3
         name: Upload to S3
         with:
