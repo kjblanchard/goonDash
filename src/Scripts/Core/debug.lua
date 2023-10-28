@@ -32,5 +32,9 @@ function Dbg.DrawRect(rect)
     goonDrawDebug.DrawRect(rect)
 end
 
+function Dbg.SetLogLevel(level)
+    goonDebug.SetLogLevel(level)
+end
+
 Dbg.__index = Dbg
 return Dbg

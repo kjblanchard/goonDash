@@ -34,11 +34,21 @@ static int Message(lua_State *L)
     return true;
 }
 
+static int SetDebugLogLevel(lua_State *L)
+{
+    // Arg1 int
+    int logLevel = luaL_checkinteger(L, 1);
+    if (logLevel > Log_LDefault && logLevel < Log_LMax)
+        SetLogLevel(logLevel);
+    return 0;
+}
+
 static int luaopen_GoonDebug(lua_State *L)
 {
     luaL_newmetatable(L, "Lua.GoonDebug");
     luaL_Reg luaDebugLib[] = {
         {"Message", Message},
+        {"SetLogLevel", SetDebugLogLevel},
         {NULL, NULL} // Sentinel value to indicate the end of the table
     };
     luaL_newlib(L, luaDebugLib);

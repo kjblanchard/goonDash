@@ -37,6 +37,7 @@ typedef enum LogLevel
     Log_LInfo = 2,
     Log_LWarn = 3,
     Log_LError = 4,
+    Log_LMax
 } LogLevel;
 /**
  * @brief Opens and/or creates a file for debug logging.

@@ -130,19 +130,7 @@ int main()
     g_Space = cpSpaceNew();
     cpSpaceSetGravity(g_Space, gravity);
     cpSpaceSetIterations(g_Space, 10);
-    cpVect lowerLeft = cpv(-500, 200);
-    cpVect lowerRight = cpv(500, 200);
-    cpBody *groundBody = cpBodyNewStatic();
-    float radius = 10.0;
-    cpShape *groundShape = cpSegmentShapeNew(groundBody, lowerLeft, lowerRight, radius);
 
-    // 4
-    cpShapeSetFriction(groundShape, 1);
-    cpShapeSetElasticity(groundShape, 0.0);
-
-    // 5
-    cpSpaceAddBody(g_Space, groundBody);
-    cpSpaceAddShape(g_Space, groundShape);
 
     // cpSpaceAddShape(g_Space, ground);
 

@@ -5,6 +5,8 @@ local currentLevel
 local sound = require("Core.sound")
 local tilemap = require("Tiled.tilemap")
 local controller = require("Input.controller")
+local dbg = require("Core.debug")
+local physics = require("Core.physics")
 
 
 
@@ -16,6 +18,7 @@ function Game.New()
     game.mainCamera = camera.New({ x = game.Settings.windowWidth, y = game.Settings.windowHeight },
         { x = game.Settings.windowWidth, y = game.Settings.windowHeight })
     game.currentLevel = nil
+    dbg.SetLogLevel(Game.Settings.logLevel)
     -- Set game to this
     Game.Game = game
     require(Game.Settings.game .. "/" .. Game.Settings.game .. "Game")
@@ -26,6 +29,9 @@ function Game:Start()
     -- Should load the level and such from game.
     currentLevel = tilemap.New(Game.Settings.initialTilemap)
     self:SetLevel(currentLevel)
+    local solidTable = currentLevel.solidLayer.objects
+    -- Make solid objects
+    physics.CreateSolidObjects(solidTable)
     local entities = currentLevel.entityLayer
     local entityObjects = entities["objects"]
     for _, object in ipairs(entityObjects) do
