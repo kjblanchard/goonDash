@@ -3,6 +3,7 @@
 #include <GoonDash/scripting/LuaScripting.h>
 #include <GoonDash/input/keyboard.h>
 #include <SupergoonSound/include/sound.h>
+#include <goonPhysics/scene.h>
 
 // EMSCRIPTEN
 #ifdef __EMSCRIPTEN__
@@ -86,6 +87,7 @@ static void loop_wrap()
 int main()
 {
     // Initialize Engine
+    gpInitScene();
     InitializeDebugLogFile();
     InitializeLua();
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) != 0)
