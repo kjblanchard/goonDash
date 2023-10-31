@@ -116,11 +116,6 @@ if(MACOS AND NOT GOON_FULL_MACOS_BUILD)
             REQUIRED)
     endif(GOON_DEBUG_LUA)
 
-    # find_library(LIB_GOONSOUND
-    # NAMES libsupergoonSound libsupergoonSound.a supergoonSound supergoonSound.a
-    # HINTS /usr/local/lib
-    # REQUIRED)
-    # set(GOONSOUND_LIBRARIES ${LIB_GOONSOUND})
     add_subdirectory(./external/sg_sound)
 
 # Build everything, useful for runners, and builds we don't care take a little longer.
@@ -244,14 +239,19 @@ endif(TARGET SDL2::SDL2-static)
 if(TARGET goonPhysics)
     target_link_libraries(SupergoonDash PRIVATE goonPhysics)
     target_include_directories(SupergoonDash PUBLIC
-        external/goonPhysics/include
+        external/goonPhysics/include/
     )
 endif(TARGET goonPhysics)
+
+# Always add goonphysics include instead of using the installed one for now
+target_include_directories(SupergoonDash PUBLIC
+    external/goonPhysics/include/
+)
 
 if(TARGET supergoonSound)
     target_link_libraries(SupergoonDash PRIVATE supergoonSound)
     target_include_directories(SupergoonDash PUBLIC
-        external/sg_sound/src
+        external/sg_sound/src/
     )
 endif(TARGET supergoonSound)
 
@@ -259,7 +259,8 @@ endif(TARGET supergoonSound)
 target_link_libraries(SupergoonDash
     PUBLIC
     PRIVATE
-    SDL2::SDL2-static
+
+    # SDL2::SDL2-static
     SDL2_image::SDL2_image-static
     ${LUA_LIBRARIES}
     ${GOONSOUND_LIBRARIES}
@@ -274,8 +275,6 @@ target_link_directories(SupergoonDash
 target_include_directories(SupergoonDash
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/
-
-    # ${LUA_INCLUDE_DIR}
 )
 
 # #########################################
