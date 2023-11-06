@@ -3,6 +3,7 @@ local gameObject = require("Core.gameobject")
 local controller = require("Input.controller")
 local playerController = require("Input.playerController")
 local rectagle = require("Core.rectangle")
+local physics = require("Core.physics")
 
 
 
@@ -30,6 +31,8 @@ function Player.New(data)
     player.playerController.controller:BindFunction(controller.Buttons.Down, controller.ButtonStates.DownOrHeld,
         function() player:MoveDown() end)
     player.gameobject.Game.Game.mainCamera:AttachToGameObject(player)
+    -- Physics
+    player.rigidbody = physics.AddBody(player.rectangle:SdlRect())
     return player
 end
 
@@ -66,6 +69,11 @@ function Player:GetLocation()
 end
 
 function Player:Update()
+    local x, y = physics.GetBodyCoordinates(self.rigidbody)
+    if x == nil then return end
+    self.rectangle.x = x
+    self.rectangle.y = y
+    print("Should update my location to X: " .. rectagle.x .. " Y: " .. rectagle.y)
     -- self:KeepPlayerInLevelBounds()
 end
 function Player:Draw()

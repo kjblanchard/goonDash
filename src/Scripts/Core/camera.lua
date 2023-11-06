@@ -38,7 +38,7 @@ end
 
 
 function Camera:GetCameraOffset(rect)
-    return rectangle.New(rect.x - self.rectangle.x, rect.y - self.rectangle.y, rect.width, rect.height)
+    return rectangle.New(math.floor(rect.x - self.rectangle.x), math.floor(rect.y - self.rectangle.y), rect.width, rect.height)
 end
 
 function Camera:AttachToGameObject(gameobject)
