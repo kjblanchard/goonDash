@@ -30,6 +30,7 @@ static int GetBodyCoordinates(lua_State *L)
     }
     lua_pushnumber(L, body->boundingBox.x);
     lua_pushnumber(L, body->boundingBox.y);
+    return 2;
 }
 
 static int luaopen_GoonPhysics(lua_State *L)

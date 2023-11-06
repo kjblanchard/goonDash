@@ -94,15 +94,7 @@ int main()
     // Testing out Physics
     scene = gpInitScene();
 
-    gpSceneSetGravity(scene, 500);
-    for (size_t i = 0; i < 10; i++)
-    {
-        /* code */
-        gpBB bb = gpBBNew(i, i, i, i);
-        gpBody *body = gpBodyNew(bb);
-        gpSceneAddBody(body);
-    }
-
+    gpSceneSetGravity(scene, 5);
     // Initialize Engine
     InitializeDebugLogFile();
     InitializeLua();

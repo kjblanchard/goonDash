@@ -12,6 +12,7 @@ end
 
 function Physics.GetBodyCoordinates(bodyNum)
     local x, y = physics.GetBodyLocation(bodyNum)
+    -- print("X/y is " .. x .. y)
     return x, y
 end
 

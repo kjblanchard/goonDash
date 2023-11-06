@@ -69,12 +69,12 @@ function Player:GetLocation()
 end
 
 function Player:Update()
+    print("Current xy " .. self.rectangle.x .. " " .. self.rectangle.y)
     local x, y = physics.GetBodyCoordinates(self.rigidbody)
+    print("Should update my location to X: " .. rectagle.x .. " Y: " .. rectagle.y)
     if x == nil then return end
     self.rectangle.x = x
     self.rectangle.y = y
-    print("Should update my location to X: " .. rectagle.x .. " Y: " .. rectagle.y)
-    -- self:KeepPlayerInLevelBounds()
 end
 function Player:Draw()
     -- local screenPos = self.rectangle:SdlRect()
