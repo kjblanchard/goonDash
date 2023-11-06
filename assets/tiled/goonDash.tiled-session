@@ -6,9 +6,9 @@
     "activeFile": "level1.tmx",
     "expandedProjectPaths": [
         "/Users/kevin/Documents/tiled",
-        ".",
         "/Users/kevin/Documents/tiled/sdl_dash/tilesets",
-        "templates"
+        "templates",
+        "."
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
@@ -66,8 +66,8 @@
             "scale": 1.5,
             "selectedLayer": 5,
             "viewCenter": {
-                "x": 528,
-                "y": 119.99999999999999
+                "x": -53,
+                "y": 64.33333333333331
             }
         },
         "terrain.tsx": {
@@ -96,9 +96,9 @@
     "project": "goonDash.tiled-project",
     "property.type": "Bgm",
     "recentFiles": [
-        "level1.tmx",
         "background.tsx",
         "terrain.tsx",
+        "level1.tmx",
         "/Users/kevin/Documents/tiled/sdl_dash/tilesets/backgrounds.tsx",
         "/Users/kevin/Documents/tiled/sdl_dash/tilesets/terrain.tsx",
         "/Users/kevin/Documents/tiled/sdl_dash/tilesets/actors.tsx",

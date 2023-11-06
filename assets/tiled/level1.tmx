@@ -111,7 +111,7 @@
   </layer>
  </group>
  <objectgroup id="5" name="entities">
-  <object id="147" template="templates/PlayerStart.tx" x="0" y="192"/>
+  <object id="147" template="templates/PlayerStart.tx" x="64" y="64"/>
  </objectgroup>
  <layer id="6" name="tile4" width="64" height="18" visible="0">
   <data encoding="csv">

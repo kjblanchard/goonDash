@@ -14,10 +14,11 @@ function Player.New(data)
     player.gameobject.Draw = Player.Draw
     player.name = data.name
     player.x = data.x
-    player.y = data.y
+    -- Currently theres an offset in tiled on the player spawn?
+    player.y = data.y - data.height
     player.width = data.width
     player.height = data.height
-    player.rectangle = rectagle.New(data.x, data.y, data.width, data.height)
+    player.rectangle = rectagle.New(data.x, player.y, data.width, data.height)
     player.playerController = playerController.New()
     -- Have to use closures to pass in self
     player.playerController.controller:BindFunction(controller.Buttons.Left, controller.ButtonStates.DownOrHeld,

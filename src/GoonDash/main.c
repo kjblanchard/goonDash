@@ -16,6 +16,7 @@
 static SDL_Event event;
 static lua_State *L;
 static bool shouldQuit = false;
+static gpScene *scene;
 
 // TODO this should be different, it is inside of SDLwindow.c
 extern SDL_Renderer *g_pRenderer;
@@ -66,6 +67,9 @@ static int loop_func()
 #else
     UpdateSound();
 #endif
+
+    // Update physics
+    gpSceneUpdate(scene, 0.16);
     // Lua Update
     CallEngineLuaFunction(L, "Update");
     // Rendering
@@ -88,12 +92,13 @@ static void loop_wrap()
 int main()
 {
     // Testing out Physics
-    gpInitScene();
+    scene = gpInitScene();
+    gpSceneSetGravity(scene, 500);
     for (size_t i = 0; i < 10; i++)
     {
         /* code */
         gpBB bb = gpBBNew(i, i, i, i);
-        gpBody* body = gpBodyNew(bb);
+        gpBody *body = gpBodyNew(bb);
         gpSceneAddBody(body);
     }
 

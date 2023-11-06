@@ -101,11 +101,14 @@ if(MACOS AND NOT GOON_FULL_MACOS_BUILD)
         HINTS /usr/local/lib
         REQUIRED)
     set(LUA_LIBRARIES ${LIB_LUA})
-    find_library(LIB_GOONPHYSICS
-        NAMES libgoonphysics.a libgoonPhysics.a
-        HINTS /usr/local/lib
-        REQUIRED)
-    set(GOONPHYSICS_LIBRARIES ${LIB_GOONPHYSICS})
+
+    # Disable this for now so that we always build it.
+    # find_library(LIB_GOONPHYSICS
+    # NAMES libgoonphysics.a libgoonPhysics.a
+    # HINTS /usr/local/lib
+    # REQUIRED)
+    # set(GOONPHYSICS_LIBRARIES ${LIB_GOONPHYSICS})
+    add_subdirectory(./external/goonPhysics)
 
     if(GOON_DEBUG_LUA)
         find_library(LIB_SOCKET
