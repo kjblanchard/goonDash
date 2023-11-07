@@ -46,7 +46,7 @@ Libraries:
 - [doxygen](https://doxygen.nl) - GPL | Automatic documentation
 - [LUA](https://www.lua.org/license.html) - MIT - Scripting
 - [Supergoon Sound](https://github.com/icculus/mojoAL/blob/main/LICENSE.txt) - ZLIB | OpenAL implementation - Mojoal wrapper
-- [Supergoon Physics] - MIT - Simple AABB physics
+- [Supergoon Physics](https://github.com/kjblanchard/goonPhysics) - MIT | Simple AABB physics
 
 ### ZeroBrane Debugging notes
 - Had to build luasocket from source, as the one from luarocks didn't build right for arm
