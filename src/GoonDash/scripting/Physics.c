@@ -15,6 +15,24 @@ static int AddBodyToScene(lua_State *L)
     return 1;
 }
 
+static int AddForceToBody(lua_State *L)
+{
+    // Arg1: Body num
+    // Arg2: Force X
+    // Arg3: Force Y
+    int bodyNum = luaL_checkinteger(L, 1);
+    float forceX = luaL_checknumber(L, 2);
+    float forceY = luaL_checknumber(L, 3);
+    gpBody* body = gpSceneGetBody(bodyNum);
+    if(!body)
+    {
+        return 0;
+    }
+    body->velocity.x += forceX;
+    body->velocity.y += forceY;
+    return 0;
+}
+
 static int GetBodyCoordinates(lua_State *L)
 {
     // Arg1: Body num
@@ -39,6 +57,7 @@ static int luaopen_GoonPhysics(lua_State *L)
     luaL_Reg luaPhysicsLib[] = {
         {"AddBody", AddBodyToScene},
         {"GetBodyLocation", GetBodyCoordinates},
+        {"AddBodyForce", AddForceToBody},
         {NULL, NULL} // Sentinel value to indicate the end of the table
     };
     luaL_newlib(L, luaPhysicsLib);

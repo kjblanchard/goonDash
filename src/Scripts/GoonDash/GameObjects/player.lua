@@ -37,31 +37,28 @@ function Player.New(data)
 end
 
 -- function Player:KeepPlayerInLevelBounds()
-    -- local currentLevel = self.gameobject.Game.Game.currentLevel
-    -- local currentXnWidth = self.x + self.width
-    -- local localcurrentLevelX = currentLevel.sizeX
-    -- if self.x + self.width > currentLevel.sizeX then
-    --     self.x = currentLevel.sizeX - self.width
-    -- end
+-- local currentLevel = self.gameobject.Game.Game.currentLevel
+-- local currentXnWidth = self.x + self.width
+-- local localcurrentLevelX = currentLevel.sizeX
+-- if self.x + self.width > currentLevel.sizeX then
+--     self.x = currentLevel.sizeX - self.width
+-- end
 -- end
 
 function Player:MoveRight()
-    self.rectangle.x = self.rectangle.x + 5
-
+    physics.AddForceToBody(self.rigidbody, 50, 0)
 end
 
 function Player:MoveLeft()
-    self.rectangle.x = self.rectangle.x - 5
-
+    physics.AddForceToBody(self.rigidbody, -50, 0)
 end
-function Player:MoveUp()
-    self.rectangle.y = self.rectangle.y - 5
 
+function Player:MoveUp()
+    physics.AddForceToBody(self.rigidbody, 0, -10)
 end
 
 function Player:MoveDown()
-    self.rectangle.y = self.rectangle.y + 5
-
+    physics.AddForceToBody(self.rigidbody, 0, 10)
 end
 
 function Player:GetLocation()
@@ -76,6 +73,7 @@ function Player:Update()
     self.rectangle.x = x
     self.rectangle.y = y
 end
+
 function Player:Draw()
     -- local screenPos = self.rectangle:SdlRect()
     -- local cam = self.gameobject.Game.Game.mainCamera

@@ -69,7 +69,7 @@ static int loop_func()
 #endif
 
     // Update physics
-    gpSceneUpdate(scene, 0.16);
+    gpSceneUpdate(scene, 1 / (float)60);
     // Lua Update
     CallEngineLuaFunction(L, "Update");
     // Rendering
@@ -93,8 +93,7 @@ int main()
 {
     // Testing out Physics
     scene = gpInitScene();
-
-    gpSceneSetGravity(scene, 5);
+    gpSceneSetGravity(scene, 300);
     // Initialize Engine
     InitializeDebugLogFile();
     InitializeLua();

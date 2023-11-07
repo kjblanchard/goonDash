@@ -12,8 +12,11 @@ end
 
 function Physics.GetBodyCoordinates(bodyNum)
     local x, y = physics.GetBodyLocation(bodyNum)
-    -- print("X/y is " .. x .. y)
     return x, y
+end
+
+function Physics.AddForceToBody(bodyNum, xForce, yForce)
+    physics.AddBodyForce(bodyNum, xForce, yForce)
 end
 
 Physics.__index = Physics
