@@ -13,7 +13,9 @@ end
 
 function Camera:GetRect()
     local dst = self.rectangle:SdlRect()
-    return self.rectangle.SdlRect(self.rectangle)
+    -- return self.rectangle.SdlRect(self.rectangle)
+    -- return self.rectangle.SdlRectInt(self.rectangle)
+    return self.rectangle:SdlRectInt()
 end
 
 function Camera:Update()

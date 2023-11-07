@@ -26,6 +26,11 @@ function Rectangle:SdlRect()
     return thing
 end
 
+function Rectangle:SdlRectInt()
+    local thing = { x = math.floor(self.x), y = math.floor(self.y), w =  self.width, h = self.height }
+    return thing
+end
+
 Rectangle.__index = Rectangle
 Rectangle.__tostring = function(rect)
     return ("X: " .. rect.x .. " Y: " .. rect.y .. " W: " .. rect.width .. " H: " .. rect.width)
