@@ -15,6 +15,18 @@ static int AddBodyToScene(lua_State *L)
     return 1;
 }
 
+static int AddStaticBodyToScene(lua_State *L)
+{
+    // Arg1: SdlRect For Body
+    // Return1: Body integer for lookup.
+    SDL_Rect bodySdlRect = GetRectFromLuaTable(L, 1);
+    gpBB bb = gpBBNew(bodySdlRect.x, bodySdlRect.y, bodySdlRect.w, bodySdlRect.h);
+    gpBody *body = gpBodyNew(bb);
+    int bodyNum = gpSceneAddStaticBody(body);
+    lua_pushinteger(L, bodyNum);
+    return 1;
+}
+
 static int AddForceToBody(lua_State *L)
 {
     // Arg1: Body num
@@ -56,6 +68,7 @@ static int luaopen_GoonPhysics(lua_State *L)
     luaL_newmetatable(L, "Lua.Physics");
     luaL_Reg luaPhysicsLib[] = {
         {"AddBody", AddBodyToScene},
+        {"AddStaticBody", AddStaticBodyToScene},
         {"GetBodyLocation", GetBodyCoordinates},
         {"AddBodyForce", AddForceToBody},
         {NULL, NULL} // Sentinel value to indicate the end of the table

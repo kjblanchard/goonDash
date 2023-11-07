@@ -8,7 +8,7 @@ return {
   spacing = 0,
   margin = 0,
   columns = 0,
-  objectalignment = "unspecified",
+  objectalignment = "topleft",
   tileoffset = {
     x = 0,
     y = 0

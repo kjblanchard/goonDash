@@ -10,6 +10,11 @@ function Physics.AddBody(bodyRect)
     return bodyNum
 end
 
+function Physics.AddStaticBody(bodyRect)
+    local bodyNum = physics.AddStaticBody(bodyRect)
+    return bodyNum
+end
+
 function Physics.GetBodyCoordinates(bodyNum)
     local x, y = physics.GetBodyLocation(bodyNum)
     return x, y

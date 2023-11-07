@@ -11,7 +11,7 @@ return {
   image = "../img/terrain.png",
   imagewidth = 352,
   imageheight = 176,
-  objectalignment = "unspecified",
+  objectalignment = "topleft",
   tileoffset = {
     x = 0,
     y = 0

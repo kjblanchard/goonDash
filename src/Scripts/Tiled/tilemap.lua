@@ -105,6 +105,9 @@ function TileMap.New(filename)
         elseif tilemapLayer.type == "objectgroup" and tilemapLayer.name == "entities" then
             debug.Debug("Entity layer found! adding to entity layer.")
             tilemap.entityLayer = tilemapLayer
+        elseif tilemapLayer.type == "objectgroup" and tilemapLayer.name == "solid" then
+            debug.Debug("Solid layer found, adding to solid layer")
+            tilemap.solidLayer = tilemapLayer
         end
     end
     -- Cleanup the Surfaces we loaded from the tilemaps for ths level.
@@ -113,6 +116,9 @@ function TileMap.New(filename)
     end
     if tilemap.entityLayer == nil then
         debug.Warn("No entity layer found in this tilemap, guess there is no gameobjects to load?")
+    end
+    if tilemap.solidLayer == nil then
+        debug.Warn("No solid layer found in this tilemap, guess there is no solids to load?")
     end
     return tilemap
 end

@@ -8,8 +8,8 @@ return {
   height = 18,
   tilewidth = 16,
   tileheight = 16,
-  nextlayerid = 13,
-  nextobjectid = 148,
+  nextlayerid = 14,
+  nextobjectid = 150,
   properties = {
     ["backup"] = {
       ["loopBegin"] = 20.397,
@@ -214,13 +214,47 @@ return {
           name = "PlayerStart",
           type = "Player",
           shape = "rectangle",
-          x = 64,
-          y = 64,
+          x = 48,
+          y = 48,
           width = 32,
           height = 32,
           rotation = 0,
           gid = 30,
           visible = true,
+          properties = {}
+        }
+      }
+    },
+    {
+      type = "objectgroup",
+      draworder = "topdown",
+      id = 13,
+      name = "solid",
+      visible = true,
+      opacity = 1,
+      offsetx = 0,
+      offsety = 0,
+      parallaxx = 1,
+      parallaxy = 1,
+      properties = {},
+      objects = {
+        {
+          id = 149,
+          name = "",
+          type = "",
+          shape = "polygon",
+          x = 0,
+          y = 240,
+          width = 0,
+          height = 0,
+          rotation = 0,
+          visible = true,
+          polygon = {
+            { x = 0, y = 0 },
+            { x = 0, y = 48 },
+            { x = 192, y = 48 },
+            { x = 192, y = 0 }
+          },
           properties = {}
         }
       }
@@ -233,7 +267,7 @@ return {
       height = 18,
       id = 6,
       name = "tile4",
-      visible = false,
+      visible = true,
       opacity = 1,
       offsetx = 0,
       offsety = 0,
@@ -270,7 +304,7 @@ return {
       height = 18,
       id = 7,
       name = "tile5",
-      visible = false,
+      visible = true,
       opacity = 1,
       offsetx = 0,
       offsety = 0,

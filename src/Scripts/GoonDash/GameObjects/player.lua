@@ -15,8 +15,8 @@ function Player.New(data)
     player.gameobject.Draw = Player.Draw
     player.name = data.name
     player.x = data.x
-    -- Currently theres an offset in tiled on the player spawn?
-    player.y = data.y - data.height
+    -- Currently theres an offset in tiled on the player spawn, this was due to tiled tsx tiles and their position.
+    -- player.y = data.y - data.height
     player.width = data.width
     player.height = data.height
     player.rectangle = rectagle.New(data.x, player.y, data.width, data.height)
@@ -66,9 +66,7 @@ function Player:GetLocation()
 end
 
 function Player:Update()
-    print("Current xy " .. self.rectangle.x .. " " .. self.rectangle.y)
     local x, y = physics.GetBodyCoordinates(self.rigidbody)
-    print("Should update my location to X: " .. rectagle.x .. " Y: " .. rectagle.y)
     if x == nil then return end
     self.rectangle.x = x
     self.rectangle.y = y
