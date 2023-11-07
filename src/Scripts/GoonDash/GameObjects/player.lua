@@ -46,11 +46,11 @@ end
 -- end
 
 function Player:MoveRight()
-    physics.AddForceToBody(self.rigidbody, 50, 0)
+    physics.AddForceToBody(self.rigidbody, 10, 0)
 end
 
 function Player:MoveLeft()
-    physics.AddForceToBody(self.rigidbody, -50, 0)
+    physics.AddForceToBody(self.rigidbody, -10, 0)
 end
 
 function Player:MoveUp()
