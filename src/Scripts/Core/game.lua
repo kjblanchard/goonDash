@@ -44,7 +44,6 @@ function Game:Start()
 
         local minX, maxX, minY, maxY = 0,0,0,0
         for _, point in ipairs(solid.polygon) do
-        print("Point X: " .. point.x .. " Y: " .. point.y)
             if point.x < minX then
               minX = point.x
             end

@@ -30,6 +30,10 @@ function Player.New(data)
         function() player:MoveUp() end)
     player.playerController.controller:BindFunction(controller.Buttons.Down, controller.ButtonStates.DownOrHeld,
         function() player:MoveDown() end)
+    player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.Down,
+        function() player:Jump() end)
+    player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.Held,
+        function() player:JumpExtend() end)
     player.gameobject.Game.Game.mainCamera:AttachToGameObject(player)
     -- Physics
     player.rigidbody = physics.AddBody(player.rectangle:SdlRect())
@@ -54,15 +58,22 @@ function Player:MoveLeft()
 end
 
 function Player:MoveUp()
-    physics.AddForceToBody(self.rigidbody, 0, -10)
+    -- physics.AddForceToBody(self.rigidbody, 0, -10)
 end
 
 function Player:MoveDown()
-    physics.AddForceToBody(self.rigidbody, 0, 10)
+    -- physics.AddForceToBody(self.rigidbody, 0, 10)
 end
 
 function Player:GetLocation()
     return { x = self.rectangle.x, y = self.rectangle.y }
+end
+
+function Player:Jump()
+    physics.AddForceToBody(self.rigidbody, 0, -120)
+end
+function Player:JumpExtend()
+    physics.AddForceToBody(self.rigidbody, 0, -10)
 end
 
 function Player:Update()
