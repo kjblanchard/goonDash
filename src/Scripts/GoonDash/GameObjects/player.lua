@@ -22,6 +22,7 @@ function Player.New(data)
     player.width = data.width
     player.height = data.height
     player.rectangle = rectagle.New(data.x, player.y, data.width, data.height)
+    print("Player rectangle is " .. tostring(player.rectangle))
     player.playerController = playerController.New()
     -- Have to use closures to pass in self
     player.playerController.controller:BindFunction(controller.Buttons.Left, controller.ButtonStates.DownOrHeld,
@@ -32,15 +33,16 @@ function Player.New(data)
         function() player:MoveUp() end)
     player.playerController.controller:BindFunction(controller.Buttons.Down, controller.ButtonStates.DownOrHeld,
         function() player:MoveDown() end)
-    player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.Down,
+    player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.DownOrHeld,
         function() player:Jump() end)
-    player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.Held,
+    player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.DownOrHeld,
         function() player:JumpExtend() end)
     player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.Up,
         function() player:JumpEnd() end)
     player.gameobject.Game.Game.mainCamera:AttachToGameObject(player)
     -- Physics
     player.rigidbody = physics.AddBody(player.rectangle:SdlRect())
+    player.lastFrameOnGround = false
     player.onGround = false
     player.jumping = false
     player.jumpFrames = 0
@@ -68,7 +70,7 @@ function Player:GetLocation()
 end
 
 function Player:Jump()
-    if not self.onGround then return end
+    if not self.onGround or self.jumping then return end
     self.jumping = true
     self.jumpFrames = 1
     physics.AddForceToBody(self.rigidbody, 0, -120)
@@ -89,6 +91,14 @@ end
 
 function Player:Update()
     self.onGround = physics.BodyOnGround(self.rigidbody)
+    if self.onGround and not self.lastFrameOnGround then
+        self.jumping = false
+    end
+    self.lastFrameOnGround = self.onGround
+    -- if not self.onGround and physics.BodyOnGround(self.rigidbody) then
+    --     self.onGround = true
+    --     self.jumping = false
+    -- end
     local x, y = physics.GetBodyCoordinates(self.rigidbody)
     if x == nil then return end
     self.rectangle.x = x
@@ -97,7 +107,8 @@ end
 
 function Player:Draw()
     local drawRect = self.gameobject.Game.Game.mainCamera:GetCameraOffset(self.rectangle)
-    self.gameobject.Debug.DrawRect(drawRect:SdlRect())
+    -- self.gameobject.Debug.DrawRect(drawRect:SdlRect())
+    self.gameobject.Debug.DrawRect(drawRect:SdlRectInt())
 end
 
 Player.__index = Player

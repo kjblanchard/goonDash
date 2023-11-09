@@ -5,7 +5,7 @@ function Camera.New(screenSizePoint, mapSizePoint)
     local camera = setmetatable({}, Camera)
     camera.rectangle = rectangle.New(0,0, screenSizePoint.x, screenSizePoint.y)
     camera.mapBounds = {}
-    camera.mapBounds.x = mapSizePoint.x
+    camera.mapBounds.x = mapSizePoint.x + 1
     camera.mapBounds.y = mapSizePoint.y
     camera.followTarget = nil
     return camera
@@ -35,12 +35,14 @@ function Camera:Update()
         local offset = middleScreenX - diff
         self.rectangle.x = self.rectangle.x - offset
     end
-
+    if self.rectangle.x < 0 then self.rectangle.x = 0 end;
+    if self.rectangle.x + self.rectangle.width > self.mapBounds.x then self.rectangle.x = self.mapBounds.x - self.rectangle.width end
+    -- print("Camera X: " .. self.rectangle.x .. " Camera Y: " .. self.rectangle.y)
 end
 
 
 function Camera:GetCameraOffset(rect)
-    return rectangle.New(math.floor(rect.x - self.rectangle.x), math.floor(rect.y - self.rectangle.y), rect.width, rect.height)
+    return rectangle.New(rect.x - self.rectangle.x, rect.y - self.rectangle.y, rect.width, rect.height)
 end
 
 function Camera:AttachToGameObject(gameobject)

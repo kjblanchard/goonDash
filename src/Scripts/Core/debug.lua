@@ -4,6 +4,7 @@
 local Dbg = {}
 local goonDebug = require("GoonDebug")
 local goonDrawDebug = require("GoonDraw")
+local rectangle     = require("Core.rectangle")
 ---Sends a Debug message to the C logger
 ---@param message string message to send out
 function Dbg.Debug(message)
