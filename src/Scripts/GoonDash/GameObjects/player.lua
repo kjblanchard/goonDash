@@ -5,6 +5,8 @@ local playerController = require("Input.playerController")
 local rectagle = require("Core.rectangle")
 local physics = require("Core.physics")
 
+local MAX_JUMP_FRAMES = 15
+
 
 
 function Player.New(data)
@@ -34,20 +36,16 @@ function Player.New(data)
         function() player:Jump() end)
     player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.Held,
         function() player:JumpExtend() end)
+    player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.Up,
+        function() player:JumpEnd() end)
     player.gameobject.Game.Game.mainCamera:AttachToGameObject(player)
     -- Physics
     player.rigidbody = physics.AddBody(player.rectangle:SdlRect())
+    player.onGround = false
+    player.jumping = false
+    player.jumpFrames = 0
     return player
 end
-
--- function Player:KeepPlayerInLevelBounds()
--- local currentLevel = self.gameobject.Game.Game.currentLevel
--- local currentXnWidth = self.x + self.width
--- local localcurrentLevelX = currentLevel.sizeX
--- if self.x + self.width > currentLevel.sizeX then
---     self.x = currentLevel.sizeX - self.width
--- end
--- end
 
 function Player:MoveRight()
     physics.AddForceToBody(self.rigidbody, 10, 0)
@@ -70,13 +68,27 @@ function Player:GetLocation()
 end
 
 function Player:Jump()
+    if not self.onGround then return end
+    self.jumping = true
+    self.jumpFrames = 1
     physics.AddForceToBody(self.rigidbody, 0, -120)
 end
+
+function Player:JumpEnd() self.jumping = false end
+
 function Player:JumpExtend()
-    physics.AddForceToBody(self.rigidbody, 0, -10)
+    if not self.jumping then return end
+    if self.jumpFrames < MAX_JUMP_FRAMES then
+        physics.AddForceToBody(self.rigidbody, 0, -10)
+        self.jumpFrames = self.jumpFrames + 1
+    else
+        self.jumping = false
+    end
+
 end
 
 function Player:Update()
+    self.onGround = physics.BodyOnGround(self.rigidbody)
     local x, y = physics.GetBodyCoordinates(self.rigidbody)
     if x == nil then return end
     self.rectangle.x = x
@@ -84,11 +96,6 @@ function Player:Update()
 end
 
 function Player:Draw()
-    -- local screenPos = self.rectangle:SdlRect()
-    -- local cam = self.gameobject.Game.Game.mainCamera
-    -- screenPos.x = screenPos.x - cam.rectangle.x
-    -- screenPos.y = screenPos.y - cam.rectangle.y
-    -- self.gameobject.Debug.DrawRect(screenPos)
     local drawRect = self.gameobject.Game.Game.mainCamera:GetCameraOffset(self.rectangle)
     self.gameobject.Debug.DrawRect(drawRect:SdlRect())
 end

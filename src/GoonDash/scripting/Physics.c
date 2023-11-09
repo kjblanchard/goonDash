@@ -45,6 +45,22 @@ static int AddForceToBody(lua_State *L)
     return 0;
 }
 
+static int IsBodyOnGround(lua_State *L)
+{
+    // Arg1: Body num
+    // Return1: is on ground bool
+    int bodyNum = luaL_checkinteger(L, 1);
+    gpBody* body = gpSceneGetBody(bodyNum);
+    if(!body)
+    {
+        lua_pushboolean(L, 0);
+        return 1;
+    }
+    bool isOnGround = gpBodyIsOnGround(body);
+    lua_pushboolean(L, isOnGround);
+    return 1;
+}
+
 static int GetBodyCoordinates(lua_State *L)
 {
     // Arg1: Body num
@@ -71,6 +87,7 @@ static int luaopen_GoonPhysics(lua_State *L)
         {"AddStaticBody", AddStaticBodyToScene},
         {"GetBodyLocation", GetBodyCoordinates},
         {"AddBodyForce", AddForceToBody},
+        {"BodyOnGround", IsBodyOnGround},
         {NULL, NULL} // Sentinel value to indicate the end of the table
     };
     luaL_newlib(L, luaPhysicsLib);

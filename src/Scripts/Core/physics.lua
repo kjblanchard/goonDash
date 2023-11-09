@@ -24,5 +24,9 @@ function Physics.AddForceToBody(bodyNum, xForce, yForce)
     physics.AddBodyForce(bodyNum, xForce, yForce)
 end
 
+function Physics.BodyOnGround(bodyNum)
+    return physics.BodyOnGround(bodyNum)
+end
+
 Physics.__index = Physics
 return Physics
