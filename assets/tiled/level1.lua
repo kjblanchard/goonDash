@@ -9,7 +9,7 @@ return {
   tilewidth = 16,
   tileheight = 16,
   nextlayerid = 14,
-  nextobjectid = 163,
+  nextobjectid = 167,
   properties = {
     ["backup"] = {
       ["loopBegin"] = 20.397,
@@ -220,6 +220,48 @@ return {
           height = 32,
           rotation = 0,
           gid = 30,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 164,
+          name = "EnemyTest",
+          type = "Enemy",
+          shape = "rectangle",
+          x = 32,
+          y = 112,
+          width = 64,
+          height = 32,
+          rotation = 0,
+          gid = 203,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 165,
+          name = "EnemyTest",
+          type = "Enemy",
+          shape = "rectangle",
+          x = 160,
+          y = 112,
+          width = 64,
+          height = 32,
+          rotation = 0,
+          gid = 203,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 166,
+          name = "EnemyTest",
+          type = "Enemy",
+          shape = "rectangle",
+          x = 432,
+          y = 224,
+          width = 64,
+          height = 32,
+          rotation = 0,
+          gid = 203,
           visible = true,
           properties = {}
         }

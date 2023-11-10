@@ -13,8 +13,6 @@ end
 
 function Camera:GetRect()
     local dst = self.rectangle:SdlRect()
-    -- return self.rectangle.SdlRect(self.rectangle)
-    -- return self.rectangle.SdlRectInt(self.rectangle)
     return self.rectangle:SdlRectInt()
 end
 
@@ -37,7 +35,6 @@ function Camera:Update()
     end
     if self.rectangle.x < 0 then self.rectangle.x = 0 end;
     if self.rectangle.x + self.rectangle.width > self.mapBounds.x then self.rectangle.x = self.mapBounds.x - self.rectangle.width end
-    -- print("Camera X: " .. self.rectangle.x .. " Camera Y: " .. self.rectangle.y)
 end
 
 

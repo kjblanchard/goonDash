@@ -34,26 +34,33 @@ function Player.New(data)
     player.playerController.controller:BindFunction(controller.Buttons.Down, controller.ButtonStates.DownOrHeld,
         function() player:MoveDown() end)
     player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.DownOrHeld,
-        function() player:Jump() end)
+        function() player:TryJump() end)
     player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.DownOrHeld,
         function() player:JumpExtend() end)
     player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.Up,
         function() player:JumpEnd() end)
     player.gameobject.Game.Game.mainCamera:AttachToGameObject(player)
     -- Physics
-    player.rigidbody = physics.AddBody(player.rectangle:SdlRect())
+    player.rigidbody = physics.AddBody(player.rectangle:SdlRect(), player)
     player.lastFrameOnGround = false
     player.onGround = false
     player.jumping = false
     player.jumpFrames = 0
+
+    player.lastFrameOverlaps = {}
+    player.thisFrameOverlaps = {}
+
+    player.isDead = false
     return player
 end
 
 function Player:MoveRight()
+    if self.isDead then return end
     physics.AddForceToBody(self.rigidbody, 10, 0)
 end
 
 function Player:MoveLeft()
+    if self.isDead then return end
     physics.AddForceToBody(self.rigidbody, -10, 0)
 end
 
@@ -69,8 +76,12 @@ function Player:GetLocation()
     return { x = self.rectangle.x, y = self.rectangle.y }
 end
 
+function Player:TryJump()
+    if not self.onGround or self.jumping or self.isDead then return end
+    self:Jump()
+end
+
 function Player:Jump()
-    if not self.onGround or self.jumping then return end
     self.jumping = true
     self.jumpFrames = 1
     physics.AddForceToBody(self.rigidbody, 0, -120)
@@ -103,9 +114,43 @@ function Player:Update()
     if x == nil then return end
     self.rectangle.x = x
     self.rectangle.y = y
+
+    -- Try shallow copy
+    self.lastFrameOverlaps = self.thisFrameOverlaps
+    self.lastFrameOverlaps = {}
+    for key, value in pairs(self.thisFrameOverlaps) do
+        self.lastFrameOverlaps[key] = value
+    end
+    -- Try move
+    -- table.move(self.thisFrameOverlaps, 1, #self.thisFrameOverlaps, 1,  self.lastFrameOverlaps)
+    self.thisFrameOverlaps = {}
+
+    -- Handle overlap table to see if we are just overlapping
+    local enemiesOverlapped = physics.GetOverlappingBodiesByType(self.rigidbody, 2)
+    for i = 1, #enemiesOverlapped do
+        self.thisFrameOverlaps[enemiesOverlapped[i]] = true
+    end
+    -- Check to see if we are just overlapping with the enemy
+    for overlapBodyNum, _ in pairs(self.thisFrameOverlaps) do
+        local enemy = physics.GetGameObjectFromBodyNum(overlapBodyNum)
+        if enemy.isDead or self.lastFrameOverlaps[overlapBodyNum] then
+        else
+            local overlapDirection = physics.GetOverlapDirection(self.rigidbody, overlapBodyNum)
+            if overlapDirection == 1 then
+                -- if enemyY >= self.rectangle.y - self.rectangle.height  then
+                physics.SetBodyVelocity(self.rigidbody, nil, 0)
+                local enemy = physics.GetGameObjectFromBodyNum(overlapBodyNum)
+                enemy.isDead = true
+                self:Jump()
+            else
+                self.isDead = true
+            end
+        end
+    end
 end
 
 function Player:Draw()
+    if self.isDead then return end
     local drawRect = self.gameobject.Game.Game.mainCamera:GetCameraOffset(self.rectangle)
     -- self.gameobject.Debug.DrawRect(drawRect:SdlRect())
     self.gameobject.Debug.DrawRect(drawRect:SdlRectInt())
