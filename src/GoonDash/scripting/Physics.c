@@ -3,6 +3,7 @@
 #include <GoonDash/scripting/SdlRect.h>
 #include <GoonPhysics/GoonPhysics.h>
 #include <GoonPhysics/aabb.h>
+#include <GoonPhysics/overlap.h>
 
 static int AddBodyToScene(lua_State *L)
 {
@@ -59,10 +60,17 @@ static int GetOverlappingBodies(lua_State *L)
     int bodiesAdded = 0;
     for (size_t i = 0; i < body->numOverlappingBodies; i++)
     {
-        gpBody *overlapBody = body->overlappingBodies[i];
+        // gpBody *overlapBody = body->overlappingBodies[i];
+        gpBody *overlapBody = body->overlaps[i]->overlapBody;
+        int direction = body->overlaps[i]->overlapDirection;
         if (overlapBody->bodyType != bodyType)
             continue;
+        // Create a new table
+        lua_newtable(L);
         lua_pushnumber(L, overlapBody->bodyNum);
+        lua_setfield(L, -2, "body");
+        lua_pushnumber(L, direction);
+        lua_setfield(L, -2, "direction");
         lua_rawseti(L, tableListLoc, ++bodiesAdded);
     }
     return 1;

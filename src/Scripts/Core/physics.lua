@@ -46,6 +46,7 @@ function Physics.BodyOnGround(bodyNum)
     return physics.BodyOnGround(bodyNum)
 end
 
+-- Tabke you get back has a body and direction key/value for each.
 function Physics.GetOverlappingBodiesByType(bodyNum, bodyType)
     return physics.GetOverlappingBodies(bodyNum, bodyType)
 end
