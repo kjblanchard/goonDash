@@ -4,8 +4,12 @@ local controller = require("Input.controller")
 local playerController = require("Input.playerController")
 local rectagle = require("Core.rectangle")
 local physics = require("Core.physics")
+local sound = require("Core.sound")
 
 local MAX_JUMP_FRAMES = 15
+
+sound.LoadSfx("jump")
+sound.LoadSfx("death")
 
 
 
@@ -85,6 +89,7 @@ function Player:Jump()
     self.jumping = true
     self.jumpFrames = 1
     physics.AddForceToBody(self.rigidbody, 0, -120)
+    sound.PlaySfx("jump")
 end
 
 function Player:JumpEnd() self.jumping = false end
@@ -128,16 +133,17 @@ function Player:Update()
     -- Handle overlap table to see if we are just overlapping
     local enemiesOverlapped = physics.GetOverlappingBodiesByType(self.rigidbody, 2)
     for i = 1, #enemiesOverlapped do
-        self.thisFrameOverlaps[enemiesOverlapped[i].body] = true
+        self.thisFrameOverlaps[enemiesOverlapped[i].body] = enemiesOverlapped[i].direction
     end
     -- Check to see if we are just overlapping with the enemy
-    for overlapBodyNum, _ in pairs(self.thisFrameOverlaps) do
+    for overlapBodyNum, overlapBodyDirection in pairs(self.thisFrameOverlaps) do
         local enemy = physics.GetGameObjectFromBodyNum(overlapBodyNum)
         if enemy.isDead or self.lastFrameOverlaps[overlapBodyNum] then
         else
             -- local overlapDirection = physics.GetOverlapDirection(self.rigidbody, overlapBodyNum)
-            local overlapDirection = enemiesOverlapped[overlapBodyNum].direction
-            if overlapDirection == 3 then
+            print("Overlap direction is " .. overlapBodyDirection)
+
+            if overlapBodyDirection == 3 then
                 -- if enemyY >= self.rectangle.y - self.rectangle.height  then
                 physics.SetBodyVelocity(self.rigidbody, nil, 0)
                 local enemy = physics.GetGameObjectFromBodyNum(overlapBodyNum)
@@ -145,6 +151,7 @@ function Player:Update()
                 self:Jump()
             else
                 self.isDead = true
+                sound.PlaySfx("death")
             end
         end
     end

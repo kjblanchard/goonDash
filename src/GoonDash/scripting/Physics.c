@@ -72,6 +72,7 @@ static int GetOverlappingBodies(lua_State *L)
         lua_pushnumber(L, direction);
         lua_setfield(L, -2, "direction");
         lua_rawseti(L, tableListLoc, ++bodiesAdded);
+        LogWarn("Getting direction and it is %d", direction);
     }
     return 1;
 }
