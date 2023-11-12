@@ -86,6 +86,7 @@ function Player:TryJump()
 end
 
 function Player:Jump()
+    if self.isDead then return end
     self.jumping = true
     self.jumpFrames = 1
     physics.AddForceToBody(self.rigidbody, 0, -120)
@@ -106,6 +107,7 @@ function Player:JumpExtend()
 end
 
 function Player:Update()
+    if self.isDead then return end
     self.onGround = physics.BodyOnGround(self.rigidbody)
     if self.onGround and not self.lastFrameOnGround then
         self.jumping = false
@@ -133,7 +135,10 @@ function Player:Update()
     -- Handle overlap table to see if we are just overlapping
     local enemiesOverlapped = physics.GetOverlappingBodiesByType(self.rigidbody, 2)
     for i = 1, #enemiesOverlapped do
-        self.thisFrameOverlaps[enemiesOverlapped[i].body] = enemiesOverlapped[i].direction
+        -- Prevent multiple overlaps from happening in lua
+        -- if not self.thisFrameOverlaps[enemiesOverlapped[i].body] then
+            self.thisFrameOverlaps[enemiesOverlapped[i].body] = enemiesOverlapped[i].direction
+        -- end
     end
     -- Check to see if we are just overlapping with the enemy
     for overlapBodyNum, overlapBodyDirection in pairs(self.thisFrameOverlaps) do
