@@ -40,7 +40,6 @@ function Game:Start()
     for _, solid in ipairs(solidObjects) do
         local bodiOffsetX = solid.x
         local bodyOffsetY = solid.y
-        print("X: " .. bodiOffsetX .. " Y: " .. bodyOffsetY)
 
         local minX, maxX, minY, maxY = 0, 0, 0, 0
         for _, point in ipairs(solid.polygon) do

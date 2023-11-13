@@ -17,10 +17,6 @@ function Physics.AddBody(bodyRect, object,  bodyType)
     bodyType = bodyType or 1
     local bodyNum = physics.AddBody(bodyRect, bodyType)
     Physics.BodyToGameObject[bodyNum] = object
-    for key, value in pairs(Physics.BodyToGameObject) do
-        print("Body num is " .. key .. " and body table is " .. tostring(value) )
-
-    end
     return bodyNum
 end
 
@@ -62,6 +58,10 @@ function Physics.SetBodyVelocity(bodyNum, velX, velY)
         velY = velY or CVelY
     end
     return physics.SetBodyVelocity(bodyNum, velX, velY)
+end
+
+function Physics.ToggleBodyGravity(bodyNum, gravityEnabled)
+    physics.SetBodyGravity(bodyNum, gravityEnabled)
 end
 
 Physics.__index = Physics

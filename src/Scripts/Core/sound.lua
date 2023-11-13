@@ -40,7 +40,6 @@ function Sound.RestartBgm()
         debug.Warn("Could not restart " .. currentPlayingBgm .. " as it isn't loaded!")
         return
     end
-    print("Going to restart the bgm")
     sound.PlayBgm(loadedBgms[currentPlayingBgm], settings.bgmVolume)
 end
 

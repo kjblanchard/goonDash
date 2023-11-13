@@ -15,7 +15,6 @@ static int AddBodyToScene(lua_State *L)
     gpBB bb = gpBBNew(bodySdlRect.x, bodySdlRect.y, bodySdlRect.w, bodySdlRect.h);
     gpBody *body = gpBodyNew(bb);
     int bodyNum = gpSceneAddBody(body);
-    printf("Body just added to scene is %d", bodyNum);
     body->bodyType = bodyType;
     lua_pushinteger(L, bodyNum);
     return 1;

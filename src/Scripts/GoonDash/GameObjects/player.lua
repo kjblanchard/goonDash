@@ -10,6 +10,7 @@ local MAX_JUMP_FRAMES = 15
 
 sound.LoadSfx("jump")
 sound.LoadSfx("death")
+sound.LoadSfx("win")
 
 
 
@@ -26,13 +27,9 @@ function Player.New(data)
         function() player:MoveLeft() end)
     player.playerController.controller:BindFunction(controller.Buttons.Right, controller.ButtonStates.DownOrHeld,
         function() player:MoveRight() end)
-    player.playerController.controller:BindFunction(controller.Buttons.Up, controller.ButtonStates.DownOrHeld,
-        function() player:MoveUp() end)
-    player.playerController.controller:BindFunction(controller.Buttons.Down, controller.ButtonStates.DownOrHeld,
-        function() player:MoveDown() end)
-    player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.DownOrHeld,
+    player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.Down,
         function() player:TryJump() end)
-    player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.DownOrHeld,
+    player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.Down,
         function() player:RestartMap() end)
     player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.DownOrHeld,
         function() player:JumpExtend() end)
@@ -51,21 +48,13 @@ function Player.New(data)
 end
 
 function Player:MoveRight()
-    if self.isDead then return end
+    if self.isDead or self.win then return end
     physics.AddForceToBody(self.rigidbody, 10, 0)
 end
 
 function Player:MoveLeft()
-    if self.isDead then return end
+    if self.isDead or self.win then return end
     physics.AddForceToBody(self.rigidbody, -10, 0)
-end
-
-function Player:MoveUp()
-    -- physics.AddForceToBody(self.rigidbody, 0, -10)
-end
-
-function Player:MoveDown()
-    -- physics.AddForceToBody(self.rigidbody, 0, 10)
 end
 
 function Player:GetLocation()
@@ -73,12 +62,12 @@ function Player:GetLocation()
 end
 
 function Player:TryJump()
-    if not self.onGround or self.jumping or self.isDead then return end
+    if not self.onGround or self.jumping or self.isDead or self.win then return end
     self:Jump()
 end
 
 function Player:Jump()
-    if self.isDead then return end
+    -- if self.isDead then return end
     self.jumping = true
     self.jumpFrames = 1
     physics.AddForceToBody(self.rigidbody, 0, -120)
@@ -99,21 +88,20 @@ function Player:JumpExtend()
 end
 
 function Player:RestartMap()
-    if not self.isDead then return end
-    self.gameobject.Game.Game:Restart()
+    -- if not self.isDead or not self.win then return end
+    -- if not self.isDead or not self.win then return end
+    if self.isDead or self.win then
+        self.gameobject.Game.Game:Restart()
+    end
 end
 
 function Player:Update()
-    if self.isDead then return end
+    if self.isDead or self.win then return end
     self.onGround = physics.BodyOnGround(self.rigidbody)
     if self.onGround and not self.lastFrameOnGround then
         self.jumping = false
     end
     self.lastFrameOnGround = self.onGround
-    -- if not self.onGround and physics.BodyOnGround(self.rigidbody) then
-    --     self.onGround = true
-    --     self.jumping = false
-    -- end
     local x, y = physics.GetBodyCoordinates(self.rigidbody)
     if x == nil then return end
     self.rectangle.x = x
@@ -125,35 +113,81 @@ function Player:Update()
     for key, value in pairs(self.thisFrameOverlaps) do
         self.lastFrameOverlaps[key] = value
     end
-    -- Try move
-    -- table.move(self.thisFrameOverlaps, 1, #self.thisFrameOverlaps, 1,  self.lastFrameOverlaps)
+    -- Overlaps
     self.thisFrameOverlaps = {}
+    self:HandleEnemyOverlap()
+    self:HandleDeathboxOverlap()
+    self:HandleWinboxOverlap()
+end
 
+function Player:HandleEnemyOverlap()
     -- Handle overlap table to see if we are just overlapping
-    local enemiesOverlapped = physics.GetOverlappingBodiesByType(self.rigidbody, 2)
+    local enemyBodyType = 2
+    local enemiesOverlapped = physics.GetOverlappingBodiesByType(self.rigidbody, enemyBodyType)
+    if not #enemiesOverlapped then return end
     for i = 1, #enemiesOverlapped do
-        -- Prevent multiple overlaps from happening in lua
-        -- if not self.thisFrameOverlaps[enemiesOverlapped[i].body] then
-        self.thisFrameOverlaps[enemiesOverlapped[i].body] = enemiesOverlapped[i].direction
-        -- end
+        self.thisFrameOverlaps[enemiesOverlapped[i].body] = { direction = enemiesOverlapped[i].direction,
+            type = enemyBodyType }
     end
     -- Check to see if we are just overlapping with the enemy
-    for overlapBodyNum, overlapBodyDirection in pairs(self.thisFrameOverlaps) do
-        local enemy = physics.GetGameObjectFromBodyNum(overlapBodyNum)
-        if enemy.isDead or self.lastFrameOverlaps[overlapBodyNum] then
-        else
-            -- local overlapDirection = physics.GetOverlapDirection(self.rigidbody, overlapBodyNum)
-            print("Overlap direction is " .. overlapBodyDirection)
+    for overlapBodyNum, overlapBodyTable in pairs(self.thisFrameOverlaps) do
+        if overlapBodyTable.type == enemyBodyType then
+            local enemy = physics.GetGameObjectFromBodyNum(overlapBodyNum)
+            if enemy.isDead or self.lastFrameOverlaps[overlapBodyNum] then
+            else
 
-            if overlapBodyDirection == 3 then
-                -- if enemyY >= self.rectangle.y - self.rectangle.height  then
-                physics.SetBodyVelocity(self.rigidbody, nil, 0)
-                local enemy = physics.GetGameObjectFromBodyNum(overlapBodyNum)
-                enemy.isDead = true
-                self:Jump()
+                if overlapBodyTable.direction == 3 then
+                    -- if enemyY >= self.rectangle.y - self.rectangle.height  then
+                    physics.SetBodyVelocity(self.rigidbody, nil, 0)
+                    local enemy = physics.GetGameObjectFromBodyNum(overlapBodyNum)
+                    enemy.isDead = true
+                    self:Jump()
+                else
+                    self.isDead = true
+                    sound.PlaySfx("death")
+                end
+            end
+        end
+    end
+end
+
+function Player:HandleDeathboxOverlap()
+    -- Handle overlap table to see if we are just overlapping
+    local enemyBodyType = 3
+    local enemiesOverlapped = physics.GetOverlappingBodiesByType(self.rigidbody, enemyBodyType)
+    if not #enemiesOverlapped then return end
+    for i = 1, #enemiesOverlapped do
+        self.thisFrameOverlaps[enemiesOverlapped[i].body] = { direction = enemiesOverlapped[i].direction,
+            type = enemyBodyType }
+    end
+    -- Check to see if we are just overlapping with the enemy
+    for overlapBodyNum, overlapBodyTable in pairs(self.thisFrameOverlaps) do
+        if overlapBodyTable.type == enemyBodyType then
+            if self.lastFrameOverlaps[overlapBodyNum] then
             else
                 self.isDead = true
                 sound.PlaySfx("death")
+            end
+        end
+    end
+end
+
+function Player:HandleWinboxOverlap()
+    -- Handle overlap table to see if we are just overlapping
+    local enemyBodyType = 4
+    local enemiesOverlapped = physics.GetOverlappingBodiesByType(self.rigidbody, enemyBodyType)
+    if not #enemiesOverlapped then return end
+    for i = 1, #enemiesOverlapped do
+        self.thisFrameOverlaps[enemiesOverlapped[i].body] = { direction = enemiesOverlapped[i].direction,
+            type = enemyBodyType }
+    end
+    -- Check to see if we are just overlapping with the enemy
+    for overlapBodyNum, overlapBodyTable in pairs(self.thisFrameOverlaps) do
+        if overlapBodyTable.type == enemyBodyType then
+            if self.lastFrameOverlaps[overlapBodyNum] then
+            else
+                self.win = true
+                sound.PlaySfx("win")
             end
         end
     end
@@ -170,6 +204,7 @@ function Player:Restart()
     self.lastFrameOverlaps = {}
     self.thisFrameOverlaps = {}
     self.isDead = false
+    self.win = false
 end
 
 function Player:Draw()
