@@ -5,10 +5,10 @@
     },
     "activeFile": "level1.tmx",
     "expandedProjectPaths": [
-        "/Users/kevin/Documents/tiled",
         "/Users/kevin/Documents/tiled/sdl_dash/tilesets",
         "templates",
-        "."
+        ".",
+        "/Users/kevin/Documents/tiled"
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
@@ -66,8 +66,8 @@
             "scale": 1.5,
             "selectedLayer": 5,
             "viewCenter": {
-                "x": -53,
-                "y": 64.33333333333331
+                "x": -52,
+                "y": 64.66666666666666
             }
         },
         "terrain.tsx": {

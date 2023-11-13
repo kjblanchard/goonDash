@@ -75,10 +75,10 @@ static int BgmPlay(lua_State *L)
         LogError("Pointer passed to playbgm is not able to be casted to a bgm");
         return 0;
     }
+    int result = PreLoadBgm(bgm);
     PlayBgm(bgm, volume);
     return 0;
 }
-
 
 static int DestroyBgm(lua_State *L)
 {

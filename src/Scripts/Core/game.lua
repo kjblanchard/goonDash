@@ -42,25 +42,25 @@ function Game:Start()
         local bodyOffsetY = solid.y
         print("X: " .. bodiOffsetX .. " Y: " .. bodyOffsetY)
 
-        local minX, maxX, minY, maxY = 0,0,0,0
+        local minX, maxX, minY, maxY = 0, 0, 0, 0
         for _, point in ipairs(solid.polygon) do
             if point.x < minX then
-              minX = point.x
+                minX = point.x
             end
             if point.x > maxX then
-              maxX = point.x
+                maxX = point.x
             end
             if point.y < minY then
-              minY = point.y
+                minY = point.y
             end
             if point.y > maxY then
-              maxY = point.y
+                maxY = point.y
             end
-          end
+        end
 
-          -- Calculate width and height
-          local width = maxX - minX
-          local height = maxY - minY
+        -- Calculate width and height
+        local width = maxX - minX
+        local height = maxY - minY
 
         local body = rectangle.New(bodiOffsetX, bodyOffsetY, width, height)
         physics.AddStaticBody(body:SdlRect())
@@ -84,7 +84,12 @@ end
 function Game:Draw()
     currentLevel:DrawBackground(self.mainCamera)
     gameObjectMap.Draw()
+end
 
+function Game:Restart()
+    gameObjectMap.Restart()
+    sound.RestartBgm()
+    self.mainCamera:Update()
 end
 
 function Game:UpdateCamera()

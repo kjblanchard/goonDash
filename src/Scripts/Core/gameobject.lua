@@ -25,6 +25,11 @@ end
 function GameObject:Draw()
 end
 
+---Restarts the gameobject, likely used when you need to reload the scene.
+function GameObject:Restart()
+
+end
+
 ---Attach a controller to this gameobject.
 ---comment
 ---@param controller table the controller that will be used

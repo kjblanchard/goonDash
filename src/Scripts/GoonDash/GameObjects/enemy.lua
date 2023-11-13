@@ -9,20 +9,23 @@ function Enemy.New(data)
     enemy.gameobject.Update = Enemy.Update
     enemy.gameobject.GetLocation = Enemy.GetLocation
     enemy.gameobject.Draw = Enemy.Draw
-    enemy.x = data.x
-    enemy.width = data.width
-    enemy.height = data.height
-    enemy.rectangle = rectagle.New(data.x, data.y, data.width, data.height)
-    print("Enemy rectangle is " .. tostring(enemy.rectangle))
-    -- Physics
-    enemy.rigidbody = physics.AddBody(enemy.rectangle:SdlRect(), enemy, 2)
-    print("Enemy rigidbody is " .. enemy.rigidbody)
-    enemy.isDead = false
+    enemy.gameobject.Restart = Enemy.Restart
+    enemy.startLoc = rectagle.New(data.x, data.y, data.width, data.height)
+    enemy.rigidbody = physics.AddBody(enemy.startLoc:SdlRect(), enemy, 2)
+
+    Enemy.Restart(enemy)
     return enemy
 end
 
 function Enemy:GetLocation()
     return { x = self.rectangle.x, y = self.rectangle.y }
+end
+
+function Enemy:Restart()
+    self.rectangle = rectagle.New(self.startLoc.x, self.startLoc.y, self.startLoc.width, self.startLoc.height)
+    physics.SetBodyCoordinates(self.rigidbody, self.rectangle.x, self.rectangle.y)
+    physics.SetBodyVelocity(self.rigidbody, 0, 0)
+    self.isDead = false
 end
 
 

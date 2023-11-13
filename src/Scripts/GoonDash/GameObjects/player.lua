@@ -15,20 +15,13 @@ sound.LoadSfx("death")
 
 function Player.New(data)
     local player = setmetatable({}, Player)
+    player.name = data.name
     player.gameobject = gameObject.New()
     player.gameobject.Update = Player.Update
     player.gameobject.GetLocation = Player.GetLocation
     player.gameobject.Draw = Player.Draw
-    player.name = data.name
-    player.x = data.x
-    -- Currently theres an offset in tiled on the player spawn, this was due to tiled tsx tiles and their position.
-    -- player.y = data.y - data.height
-    player.width = data.width
-    player.height = data.height
-    player.rectangle = rectagle.New(data.x, player.y, data.width, data.height)
-    print("Player rectangle is " .. tostring(player.rectangle))
+    player.gameobject.Restart = Player.Restart
     player.playerController = playerController.New()
-    -- Have to use closures to pass in self
     player.playerController.controller:BindFunction(controller.Buttons.Left, controller.ButtonStates.DownOrHeld,
         function() player:MoveLeft() end)
     player.playerController.controller:BindFunction(controller.Buttons.Right, controller.ButtonStates.DownOrHeld,
@@ -40,21 +33,20 @@ function Player.New(data)
     player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.DownOrHeld,
         function() player:TryJump() end)
     player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.DownOrHeld,
+        function() player:RestartMap() end)
+    player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.DownOrHeld,
         function() player:JumpExtend() end)
     player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.Up,
         function() player:JumpEnd() end)
     player.gameobject.Game.Game.mainCamera:AttachToGameObject(player)
-    -- Physics
-    player.rigidbody = physics.AddBody(player.rectangle:SdlRect(), player)
-    player.lastFrameOnGround = false
-    player.onGround = false
-    player.jumping = false
-    player.jumpFrames = 0
 
-    player.lastFrameOverlaps = {}
-    player.thisFrameOverlaps = {}
+    player.startLoc = rectagle.New(data.x, data.y, data.width, data.height)
+    player.rigidbody = physics.AddBody(player.startLoc:SdlRect(), player)
 
-    player.isDead = false
+    -- Setup Player for initial scene
+    Player.Restart(player)
+
+    -- Return the instantiated player
     return player
 end
 
@@ -106,6 +98,11 @@ function Player:JumpExtend()
 
 end
 
+function Player:RestartMap()
+    if not self.isDead then return end
+    self.gameobject.Game.Game:Restart()
+end
+
 function Player:Update()
     if self.isDead then return end
     self.onGround = physics.BodyOnGround(self.rigidbody)
@@ -137,7 +134,7 @@ function Player:Update()
     for i = 1, #enemiesOverlapped do
         -- Prevent multiple overlaps from happening in lua
         -- if not self.thisFrameOverlaps[enemiesOverlapped[i].body] then
-            self.thisFrameOverlaps[enemiesOverlapped[i].body] = enemiesOverlapped[i].direction
+        self.thisFrameOverlaps[enemiesOverlapped[i].body] = enemiesOverlapped[i].direction
         -- end
     end
     -- Check to see if we are just overlapping with the enemy
@@ -162,10 +159,22 @@ function Player:Update()
     end
 end
 
+function Player:Restart()
+    self.rectangle = rectagle.New(self.startLoc.x, self.startLoc.y, self.startLoc.width, self.startLoc.height)
+    physics.SetBodyCoordinates(self.rigidbody, self.rectangle.x, self.rectangle.y)
+    physics.SetBodyVelocity(self.rigidbody, 0, 0)
+    self.lastFrameOnGround = false
+    self.onGround = false
+    self.jumping = false
+    self.jumpFrames = 0
+    self.lastFrameOverlaps = {}
+    self.thisFrameOverlaps = {}
+    self.isDead = false
+end
+
 function Player:Draw()
     if self.isDead then return end
     local drawRect = self.gameobject.Game.Game.mainCamera:GetCameraOffset(self.rectangle)
-    -- self.gameobject.Debug.DrawRect(drawRect:SdlRect())
     self.gameobject.Debug.DrawRect(drawRect:SdlRectInt())
 end
 

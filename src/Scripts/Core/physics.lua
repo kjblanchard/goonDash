@@ -34,6 +34,10 @@ function Physics.GetBodyCoordinates(bodyNum)
     return x, y
 end
 
+function Physics.SetBodyCoordinates(bodyNum, x, y)
+    physics.SetBodyLocation(bodyNum, x, y)
+end
+
 function Physics.GetOverlapDirection(bodyNum, overlapBodyNumb)
     return physics.GetOverlapDirection(bodyNum, overlapBodyNumb)
 end
