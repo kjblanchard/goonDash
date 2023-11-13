@@ -4,6 +4,8 @@
 #include <GoonDash/input/keyboard.h>
 #include <SupergoonSound/include/sound.h>
 
+#include <GoonPhysics/GoonPhysics.h>
+
 // EMSCRIPTEN
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -14,6 +16,7 @@
 static SDL_Event event;
 static lua_State *L;
 static bool shouldQuit = false;
+static gpScene *scene;
 
 // TODO this should be different, it is inside of SDLwindow.c
 extern SDL_Renderer *g_pRenderer;
@@ -64,6 +67,9 @@ static int loop_func()
 #else
     UpdateSound();
 #endif
+
+    // Update physics
+    gpSceneUpdate(scene, 1 / (float)60);
     // Lua Update
     CallEngineLuaFunction(L, "Update");
     // Rendering
@@ -85,6 +91,9 @@ static void loop_wrap()
 
 int main()
 {
+    // Testing out Physics
+    scene = gpInitScene();
+    gpSceneSetGravity(scene, 300);
     // Initialize Engine
     InitializeDebugLogFile();
     InitializeLua();

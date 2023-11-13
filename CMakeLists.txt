@@ -102,6 +102,14 @@ if(MACOS AND NOT GOON_FULL_MACOS_BUILD)
         REQUIRED)
     set(LUA_LIBRARIES ${LIB_LUA})
 
+    # Disable this for now so that we always build it.
+    # find_library(LIB_GOONPHYSICS
+    # NAMES libgoonphysics.a libgoonPhysics.a
+    # HINTS /usr/local/lib
+    # REQUIRED)
+    # set(GOONPHYSICS_LIBRARIES ${LIB_GOONPHYSICS})
+    add_subdirectory(./external/goonPhysics)
+
     if(GOON_DEBUG_LUA)
         find_library(LIB_SOCKET
             NAMES socket-3.0.0.so
@@ -111,13 +119,7 @@ if(MACOS AND NOT GOON_FULL_MACOS_BUILD)
             REQUIRED)
     endif(GOON_DEBUG_LUA)
 
-    # find_library(LIB_GOONSOUND
-    #     NAMES libsupergoonSound libsupergoonSound.a supergoonSound supergoonSound.a
-    #     HINTS /usr/local/lib
-    #     REQUIRED)
-    # set(GOONSOUND_LIBRARIES ${LIB_GOONSOUND})
-
-add_subdirectory(./external/sg_sound)
+    add_subdirectory(./external/sg_sound)
 
 # Build everything, useful for runners, and builds we don't care take a little longer.
 else()
@@ -137,8 +139,9 @@ else()
         add_subdirectory(./external/SDL_image EXCLUDE_FROM_ALL)
         add_subdirectory(./external/Lua EXCLUDE_FROM_ALL)
         add_subdirectory(./external/sg_sound)
+        add_subdirectory(./external/goonPhysics)
 
-        target_link_libraries(SupergoonDash PRIVATE lua_static)
+        target_link_libraries(SupergoonDash PRIVATE lua_static goonPhysics)
     else()
         message(STATUS "Could not init git for some reason")
     endif()
@@ -236,15 +239,36 @@ if(TARGET SDL2::SDL2-static)
     target_link_libraries(SupergoonDash PRIVATE SDL2::SDL2-static)
 endif(TARGET SDL2::SDL2-static)
 
+if(TARGET goonPhysics)
+    target_link_libraries(SupergoonDash PRIVATE goonPhysics)
+    target_include_directories(SupergoonDash PUBLIC
+        external/goonPhysics/include/
+    )
+endif(TARGET goonPhysics)
+
+# Always add goonphysics include instead of using the installed one for now
+target_include_directories(SupergoonDash PUBLIC
+    external/goonPhysics/include/
+)
+
+if(TARGET supergoonSound)
+    target_link_libraries(SupergoonDash PRIVATE supergoonSound)
+    target_include_directories(SupergoonDash PUBLIC
+        external/sg_sound/src/
+    )
+endif(TARGET supergoonSound)
+
 # Link to the actual SDL2 library. SDL2::SDL2 is the shared SDL library, SDL2::SDL2-static is the static SDL libarary.
 target_link_libraries(SupergoonDash
     PUBLIC
     PRIVATE
-    SDL2::SDL2-static
+
+    # SDL2::SDL2-static
     SDL2_image::SDL2_image-static
     ${LUA_LIBRARIES}
     ${GOONSOUND_LIBRARIES}
     ${LIB_SOCKET}
+    ${GOONPHYSICS_LIBRARIES}
 )
 target_link_directories(SupergoonDash
     PRIVATE
@@ -254,14 +278,7 @@ target_link_directories(SupergoonDash
 target_include_directories(SupergoonDash
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/
-    ${LUA_INCLUDE_DIR}
 )
-
-# Supergoon sound
-target_link_libraries(SupergoonDash
-    PUBLIC
-    supergoonSound)
-target_include_directories(SupergoonDash PUBLIC external/sg_sound/src)
 
 # #########################################
 # Install

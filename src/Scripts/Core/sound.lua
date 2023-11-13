@@ -6,6 +6,7 @@ local sound = require("Sound")
 local debug = require("Core.debug")
 local settings = require("settings")
 local loadedBgms = {}
+local loadedSfx = {}
 local filePath = "assets/audio/"
 local currentPlayingBgm = ""
 
@@ -29,9 +30,30 @@ function Sound.Play(filename)
         debug.Warn("Could not play " .. filename .. " as it isn't loaded!")
         return
     end
-    sound.PlayBgm(loadedBgms[filename], settings.volume)
+    sound.PlayBgm(loadedBgms[filename], settings.bgmVolume)
     currentPlayingBgm = filename
 end
+
+---Loads a function into the table if it isn't already loaded
+---@param filename string The name that we should load
+function Sound.LoadSfx(filename)
+    if loadedSfx[filename] ~= nil then return end
+    local fullFilepath = filePath .. filename .. ".ogg"
+    local sfx = sound.LoadSfx(fullFilepath)
+    if sfx == nil then return end
+    loadedSfx[filename] = sfx
+end
+
+---Plays a Bgm, this will preload some data automatically.
+---@param filename string The filename we should play
+function Sound.PlaySfx(filename)
+    if loadedSfx[filename] == nil then
+        debug.Warn("Could not play sound " .. filename .. " as it isn't loaded!")
+        return
+    end
+    sound.PlaySfx(loadedSfx[filename], settings.sfxVolume)
+end
+
 
 ---Destroys a BGM that is loaded
 ---@param filename string The bgm to destroy
