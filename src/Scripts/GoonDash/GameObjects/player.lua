@@ -7,6 +7,9 @@ local physics = require("Core.physics")
 local sound = require("Core.sound")
 
 local MAX_JUMP_FRAMES = 15
+local leftRightBaseSpeed = 1000
+local initialJumpSpeed = -15000
+local extendJumpSpeed = -1500
 
 sound.LoadSfx("jump")
 sound.LoadSfx("death")
@@ -49,12 +52,15 @@ end
 
 function Player:MoveRight()
     if self.isDead or self.win then return end
-    physics.AddForceToBody(self.rigidbody, 10, 0)
+    -- print(Lua.DeltaTime)
+    local forceX = leftRightBaseSpeed * Lua.DeltaTime
+    physics.AddForceToBody(self.rigidbody, forceX, 0)
 end
 
 function Player:MoveLeft()
     if self.isDead or self.win then return end
-    physics.AddForceToBody(self.rigidbody, -10, 0)
+    local forceX = -leftRightBaseSpeed * Lua.DeltaTime
+    physics.AddForceToBody(self.rigidbody, forceX, 0)
 end
 
 function Player:GetLocation()
@@ -70,7 +76,7 @@ function Player:Jump()
     -- if self.isDead then return end
     self.jumping = true
     self.jumpFrames = 1
-    physics.AddForceToBody(self.rigidbody, 0, -120)
+    physics.AddForceToBody(self.rigidbody, 0, initialJumpSpeed * Lua.DeltaTime)
     sound.PlaySfx("jump")
 end
 
@@ -79,7 +85,7 @@ function Player:JumpEnd() self.jumping = false end
 function Player:JumpExtend()
     if not self.jumping then return end
     if self.jumpFrames < MAX_JUMP_FRAMES then
-        physics.AddForceToBody(self.rigidbody, 0, -10)
+        physics.AddForceToBody(self.rigidbody, 0, extendJumpSpeed * Lua.DeltaTime)
         self.jumpFrames = self.jumpFrames + 1
     else
         self.jumping = false
