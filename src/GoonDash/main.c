@@ -69,19 +69,22 @@ static int loop_func()
     shouldQuit = sdlEventLoop();
     if (shouldQuit)
         return 0;
-
-    float deltaTime = 1 / (float)g_refreshRate;
+    // TODO make these static and pass into as ref to stop allocations
+    // Initialize time this frame
+    double deltaTimeSeconds = 1 / (double)g_refreshRate;
+    double deltaTimeMs = 1000 / (double)g_refreshRate;
+    if (msBuildup < deltaTimeMs)
+        return true;
+    SetLuaTableValue(L, "Lua", "DeltaTime", (void *)&deltaTimeSeconds, gLuaTableNumber);
     UpdateSound();
-    SetLuaTableValue(L, "Lua", "DeltaTime", (void *)&deltaTime, gLuaTableNumber);
+
 
     // Run Update and update physics as many times as needed
-    // printf("Buildup is %f and refresh rate is %d and check is %f \n", msBuildup, g_refreshRate, 1000.0f / g_refreshRate);
-    while (msBuildup > 1000.0f / g_refreshRate)
+    while (msBuildup >= deltaTimeMs)
     {
-        // printf("Updating here");
-        gpSceneUpdate(scene, 1 / (float)g_refreshRate);
+        gpSceneUpdate(scene, deltaTimeSeconds);
         CallEngineLuaFunction(L, "Update");
-        msBuildup -= 1000.0f / g_refreshRate;
+        msBuildup -= deltaTimeMs;
     }
 
     // Draw after we are caught up

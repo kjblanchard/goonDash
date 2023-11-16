@@ -90,6 +90,7 @@ static int AddForceToBody(lua_State *L)
     }
     body->velocity.x += forceX;
     body->velocity.y += forceY;
+    LogWarn("New velocity is %f : %f", body->velocity.x, body->velocity.y);
     return 0;
 }
 

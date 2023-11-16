@@ -6,10 +6,10 @@ local rectagle = require("Core.rectangle")
 local physics = require("Core.physics")
 local sound = require("Core.sound")
 
-local MAX_JUMP_FRAMES = 15
+local MAX_JUMP_LENGTH_SECONDS = 0.45
 local leftRightBaseSpeed = 1000
-local initialJumpSpeed = -15000
-local extendJumpSpeed = -1500
+local initialJumpSpeed = -110
+local extendJumpSpeed = -250
 
 sound.LoadSfx("jump")
 sound.LoadSfx("death")
@@ -43,6 +43,7 @@ function Player.New(data)
     player.startLoc = rectagle.New(data.x, data.y, data.width, data.height)
     player.rigidbody = physics.AddBody(player.startLoc:SdlRect(), player)
 
+
     -- Setup Player for initial scene
     Player.Restart(player)
 
@@ -52,15 +53,16 @@ end
 
 function Player:MoveRight()
     if self.isDead or self.win then return end
-    -- print(Lua.DeltaTime)
-    local forceX = leftRightBaseSpeed * Lua.DeltaTime
-    physics.AddForceToBody(self.rigidbody, forceX, 0)
+    local forceX = leftRightBaseSpeed
+    print("Deltatime is " .. Lua.DeltaTime,
+        " Force is " .. leftRightBaseSpeed .. " and the amount to add to force is " .. forceX)
+    physics.AddForceToBody(self.rigidbody, forceX, 0, Lua.DeltaTime)
 end
 
 function Player:MoveLeft()
     if self.isDead or self.win then return end
-    local forceX = -leftRightBaseSpeed * Lua.DeltaTime
-    physics.AddForceToBody(self.rigidbody, forceX, 0)
+    local forceX = -leftRightBaseSpeed
+    physics.AddForceToBody(self.rigidbody, forceX, 0, Lua.DeltaTime)
 end
 
 function Player:GetLocation()
@@ -75,8 +77,9 @@ end
 function Player:Jump()
     -- if self.isDead then return end
     self.jumping = true
-    self.jumpFrames = 1
-    physics.AddForceToBody(self.rigidbody, 0, initialJumpSpeed * Lua.DeltaTime)
+    self.jumpFrames = 0
+    -- physics.AddForceToBody(self.rigidbody, 0, initialJumpSpeed * Lua.DeltaTime)
+    physics.AddImpactToBody(self.rigidbody, 0, initialJumpSpeed)
     sound.PlaySfx("jump")
 end
 
@@ -84,9 +87,11 @@ function Player:JumpEnd() self.jumping = false end
 
 function Player:JumpExtend()
     if not self.jumping then return end
-    if self.jumpFrames < MAX_JUMP_FRAMES then
-        physics.AddForceToBody(self.rigidbody, 0, extendJumpSpeed * Lua.DeltaTime)
-        self.jumpFrames = self.jumpFrames + 1
+    print("Jump time is " .. self.jumpFrames .. " and max time is " .. MAX_JUMP_LENGTH_SECONDS)
+    if self.jumpFrames < MAX_JUMP_LENGTH_SECONDS then
+        -- physics.AddForceToBody(self.rigidbody, 0, extendJumpSpeed * Lua.DeltaTime, Lua.DeltaTime)
+        physics.AddForceToBody(self.rigidbody, 0, extendJumpSpeed, Lua.DeltaTime)
+        self.jumpFrames = self.jumpFrames + Lua.DeltaTime
     else
         self.jumping = false
     end
@@ -203,6 +208,7 @@ function Player:Restart()
     self.rectangle = rectagle.New(self.startLoc.x, self.startLoc.y, self.startLoc.width, self.startLoc.height)
     physics.SetBodyCoordinates(self.rigidbody, self.rectangle.x, self.rectangle.y)
     physics.SetBodyVelocity(self.rigidbody, 0, 0)
+    -- physics.AddForceToBody(self.rigidbody, 100, 0)
     self.lastFrameOnGround = false
     self.onGround = false
     self.jumping = false

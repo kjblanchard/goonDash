@@ -38,7 +38,23 @@ function Physics.GetOverlapDirection(bodyNum, overlapBodyNumb)
     return physics.GetOverlapDirection(bodyNum, overlapBodyNumb)
 end
 
-function Physics.AddForceToBody(bodyNum, xForce, yForce)
+---comment Used when you need to apply force every frame
+---@param bodyNum any
+---@param xForce any
+---@param yForce any
+---@param gametime any
+function Physics.AddForceToBody(bodyNum, xForce, yForce, gametime)
+    xForce = xForce * gametime
+    yForce = yForce * gametime
+    print("Force to add is " .. xForce .. " : " .. yForce)
+    physics.AddBodyForce(bodyNum, xForce, yForce)
+end
+
+---comment Used to put one big impact on the body, an initial push all at once
+---@param bodyNum any
+---@param xForce any
+---@param yForce any
+function Physics.AddImpactToBody(bodyNum, xForce, yForce)
     physics.AddBodyForce(bodyNum, xForce, yForce)
 end
 

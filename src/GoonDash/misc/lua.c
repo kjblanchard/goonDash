@@ -113,7 +113,7 @@ int SetLuaTableValue(lua_State *L, const char *tableName, const char *tableKeyNa
   // push proper value on stack
   if(valueType == gLuaTableNumber)
   {
-    float number = *(float*)tableValue;
+    double number = *(double*)tableValue;
     lua_pushnumber(L, number);
   }
   else

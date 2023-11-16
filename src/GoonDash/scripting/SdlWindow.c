@@ -36,7 +36,9 @@ static int LuaCreateSdlWindow(lua_State *L)
     SDL_DisplayMode mode;
     SDL_GetWindowDisplayMode(g_pWindow, &mode);
     g_refreshRate = mode.refresh_rate ? mode.refresh_rate : 60;
-    LogDebug("The refresh rate of the window is %d\n", mode.refresh_rate);
+    // g_refreshRate = 60;
+    // LogDebug("The refresh rate of the window is %d\n", mode.refresh_rate);
+    LogWarn("The refresh rate of the window is %d\n", mode.refresh_rate);
     return 0;
 }
 
