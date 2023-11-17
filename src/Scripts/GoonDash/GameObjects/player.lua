@@ -7,9 +7,10 @@ local physics = require("Core.physics")
 local sound = require("Core.sound")
 
 local MAX_JUMP_LENGTH_SECONDS = 0.45
-local leftRightBaseSpeed = 1000
+local leftRightBaseSpeed = 450
+local initialMoveSpeed = 50
 local initialJumpSpeed = -110
-local extendJumpSpeed = -250
+local extendJumpSpeed = -350
 
 sound.LoadSfx("jump")
 sound.LoadSfx("death")
@@ -53,14 +54,21 @@ end
 
 function Player:MoveRight()
     if self.isDead or self.win then return end
+    local xVel, _ = physics.GetBodyVelocity(self.rigidbody)
+    if xVel == 0 then
+        physics.AddImpactToBody(self.rigidbody, initialMoveSpeed, 0)
+    end
+
     local forceX = leftRightBaseSpeed
-    print("Deltatime is " .. Lua.DeltaTime,
-        " Force is " .. leftRightBaseSpeed .. " and the amount to add to force is " .. forceX)
     physics.AddForceToBody(self.rigidbody, forceX, 0, Lua.DeltaTime)
 end
 
 function Player:MoveLeft()
     if self.isDead or self.win then return end
+    local xVel, _ = physics.GetBodyVelocity(self.rigidbody)
+    if xVel == 0 then
+        physics.AddImpactToBody(self.rigidbody, -initialMoveSpeed, 0)
+    end
     local forceX = -leftRightBaseSpeed
     physics.AddForceToBody(self.rigidbody, forceX, 0, Lua.DeltaTime)
 end
@@ -75,10 +83,8 @@ function Player:TryJump()
 end
 
 function Player:Jump()
-    -- if self.isDead then return end
     self.jumping = true
     self.jumpFrames = 0
-    -- physics.AddForceToBody(self.rigidbody, 0, initialJumpSpeed * Lua.DeltaTime)
     physics.AddImpactToBody(self.rigidbody, 0, initialJumpSpeed)
     sound.PlaySfx("jump")
 end
@@ -87,9 +93,7 @@ function Player:JumpEnd() self.jumping = false end
 
 function Player:JumpExtend()
     if not self.jumping then return end
-    print("Jump time is " .. self.jumpFrames .. " and max time is " .. MAX_JUMP_LENGTH_SECONDS)
     if self.jumpFrames < MAX_JUMP_LENGTH_SECONDS then
-        -- physics.AddForceToBody(self.rigidbody, 0, extendJumpSpeed * Lua.DeltaTime, Lua.DeltaTime)
         physics.AddForceToBody(self.rigidbody, 0, extendJumpSpeed, Lua.DeltaTime)
         self.jumpFrames = self.jumpFrames + Lua.DeltaTime
     else
@@ -99,8 +103,6 @@ function Player:JumpExtend()
 end
 
 function Player:RestartMap()
-    -- if not self.isDead or not self.win then return end
-    -- if not self.isDead or not self.win then return end
     if self.isDead or self.win then
         self.gameobject.Game.Game:Restart()
     end

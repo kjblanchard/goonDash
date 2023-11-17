@@ -66,6 +66,10 @@ end
 function Physics.GetOverlappingBodiesByType(bodyNum, bodyType)
     return physics.GetOverlappingBodies(bodyNum, bodyType)
 end
+function Physics.GetBodyVelocity(bodyNum)
+    local xVel, yVel = physics.GetBodyVelocity(bodyNum)
+    return xVel, yVel
+end
 
 function Physics.SetBodyVelocity(bodyNum, velX, velY)
     if velX == nil or velY == nil then
