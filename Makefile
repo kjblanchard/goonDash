@@ -58,6 +58,7 @@ package:
 	@tar -czvf $(BUILD_FOLDER)/$(BINARY_NAME).tgz -C $(BINARY_FOLDER_REL_PATH) .
 
 wpackage:
+	@ls -lah
 	@zip -r $(BUILD_FOLDER)/$(MSVC_CONFIG_TYPE)/$(BINARY_NAME).zip -j $(BINARY_FOLDER_REL_PATH)
 
 rebuild: clean configure build install test
