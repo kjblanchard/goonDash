@@ -10,6 +10,7 @@ BINARY_FOLDER = bin
 BINARY_FOLDER_REL_PATH = $(BUILD_FOLDER)/$(BINARY_FOLDER)
 BINARY_NAME = SupergoonDash
 BINARY_PATH = $(BUILD_FOLDER)/$(BINARY_NAME)
+# Tiled
 TILED_PATH = /Applications/Tiled.app/Contents/MacOS/Tiled
 TILED_FOLDER_PATH = ./assets/tiled
 TILED_EXPORT_TILESETS = background terrain
@@ -56,11 +57,14 @@ clean:
 package:
 	@tar -czvf $(BINARY_FOLDER_REL_PATH)/$(BINARY_NAME).tgz -C $(BINARY_FOLDER_REL_PATH) .
 
+wpackage:
+	@zip -r $(BINARY_FOLDER_REL_PATH)/$(BINARY_NAME).zip -j $(BINARY_FOLDER_REL_PATH)
+
 rebuild: clean configure build install test
-brebuild: clean bconfigure build install test
-wrebuild: clean wconfigure build install
+brebuild: clean bconfigure build install test package
+wrebuild: clean wconfigure build install wpackage
 mrebuild: clean mconfigure build install
-xrebuild: clean xconfigure build install
+xrebuild: clean xconfigure build install package
 erebuild: clean econfigure ebuild
 
 # MacosDev
