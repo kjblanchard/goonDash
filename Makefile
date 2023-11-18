@@ -56,14 +56,13 @@ clean:
 	@ - rm -rf build
 package:
 	@tar -czvf $(BUILD_FOLDER)/$(BINARY_NAME).tgz -C $(BINARY_FOLDER_REL_PATH) .
+	pwd
 	ls -lah $(BUILD_FOLDER)
 
 wpackage:
 	@ls -lah
-	@ls -lah build
 	7z a -r $(BUILD_FOLDER)/$(BINARY_NAME).zip $(BINARY_FOLDER_REL_PATH)
-	Compress-Archive -Path $(BINARY_FOLDER_REL_PATH) -DestinationPath $(BUILD_FOLDER)/$(BINARY_NAME).zip
-	@zip -r $(BUILD_FOLDER)/$(BINARY_NAME).zip -j $(BINARY_FOLDER_REL_PATH)/
+	@ls -lah build
 
 rebuild: clean configure build install test
 brebuild: clean bconfigure build install test package
