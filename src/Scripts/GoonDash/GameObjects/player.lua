@@ -8,7 +8,8 @@ local sound = require("Core.sound")
 
 local MAX_JUMP_LENGTH_SECONDS = 0.45
 local leftRightBaseSpeed = 450
-local initialMoveSpeed = 50
+local leftRightAirSpeed = 120
+local initialMoveSpeed = 20
 local initialJumpSpeed = -110
 local extendJumpSpeed = -350
 
@@ -60,6 +61,8 @@ function Player:MoveRight()
     end
 
     local forceX = leftRightBaseSpeed
+    -- Handle air control
+    if not self.onGround then forceX = forceX / 2 end
     physics.AddForceToBody(self.rigidbody, forceX, 0, Lua.DeltaTime)
 end
 
@@ -70,6 +73,8 @@ function Player:MoveLeft()
         physics.AddImpactToBody(self.rigidbody, -initialMoveSpeed, 0)
     end
     local forceX = -leftRightBaseSpeed
+    -- Handle air control
+    if not self.onGround then forceX = forceX / 2 end
     physics.AddForceToBody(self.rigidbody, forceX, 0, Lua.DeltaTime)
 end
 
