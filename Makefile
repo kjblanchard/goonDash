@@ -55,10 +55,10 @@ tiled:
 clean:
 	@ - rm -rf build
 package:
-	@tar -czvf $(BINARY_FOLDER_REL_PATH)/$(BINARY_NAME).tgz -C $(BINARY_FOLDER_REL_PATH) .
+	@tar -czvf $(BUILD_FOLDER)/$(BINARY_NAME).tgz -C $(BINARY_FOLDER_REL_PATH) .
 
 wpackage:
-	@zip -r $(BINARY_FOLDER_REL_PATH)/$(BINARY_NAME).zip -j $(BINARY_FOLDER_REL_PATH)
+	@zip -r $(BUILD_FOLDER)/$(MSVC_CONFIG_TYPE)/$(BINARY_NAME).zip -j $(BINARY_FOLDER_REL_PATH)
 
 rebuild: clean configure build install test
 brebuild: clean bconfigure build install test package
