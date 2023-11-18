@@ -2,6 +2,8 @@ name: Build All Platforms
 run-name: "Build All Platforms: ${{ github.actor }} 🚀"
 on:
   push:
+    tags:
+      - 'v*'
     branches: [master]
   pull_request:
     branches: [master]
