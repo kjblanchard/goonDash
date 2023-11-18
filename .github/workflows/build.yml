@@ -24,7 +24,7 @@ jobs:
         run: make brebuild
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - name: Save packaged artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: linux-artifacts
           path: build/SupergoonDash.tgz
@@ -36,7 +36,7 @@ jobs:
       - name: Configure CMake
         run: make xrebuild
       - name: Save packaged artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: mac-artifacts
           path: build/SupergoonDash.tgz
@@ -86,7 +86,7 @@ jobs:
       - name: Configure CMake
         run: make wrebuild
       - name: Save packaged artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: mac-artifacts
           path: build/SupergoonDash.zip
