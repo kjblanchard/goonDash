@@ -59,7 +59,8 @@ package:
 
 wpackage:
 	@ls -lah
-	@zip -r $(BUILD_FOLDER)/$(BINARY_NAME).zip -j $(BINARY_FOLDER_REL_PATH)
+	@ls -lah build
+	@zip -r $(BUILD_FOLDER)/$(BINARY_NAME).zip -j $(BINARY_FOLDER_REL_PATH)/
 
 rebuild: clean configure build install test
 brebuild: clean bconfigure build install test package

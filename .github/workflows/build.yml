@@ -27,7 +27,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: linux-artifacts
-          path: repo/build/bin/SupergoonDash.tgz
+          path: repo/build/SupergoonDash.tgz
   Build-Macos:
     runs-on: macos-latest
     steps:
@@ -39,7 +39,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: mac-artifacts
-          path: repo/build/bin/SupergoonDash.tgz
+          path: repo/build/SupergoonDash.tgz
   # Use container as for some reason has permissions issues on a regular runner when I install emscripten.
   Build-Emscripten:
     runs-on: ubuntu-latest
@@ -89,4 +89,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: mac-artifacts
-          path: repo/build/bin/SupergoonDash.tgz
+          path: repo/build/SupergoonDash.zip
