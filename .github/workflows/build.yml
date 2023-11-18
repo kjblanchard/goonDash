@@ -90,7 +90,7 @@ jobs:
       - name: Save packaged artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: mac-artifacts
+          name: windows-artifacts
           path: build/SupergoonDash.zip
   create-release:
     if: startsWith(github.event.ref, 'refs/tags/v')
