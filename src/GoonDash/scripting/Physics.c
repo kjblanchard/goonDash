@@ -15,7 +15,6 @@ static int AddBodyToScene(lua_State *L)
     gpBB bb = gpBBNew(bodySdlRect.x, bodySdlRect.y, bodySdlRect.w, bodySdlRect.h);
     gpBody *body = gpBodyNew(bb);
     int bodyNum = gpSceneAddBody(body);
-    printf("Body just added to scene is %d", bodyNum);
     body->bodyType = bodyType;
     lua_pushinteger(L, bodyNum);
     return 1;
@@ -72,7 +71,6 @@ static int GetOverlappingBodies(lua_State *L)
         lua_pushnumber(L, direction);
         lua_setfield(L, -2, "direction");
         lua_rawseti(L, tableListLoc, ++bodiesAdded);
-        LogWarn("Getting direction and it is %d", direction);
     }
     return 1;
 }
@@ -177,6 +175,26 @@ static int GetBodyCoordinates(lua_State *L)
     return 2;
 }
 
+static int SetBodyPos(lua_State *L)
+{
+    // Arg1: Body num
+    // Arg2: X
+    // Arg3: Y
+    int bodyRef = luaL_checkinteger(L, 1);
+    gpBody *body = gpSceneGetBody(bodyRef);
+    if (!body)
+    {
+        LogWarn("Could not get body num %d from the physics scene", bodyRef);
+        lua_pushnil(L);
+        return 1;
+    }
+    float x =luaL_checknumber(L, 2);
+    float y =luaL_checknumber(L, 3);
+    body->boundingBox.x = x;
+    body->boundingBox.y = y;
+    return 0;
+}
+
 static int GetBodyVelocity(lua_State *L)
 {
     // Arg1: Body num
@@ -222,14 +240,15 @@ static int luaopen_GoonPhysics(lua_State *L)
         {"AddBody", AddBodyToScene},
         {"AddStaticBody", AddStaticBodyToScene},
         {"GetBodyLocation", GetBodyCoordinates},
+        {"SetBodyLocation", SetBodyPos},
         {"GetBodyVelocity", GetBodyVelocity},
+        {"SetBodyVelocity", SetBodyVelocity},
         {"AddBodyForce", AddForceToBody},
         {"SetBodyType", SetBodyType},
         {"SetBodyGravity", ToggleBodyGravity},
         {"BodyOnGround", IsBodyOnGround},
         {"GetOverlappingBodies", GetOverlappingBodies},
         {"GetOverlapDirection", GetOverlapDirection},
-        {"SetBodyVelocity", SetBodyVelocity},
         {NULL, NULL} // Sentinel value to indicate the end of the table
     };
     luaL_newlib(L, luaPhysicsLib);

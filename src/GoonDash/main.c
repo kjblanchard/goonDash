@@ -18,8 +18,12 @@ static lua_State *L;
 static bool shouldQuit = false;
 static gpScene *scene;
 
+static uint64_t lastFrameMilliseconds;
+static float msBuildup;
+
 // TODO this should be different, it is inside of SDLwindow.c
 extern SDL_Renderer *g_pRenderer;
+extern int g_refreshRate;
 
 void *MusicUpdateWrapper(void *arg)
 {
@@ -56,32 +60,38 @@ static bool sdlEventLoop()
 
 static int loop_func()
 {
+    // Initialize this frame
     Uint64 beginFrame = SDL_GetTicks64();
+    Uint64 delta = beginFrame - lastFrameMilliseconds;
+    msBuildup += delta;
+    lastFrameMilliseconds = beginFrame;
+    // Handle SDL inputs
     shouldQuit = sdlEventLoop();
     if (shouldQuit)
         return 0;
-// Engine Updates
-#ifdef GN_MULTITHREADED
-    SDL_Thread *thread = NULL; // SDL thread handle
-    thread = SDL_CreateThread(MusicUpdateWrapper, "MusicUpdateThread", NULL);
-#else
+    // TODO make these static and pass into as ref to stop allocations
+    // Initialize time this frame
+    double deltaTimeSeconds = 1 / (double)g_refreshRate;
+    double deltaTimeMs = 1000 / (double)g_refreshRate;
+    if (msBuildup < deltaTimeMs)
+        return true;
+    SetLuaTableValue(L, "Lua", "DeltaTime", (void *)&deltaTimeSeconds, gLuaTableNumber);
     UpdateSound();
-#endif
 
-    // Update physics
-    gpSceneUpdate(scene, 1 / (float)60);
-    // Lua Update
-    CallEngineLuaFunction(L, "Update");
-    // Rendering
+
+    // Run Update and update physics as many times as needed
+    while (msBuildup >= deltaTimeMs)
+    {
+        gpSceneUpdate(scene, deltaTimeSeconds);
+        CallEngineLuaFunction(L, "Update");
+        msBuildup -= deltaTimeMs;
+    }
+
+    // Draw after we are caught up
     SDL_SetRenderDrawColor(g_pRenderer, 100, 100, 100, 255);
     SDL_RenderClear(g_pRenderer);
     CallEngineLuaFunction(L, "Draw");
     SDL_RenderPresent(g_pRenderer);
-    return SDL_GetTicks64() - beginFrame;
-#ifdef GN_MULTITHREADED
-    SDL_WaitThread(thread, NULL);
-#endif
-    return SDL_GetTicks64() - beginFrame;
 }
 
 static void loop_wrap()
@@ -128,16 +138,17 @@ int main()
     // Start
     CallEngineLuaFunction(L, "Start");
 
+    // Set last fram ms
+    lastFrameMilliseconds = SDL_GetTicks64();
+
     // Main loop
 #ifdef __EMSCRIPTEN__
+    // emscripten_set_main_loop(loop_wrap, g_refreshRate, 1);
     emscripten_set_main_loop(loop_wrap, 60, 1);
 #else
     while (!shouldQuit)
     {
-
         TIMED_BLOCK(int loopTime = loop_func();, "loopfunc")
-        int delayTime = 16 - loopTime;
-        SDL_Delay(delayTime > 0 ? delayTime : 0);
     }
 #endif
 

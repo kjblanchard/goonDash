@@ -34,6 +34,15 @@ function Sound.Play(filename)
     currentPlayingBgm = filename
 end
 
+function Sound.RestartBgm()
+    if not currentPlayingBgm then return end
+    if loadedBgms[currentPlayingBgm] == nil then
+        debug.Warn("Could not restart " .. currentPlayingBgm .. " as it isn't loaded!")
+        return
+    end
+    sound.PlayBgm(loadedBgms[currentPlayingBgm], settings.bgmVolume)
+end
+
 ---Loads a function into the table if it isn't already loaded
 ---@param filename string The name that we should load
 function Sound.LoadSfx(filename)

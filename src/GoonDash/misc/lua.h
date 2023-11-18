@@ -12,5 +12,12 @@ lua_State *GetGlobalLuaState();
  */
 int LuaLoadFileIntoGlobalState(const char *file);
 
+typedef enum gLuaTableValueTypes {
+    gLuaTableDefault = 0,
+    gLuaTableNumber = 1,
+
+} gLuaTableValueTypes;
+
 int CallEngineLuaFunction(lua_State* L, const char* functionName);
+int SetLuaTableValue(lua_State *L, const char *tableName, const char *tableKeyName, void *tableValue, gLuaTableValueTypes valueType);
 void DumpLuaStack(lua_State *state);

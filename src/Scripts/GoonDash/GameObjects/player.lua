@@ -6,74 +6,76 @@ local rectagle = require("Core.rectangle")
 local physics = require("Core.physics")
 local sound = require("Core.sound")
 
-local MAX_JUMP_FRAMES = 15
+local MAX_JUMP_LENGTH_SECONDS = 0.45
+local leftRightBaseSpeed = 450
+local leftRightAirSpeed = 120
+local initialMoveSpeed = 20
+local initialJumpSpeed = -110
+local extendJumpSpeed = -350
 
 sound.LoadSfx("jump")
 sound.LoadSfx("death")
+sound.LoadSfx("win")
 
 
 
 function Player.New(data)
     local player = setmetatable({}, Player)
+    player.name = data.name
     player.gameobject = gameObject.New()
     player.gameobject.Update = Player.Update
     player.gameobject.GetLocation = Player.GetLocation
     player.gameobject.Draw = Player.Draw
-    player.name = data.name
-    player.x = data.x
-    -- Currently theres an offset in tiled on the player spawn, this was due to tiled tsx tiles and their position.
-    -- player.y = data.y - data.height
-    player.width = data.width
-    player.height = data.height
-    player.rectangle = rectagle.New(data.x, player.y, data.width, data.height)
-    print("Player rectangle is " .. tostring(player.rectangle))
+    player.gameobject.Restart = Player.Restart
     player.playerController = playerController.New()
-    -- Have to use closures to pass in self
     player.playerController.controller:BindFunction(controller.Buttons.Left, controller.ButtonStates.DownOrHeld,
         function() player:MoveLeft() end)
     player.playerController.controller:BindFunction(controller.Buttons.Right, controller.ButtonStates.DownOrHeld,
         function() player:MoveRight() end)
-    player.playerController.controller:BindFunction(controller.Buttons.Up, controller.ButtonStates.DownOrHeld,
-        function() player:MoveUp() end)
-    player.playerController.controller:BindFunction(controller.Buttons.Down, controller.ButtonStates.DownOrHeld,
-        function() player:MoveDown() end)
-    player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.DownOrHeld,
+    player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.Down,
         function() player:TryJump() end)
+    player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.Down,
+        function() player:RestartMap() end)
     player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.DownOrHeld,
         function() player:JumpExtend() end)
     player.playerController.controller:BindFunction(controller.Buttons.Confirm, controller.ButtonStates.Up,
         function() player:JumpEnd() end)
     player.gameobject.Game.Game.mainCamera:AttachToGameObject(player)
-    -- Physics
-    player.rigidbody = physics.AddBody(player.rectangle:SdlRect(), player)
-    player.lastFrameOnGround = false
-    player.onGround = false
-    player.jumping = false
-    player.jumpFrames = 0
 
-    player.lastFrameOverlaps = {}
-    player.thisFrameOverlaps = {}
+    player.startLoc = rectagle.New(data.x, data.y, data.width, data.height)
+    player.rigidbody = physics.AddBody(player.startLoc:SdlRect(), player)
 
-    player.isDead = false
+
+    -- Setup Player for initial scene
+    Player.Restart(player)
+
+    -- Return the instantiated player
     return player
 end
 
 function Player:MoveRight()
-    if self.isDead then return end
-    physics.AddForceToBody(self.rigidbody, 10, 0)
+    if self.isDead or self.win then return end
+    local xVel, _ = physics.GetBodyVelocity(self.rigidbody)
+    if xVel == 0 then
+        physics.AddImpactToBody(self.rigidbody, initialMoveSpeed, 0)
+    end
+
+    local forceX = leftRightBaseSpeed
+    -- Handle air control
+    if not self.onGround then forceX = forceX / 2 end
+    physics.AddForceToBody(self.rigidbody, forceX, 0, Lua.DeltaTime)
 end
 
 function Player:MoveLeft()
-    if self.isDead then return end
-    physics.AddForceToBody(self.rigidbody, -10, 0)
-end
-
-function Player:MoveUp()
-    -- physics.AddForceToBody(self.rigidbody, 0, -10)
-end
-
-function Player:MoveDown()
-    -- physics.AddForceToBody(self.rigidbody, 0, 10)
+    if self.isDead or self.win then return end
+    local xVel, _ = physics.GetBodyVelocity(self.rigidbody)
+    if xVel == 0 then
+        physics.AddImpactToBody(self.rigidbody, -initialMoveSpeed, 0)
+    end
+    local forceX = -leftRightBaseSpeed
+    -- Handle air control
+    if not self.onGround then forceX = forceX / 2 end
+    physics.AddForceToBody(self.rigidbody, forceX, 0, Lua.DeltaTime)
 end
 
 function Player:GetLocation()
@@ -81,15 +83,14 @@ function Player:GetLocation()
 end
 
 function Player:TryJump()
-    if not self.onGround or self.jumping or self.isDead then return end
+    if not self.onGround or self.jumping or self.isDead or self.win then return end
     self:Jump()
 end
 
 function Player:Jump()
-    if self.isDead then return end
     self.jumping = true
-    self.jumpFrames = 1
-    physics.AddForceToBody(self.rigidbody, 0, -120)
+    self.jumpFrames = 0
+    physics.AddImpactToBody(self.rigidbody, 0, initialJumpSpeed)
     sound.PlaySfx("jump")
 end
 
@@ -97,26 +98,28 @@ function Player:JumpEnd() self.jumping = false end
 
 function Player:JumpExtend()
     if not self.jumping then return end
-    if self.jumpFrames < MAX_JUMP_FRAMES then
-        physics.AddForceToBody(self.rigidbody, 0, -10)
-        self.jumpFrames = self.jumpFrames + 1
+    if self.jumpFrames < MAX_JUMP_LENGTH_SECONDS then
+        physics.AddForceToBody(self.rigidbody, 0, extendJumpSpeed, Lua.DeltaTime)
+        self.jumpFrames = self.jumpFrames + Lua.DeltaTime
     else
         self.jumping = false
     end
 
 end
 
+function Player:RestartMap()
+    if self.isDead or self.win then
+        self.gameobject.Game.Game:Restart()
+    end
+end
+
 function Player:Update()
-    if self.isDead then return end
+    if self.isDead or self.win then return end
     self.onGround = physics.BodyOnGround(self.rigidbody)
     if self.onGround and not self.lastFrameOnGround then
         self.jumping = false
     end
     self.lastFrameOnGround = self.onGround
-    -- if not self.onGround and physics.BodyOnGround(self.rigidbody) then
-    --     self.onGround = true
-    --     self.jumping = false
-    -- end
     local x, y = physics.GetBodyCoordinates(self.rigidbody)
     if x == nil then return end
     self.rectangle.x = x
@@ -128,32 +131,57 @@ function Player:Update()
     for key, value in pairs(self.thisFrameOverlaps) do
         self.lastFrameOverlaps[key] = value
     end
-    -- Try move
-    -- table.move(self.thisFrameOverlaps, 1, #self.thisFrameOverlaps, 1,  self.lastFrameOverlaps)
+    -- Overlaps
     self.thisFrameOverlaps = {}
+    self:HandleEnemyOverlap()
+    self:HandleDeathboxOverlap()
+    self:HandleWinboxOverlap()
+end
 
+function Player:HandleEnemyOverlap()
     -- Handle overlap table to see if we are just overlapping
-    local enemiesOverlapped = physics.GetOverlappingBodiesByType(self.rigidbody, 2)
+    local enemyBodyType = 2
+    local enemiesOverlapped = physics.GetOverlappingBodiesByType(self.rigidbody, enemyBodyType)
+    if not #enemiesOverlapped then return end
     for i = 1, #enemiesOverlapped do
-        -- Prevent multiple overlaps from happening in lua
-        -- if not self.thisFrameOverlaps[enemiesOverlapped[i].body] then
-            self.thisFrameOverlaps[enemiesOverlapped[i].body] = enemiesOverlapped[i].direction
-        -- end
+        self.thisFrameOverlaps[enemiesOverlapped[i].body] = { direction = enemiesOverlapped[i].direction,
+            type = enemyBodyType }
     end
     -- Check to see if we are just overlapping with the enemy
-    for overlapBodyNum, overlapBodyDirection in pairs(self.thisFrameOverlaps) do
-        local enemy = physics.GetGameObjectFromBodyNum(overlapBodyNum)
-        if enemy.isDead or self.lastFrameOverlaps[overlapBodyNum] then
-        else
-            -- local overlapDirection = physics.GetOverlapDirection(self.rigidbody, overlapBodyNum)
-            print("Overlap direction is " .. overlapBodyDirection)
+    for overlapBodyNum, overlapBodyTable in pairs(self.thisFrameOverlaps) do
+        if overlapBodyTable.type == enemyBodyType then
+            local enemy = physics.GetGameObjectFromBodyNum(overlapBodyNum)
+            if enemy.isDead or self.lastFrameOverlaps[overlapBodyNum] then
+            else
 
-            if overlapBodyDirection == 3 then
-                -- if enemyY >= self.rectangle.y - self.rectangle.height  then
-                physics.SetBodyVelocity(self.rigidbody, nil, 0)
-                local enemy = physics.GetGameObjectFromBodyNum(overlapBodyNum)
-                enemy.isDead = true
-                self:Jump()
+                if overlapBodyTable.direction == 3 then
+                    -- if enemyY >= self.rectangle.y - self.rectangle.height  then
+                    physics.SetBodyVelocity(self.rigidbody, nil, 0)
+                    local enemy = physics.GetGameObjectFromBodyNum(overlapBodyNum)
+                    enemy.isDead = true
+                    self:Jump()
+                else
+                    self.isDead = true
+                    sound.PlaySfx("death")
+                end
+            end
+        end
+    end
+end
+
+function Player:HandleDeathboxOverlap()
+    -- Handle overlap table to see if we are just overlapping
+    local enemyBodyType = 3
+    local enemiesOverlapped = physics.GetOverlappingBodiesByType(self.rigidbody, enemyBodyType)
+    if not #enemiesOverlapped then return end
+    for i = 1, #enemiesOverlapped do
+        self.thisFrameOverlaps[enemiesOverlapped[i].body] = { direction = enemiesOverlapped[i].direction,
+            type = enemyBodyType }
+    end
+    -- Check to see if we are just overlapping with the enemy
+    for overlapBodyNum, overlapBodyTable in pairs(self.thisFrameOverlaps) do
+        if overlapBodyTable.type == enemyBodyType then
+            if self.lastFrameOverlaps[overlapBodyNum] then
             else
                 self.isDead = true
                 sound.PlaySfx("death")
@@ -162,10 +190,45 @@ function Player:Update()
     end
 end
 
+function Player:HandleWinboxOverlap()
+    -- Handle overlap table to see if we are just overlapping
+    local enemyBodyType = 4
+    local enemiesOverlapped = physics.GetOverlappingBodiesByType(self.rigidbody, enemyBodyType)
+    if not #enemiesOverlapped then return end
+    for i = 1, #enemiesOverlapped do
+        self.thisFrameOverlaps[enemiesOverlapped[i].body] = { direction = enemiesOverlapped[i].direction,
+            type = enemyBodyType }
+    end
+    -- Check to see if we are just overlapping with the enemy
+    for overlapBodyNum, overlapBodyTable in pairs(self.thisFrameOverlaps) do
+        if overlapBodyTable.type == enemyBodyType then
+            if self.lastFrameOverlaps[overlapBodyNum] then
+            else
+                self.win = true
+                sound.PlaySfx("win")
+            end
+        end
+    end
+end
+
+function Player:Restart()
+    self.rectangle = rectagle.New(self.startLoc.x, self.startLoc.y, self.startLoc.width, self.startLoc.height)
+    physics.SetBodyCoordinates(self.rigidbody, self.rectangle.x, self.rectangle.y)
+    physics.SetBodyVelocity(self.rigidbody, 0, 0)
+    -- physics.AddForceToBody(self.rigidbody, 100, 0)
+    self.lastFrameOnGround = false
+    self.onGround = false
+    self.jumping = false
+    self.jumpFrames = 0
+    self.lastFrameOverlaps = {}
+    self.thisFrameOverlaps = {}
+    self.isDead = false
+    self.win = false
+end
+
 function Player:Draw()
     if self.isDead then return end
     local drawRect = self.gameobject.Game.Game.mainCamera:GetCameraOffset(self.rectangle)
-    -- self.gameobject.Debug.DrawRect(drawRect:SdlRect())
     self.gameobject.Debug.DrawRect(drawRect:SdlRectInt())
 end
 

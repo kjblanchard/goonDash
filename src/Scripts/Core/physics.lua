@@ -17,10 +17,6 @@ function Physics.AddBody(bodyRect, object,  bodyType)
     bodyType = bodyType or 1
     local bodyNum = physics.AddBody(bodyRect, bodyType)
     Physics.BodyToGameObject[bodyNum] = object
-    for key, value in pairs(Physics.BodyToGameObject) do
-        print("Body num is " .. key .. " and body table is " .. tostring(value) )
-
-    end
     return bodyNum
 end
 
@@ -34,11 +30,30 @@ function Physics.GetBodyCoordinates(bodyNum)
     return x, y
 end
 
+function Physics.SetBodyCoordinates(bodyNum, x, y)
+    physics.SetBodyLocation(bodyNum, x, y)
+end
+
 function Physics.GetOverlapDirection(bodyNum, overlapBodyNumb)
     return physics.GetOverlapDirection(bodyNum, overlapBodyNumb)
 end
 
-function Physics.AddForceToBody(bodyNum, xForce, yForce)
+---comment Used when you need to apply force every frame
+---@param bodyNum any
+---@param xForce any
+---@param yForce any
+---@param gametime any
+function Physics.AddForceToBody(bodyNum, xForce, yForce, gametime)
+    xForce = xForce * gametime
+    yForce = yForce * gametime
+    physics.AddBodyForce(bodyNum, xForce, yForce)
+end
+
+---comment Used to put one big impact on the body, an initial push all at once
+---@param bodyNum any
+---@param xForce any
+---@param yForce any
+function Physics.AddImpactToBody(bodyNum, xForce, yForce)
     physics.AddBodyForce(bodyNum, xForce, yForce)
 end
 
@@ -50,6 +65,10 @@ end
 function Physics.GetOverlappingBodiesByType(bodyNum, bodyType)
     return physics.GetOverlappingBodies(bodyNum, bodyType)
 end
+function Physics.GetBodyVelocity(bodyNum)
+    local xVel, yVel = physics.GetBodyVelocity(bodyNum)
+    return xVel, yVel
+end
 
 function Physics.SetBodyVelocity(bodyNum, velX, velY)
     if velX == nil or velY == nil then
@@ -58,6 +77,10 @@ function Physics.SetBodyVelocity(bodyNum, velX, velY)
         velY = velY or CVelY
     end
     return physics.SetBodyVelocity(bodyNum, velX, velY)
+end
+
+function Physics.ToggleBodyGravity(bodyNum, gravityEnabled)
+    physics.SetBodyGravity(bodyNum, gravityEnabled)
 end
 
 Physics.__index = Physics

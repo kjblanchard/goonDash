@@ -33,6 +33,13 @@ function GameObjectMap.Update()
     end
 end
 
+function GameObjectMap.Restart()
+    for _, value in ipairs(GameObjectMap.GameObjects) do
+        -- Call update on the gameobject, but pass in the actual instance, probably don't need to do it this way.
+        value.gameobject.Restart(value)
+    end
+end
+
 ---Updates all of the gameobjects currently available
 function GameObjectMap.Draw()
     for _, value in ipairs(GameObjectMap.GameObjects) do

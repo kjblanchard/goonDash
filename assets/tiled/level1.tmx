@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.6" orientation="orthogonal" renderorder="right-down" width="64" height="18" tilewidth="16" tileheight="16" infinite="0" nextlayerid="14" nextobjectid="167">
+<map version="1.8" tiledversion="1.8.6" orientation="orthogonal" renderorder="right-down" width="64" height="18" tilewidth="16" tileheight="16" infinite="0" nextlayerid="14" nextobjectid="175">
  <editorsettings>
   <export target="level1.lua" format="lua"/>
  </editorsettings>
@@ -101,7 +101,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,18,19,20,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -115,6 +115,8 @@
   <object id="164" name="EnemyTest" type="Enemy" gid="203" x="32" y="112" width="64" height="32"/>
   <object id="165" name="EnemyTest" type="Enemy" gid="203" x="160" y="112" width="64" height="32"/>
   <object id="166" name="EnemyTest" type="Enemy" gid="203" x="432" y="224" width="64" height="32"/>
+  <object id="172" type="DeathBox" gid="189" x="0" y="288" width="1040" height="16"/>
+  <object id="174" name="WinBox" type="WinBox" gid="240" x="976" y="160" width="48" height="64"/>
  </objectgroup>
  <objectgroup id="13" name="solid">
   <object id="149" x="0" y="240">
@@ -152,6 +154,15 @@
   </object>
   <object id="162" x="976" y="192">
    <polygon points="0,0 0,48 48,48 48,0"/>
+  </object>
+  <object id="170" x="1024" y="0">
+   <polygon points="0,0 16,0 16,304 0,304"/>
+  </object>
+  <object id="171" x="-32" y="0">
+   <polygon points="0,0 32,0 32,288 0,288"/>
+  </object>
+  <object id="173" x="0" y="-16">
+   <polygon points="0,0 0,16 896,16 896,0"/>
   </object>
  </objectgroup>
  <layer id="6" name="tile4" width="64" height="18">

@@ -3,6 +3,7 @@
 
 SDL_Window *g_pWindow = 0;
 SDL_Renderer *g_pRenderer = 0;
+int g_refreshRate = 60;
 
 /**
  * @brief
@@ -27,11 +28,18 @@ static int LuaCreateSdlWindow(lua_State *L)
         return 0;
     }
     g_pRenderer = SDL_CreateRenderer(g_pWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if(g_pRenderer == NULL)
+    if (g_pRenderer == NULL)
     {
         LogError("Renderer could not be created, Error: %s", SDL_GetError());
     }
     LogDebug("Created window\nWidth: %d, Height: %d", width, height);
+    SDL_DisplayMode mode;
+    SDL_GetWindowDisplayMode(g_pWindow, &mode);
+    g_refreshRate = mode.refresh_rate ? mode.refresh_rate : 60;
+    // g_refreshRate = 60;
+    // g_refreshRate = 30;
+    // LogDebug("The refresh rate of the window is %d\n", mode.refresh_rate);
+    LogWarn("The refresh rate of the window is %d\n", mode.refresh_rate);
     return 0;
 }
 

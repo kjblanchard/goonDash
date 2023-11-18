@@ -100,6 +100,32 @@ void DumpLuaStack(lua_State *state)
     }
   }
 }
+int SetLuaTableValue(lua_State *L, const char *tableName, const char *tableKeyName, void *tableValue, gLuaTableValueTypes valueType)
+{
+  lua_getglobal(L, tableName);
+  if(!lua_istable(L, -1))
+  {
+    fprintf(stderr, "Error not a table");
+    lua_settop(L, 0);
+    return false;
+  }
+  // Table is on the stack
+  // push proper value on stack
+  if(valueType == gLuaTableNumber)
+  {
+    double number = *(double*)tableValue;
+    lua_pushnumber(L, number);
+  }
+  else
+  {
+    fprintf(stderr, "Error:  when setting lua table, Unsupported type for tableValue.\n");
+    lua_settop(L, 0);
+    return false;
+  }
+  lua_setfield(L, -2, tableKeyName);
+  lua_settop(L, 0);
+  return true;
+}
 
 int CallEngineLuaFunction(lua_State *L, const char *functionName)
 {

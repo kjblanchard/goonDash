@@ -4,6 +4,7 @@ GameObject.Debug = require("Core.debug")
 GameObject.Sound = require("Core.sound")
 GameObject.Game = require("Core.game")
 GameObject.CurrentId = 0
+GameObject.DeltaTime = 0
 
 ---Create a new gameobject
 ---@return table GameObject new gameobject instance, mainly just an id.
@@ -23,6 +24,11 @@ end
 
 ---Gameobjects Draw function
 function GameObject:Draw()
+end
+
+---Restarts the gameobject, likely used when you need to reload the scene.
+function GameObject:Restart()
+
 end
 
 ---Attach a controller to this gameobject.
