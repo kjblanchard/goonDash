@@ -5,32 +5,17 @@ on:
     - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 name: Create Release
 
-# on:
-#   pull_request:
-#     branches:
-#       - master
 jobs:
   create-release:
+    needs:
+    - Build-Linux
+    - Build-Windows
+    - Build-Macos
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Create Windows Zip
-        run: |
-          cd ${{ github.workspace }}
-          zip -r my_app_windows.zip build/bin/*
-
-      - name: Create macOS Tar.gz
-        run: |
-          cd ${{ github.workspace }}
-          tar -czvf my_app_macos.tar.gz -C build/bin .
-
-      - name: Create Linux Tar.gz
-        run: |
-          cd ${{ github.workspace }}
-          tar -czvf my_app_linux.tar.gz -C build/bin .
 
       - name: Publish Release
         id: create_release
@@ -43,20 +28,14 @@ jobs:
             - Improved performance
             - Bug fixes
 
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: windows-artifacts
+          # path: build-bin
+
       - name: Upload Windows Zip
         uses: actions/upload-artifact@v2
         with:
-          name: my_app_windows
-          path: my_app_windows.zip
-
-      - name: Upload macOS Tar.gz
-        uses: actions/upload-artifact@v2
-        with:
-          name: my_app_macos
-          path: my_app_macos.tar.gz
-
-      - name: Upload Linux Tar.gz
-        uses: actions/upload-artifact@v2
-        with:
-          name: my_app_linux
-          path: my_app_linux.tar.gz
+          name: windows-artifacts
+          # path: my_app_windows.zip
