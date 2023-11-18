@@ -46,7 +46,6 @@ end
 function Physics.AddForceToBody(bodyNum, xForce, yForce, gametime)
     xForce = xForce * gametime
     yForce = yForce * gametime
-    print("Force to add is " .. xForce .. " : " .. yForce)
     physics.AddBodyForce(bodyNum, xForce, yForce)
 end
 
