@@ -7,10 +7,6 @@ name: Create Release
 
 jobs:
   create-release:
-    needs:
-    - Build-Linux
-    - Build-Windows
-    - Build-Macos
     runs-on: ubuntu-latest
 
     steps:
