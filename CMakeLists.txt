@@ -31,6 +31,7 @@ if(EMSCRIPTEN)
     message(STATUS "Configuring Emscripten")
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
     set(GOON_ENABLE_TESTING OFF)
+    add_compile_options("-s" "USE_FREETYPE=1")
 elseif(APPLE)
     # MACOS
     if(NOT IOS)
@@ -217,6 +218,7 @@ if(EMSCRIPTEN)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${USE_FLAGS}")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${USE_FLAGS}")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${USE_FLAGS}")
+    add_compile_options("-s" "USE_FREETYPE=1")
 endif(EMSCRIPTEN)
 
 # #########################################
