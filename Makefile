@@ -22,7 +22,7 @@ all: build run
 configure:
 	@cmake . -B build -D CMAKE_BUILD_TYPE=Debug -G $(BUILD_SYSTEM)
 econfigure:
-	@emcmake cmake . -B build -D CMAKE_BUILD_TYPE=Debug -G $(BACKUP_BUILD_SYSTEM) -DGOON_FULL_MACOS_BUILD=ON -DCMAKE_VERBOSE_MAKEFILE=ON -Dvendored_default=FALSE -DSDL2TTF_VENDORED=FALSE
+	@emcmake cmake . -B build -D CMAKE_BUILD_TYPE=Debug -G $(BACKUP_BUILD_SYSTEM) -DGOON_FULL_MACOS_BUILD=ON -DCMAKE_VERBOSE_MAKEFILE=ON -Dvendored_default=TRUE -DSDL2TTF_VENDORED=TRUE
 # Macos Runner
 mconfigure:
 #  Use macos universal build for freetype
