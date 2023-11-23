@@ -29,7 +29,7 @@ mconfigure:
 	@cmake . -B build -D CMAKE_BUILD_TYPE=Debug -G $(BACKUP_BUILD_SYSTEM) -DGOON_FULL_MACOS_BUILD=ON -DIOS_PLATFORM=OS
 # Macos Runner Future
 xconfigure:
-	@cmake . -B build -D CMAKE_BUILD_TYPE=Debug -G $(XCODE_BUILD_SYSTEM) -DGOON_FULL_MACOS_BUILD=ON -DIOS_PLATFORM=OS -Dvendored_default=true
+	@cmake . -B build -D CMAKE_BUILD_TYPE=Debug -G $(XCODE_BUILD_SYSTEM) -DGOON_FULL_MACOS_BUILD=ON -DIOS_PLATFORM=OS -Dvendored_default=TRUE -DSDL2TTF_VENDORED=TRUE
 # Linux/Runner / MacosDev backup
 bconfigure:
 	@cmake . -B build -D CMAKE_BUILD_TYPE=Debug -G $(BACKUP_BUILD_SYSTEM)
