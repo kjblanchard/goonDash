@@ -92,6 +92,12 @@ if(MACOS AND NOT GOON_FULL_MACOS_BUILD)
         CONFIG COMPONENTS SDL2_image
         HINTS /usr/local/lib)
 
+    find_package(SDL2_ttf
+
+        NAMES SDL2_ttf libSDL2_ttf SDL2_Ttf libSDL2_Ttf libSDL2_Ttf
+        CONFIG COMPONENTS SDL2_ttf
+        HINTS /usr/local/lib)
+
     # 1. Look for a SDL2 package, 2. Look for the SDL2maincomponent and 3. DO NOT fail when SDL2main is not available
     find_package(SDL2 REQUIRED CONFIG COMPONENTS SDL2main)
 
@@ -137,6 +143,7 @@ else()
 
         add_subdirectory(./external/SDL EXCLUDE_FROM_ALL)
         add_subdirectory(./external/SDL_image EXCLUDE_FROM_ALL)
+        add_subdirectory(./external/SDL_ttf EXCLUDE_FROM_ALL)
         add_subdirectory(./external/Lua EXCLUDE_FROM_ALL)
         add_subdirectory(./external/sg_sound)
         add_subdirectory(./external/goonPhysics)
@@ -265,6 +272,7 @@ target_link_libraries(SupergoonDash
 
     # SDL2::SDL2-static
     SDL2_image::SDL2_image-static
+    SDL2_ttf::SDL2_ttf-static
     ${LUA_LIBRARIES}
     ${GOONSOUND_LIBRARIES}
     ${LIB_SOCKET}

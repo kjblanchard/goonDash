@@ -2,6 +2,7 @@
 #include <GoonDash/misc/lua.h>
 #include <GoonDash/scripting/LuaScripting.h>
 #include <GoonDash/input/keyboard.h>
+#include <SDL_ttf.h>
 #include <SupergoonSound/include/sound.h>
 
 #include <GoonPhysics/GoonPhysics.h>
@@ -115,6 +116,10 @@ int main()
     if (IMG_Init(IMG_INIT_PNG) == 0)
     {
         LogError("Could not initialize SDL_IMAGE\nError: %s", IMG_GetError());
+    }
+    if(TTF_Init() != 0)
+    {
+        LogError("Could not initialize SDL TTF\n,Error: %s", TTF_GetError());
     }
     L = GetGlobalLuaState();
     int result = InitializeSound();
