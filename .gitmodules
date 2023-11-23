@@ -16,3 +16,6 @@
 [submodule "external/SDL_ttf"]
 	path = external/SDL_ttf
 	url = https://github.com/kjblanchard/SDL_ttf.git
+[submodule "external/freetype"]
+	path = external/freetype
+	url = https://github.com/freetype/freetype.git
