@@ -91,6 +91,7 @@ jobs:
           apt update -y && apt upgrade -y
           apt install cmake pkg-config libfreetype-dev -y
           cp /usr/lib/x86_64-linux-gnu/pkgconfig/freetype2.pc /usr/lib/x86_64-linux-gnu/pkgconfig/freetype.pc
+          export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig/
       - name: Actual build
         run: cd repo && make erebuild
       - uses: actions/upload-artifact@v3
