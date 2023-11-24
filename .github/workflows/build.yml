@@ -89,6 +89,7 @@ jobs:
       - name: Install CMake
         run: |
           apt update -y && apt upgrade -y
+          # This is needed as system freetype doesn't have proper files for find package.
           apt install cmake pkg-config libfreetype-dev -y
           cp /usr/lib/x86_64-linux-gnu/pkgconfig/freetype2.pc /usr/lib/x86_64-linux-gnu/pkgconfig/freetype.pc
           export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig/

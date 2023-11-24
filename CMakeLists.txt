@@ -31,7 +31,6 @@ if(EMSCRIPTEN)
     message(STATUS "Configuring Emscripten")
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
     set(GOON_ENABLE_TESTING OFF)
-    add_compile_options("-s" "USE_FREETYPE=1")
 elseif(APPLE)
     # MACOS
     if(NOT IOS)
@@ -142,10 +141,10 @@ else()
             message(FATAL_ERROR "git submodule update --init --recursive failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
         endif()
 
-        add_subdirectory(./external/SDL EXCLUDE_FROM_ALL)
-        add_subdirectory(./external/SDL_image EXCLUDE_FROM_ALL)
+        # add_subdirectory(./external/SDL EXCLUDE_FROM_ALL)
+        # add_subdirectory(./external/SDL_image EXCLUDE_FROM_ALL)
         # add_subdirectory(./external/SDL_ttf EXCLUDE_FROM_ALL)
-        add_subdirectory(./external/SDL_ttf EXCLUDE_FROM_ALL)
+        # add_subdirectory(./external/SDL_ttf EXCLUDE_FROM_ALL)
         add_subdirectory(./external/Lua EXCLUDE_FROM_ALL)
         add_subdirectory(./external/sg_sound)
         add_subdirectory(./external/goonPhysics)
@@ -207,11 +206,15 @@ if(CMAKE_DEBUG_VARIABLES)
 endif(CMAKE_DEBUG_VARIABLES)
 
 # PROPERTIES
-if(EMSCRIPTEN)
+# if(EMSCRIPTEN)
     # Use this for pthreads in emscripten when ready
     # set_target_properties(SupergoonDash PROPERTIES LINK_FLAGS ${LINK_FLAGS} "-O0 -g -s USE_PTHREADS=1 -sPTHREAD_POOL_SIZE=2 -s SAFE_HEAP=1 -pthread -s STACK_OVERFLOW_CHECK=1 --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets --preload-file ${CMAKE_SOURCE_DIR}/src/Scripts@/Scripts")
     # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread -sPTHREAD_POOL_SIZE=2 -s USE_PTHREADS=1 -s 'DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\"$autoResumeAudioContext\",\"$dynCall\"]'")
-    set_target_properties(SupergoonDash PROPERTIES LINK_FLAGS ${LINK_FLAGS} "-O0 -g -s SAFE_HEAP=1 -s STACK_OVERFLOW_CHECK=1 --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets --preload-file ${CMAKE_SOURCE_DIR}/src/Scripts@/Scripts")
+    set(USE_FLAGS "-sUSE_SDL=2 -sUSE_SDL_IMAGE=2 -sUSE_FREETYPE=1")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${USE_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${USE_FLAGS}")
+    set(CMAKE_EXECUTABLE_SUFFIX .html)
+    # set_target_properties(SupergoonDash PROPERTIES LINK_FLAGS ${LINK_FLAGS} "-O0 -g -sUSE_SDL=2 -sUSE_SDL_IMAGE=2 -sUSE_SDL_TTF=2 -s SAFE_HEAP=1 -s STACK_OVERFLOW_CHECK=1 --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets --preload-file ${CMAKE_SOURCE_DIR}/src/Scripts@/Scripts")
     # target_compile_options(SupergoonDash "-s" "USE_FREETYPE=1")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s 'DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\"$autoResumeAudioContext\",\"$dynCall\"]'")
     # set(USE_FLAGS "-s USE_SDL=2 -s USE_FREETYPE=1")
@@ -220,7 +223,7 @@ if(EMSCRIPTEN)
     # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${USE_FLAGS}")
     # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${USE_FLAGS}")
     # add_compile_options("-s" "USE_FREETYPE=1")
-endif(EMSCRIPTEN)
+# endif(EMSCRIPTEN)
 
 # #########################################
 # Compile Options
@@ -280,8 +283,8 @@ target_link_libraries(SupergoonDash
     PRIVATE
 
     # SDL2::SDL2-static
-    SDL2_image::SDL2_image-static
-    SDL2_ttf::SDL2_ttf-static
+    # SDL2_image::SDL2_image-static
+    # SDL2_ttf::SDL2_ttf-static
     ${LUA_LIBRARIES}
     ${GOONSOUND_LIBRARIES}
     ${LIB_SOCKET}
