@@ -89,9 +89,10 @@ jobs:
       - name: Install CMake
         run: |
           apt update -y && apt upgrade -y
-          apt install cmake libfreetype6 libfreetype-dev pkg-config -y
-          dpkg-query -L libfreetype6 | grep libfreetype
-          dpkg-query -L libfreetype6-dev
+          apt install cmake pkg-config -y
+          # apt install cmake libfreetype6 libfreetype-dev pkg-config -y
+          # dpkg-query -L libfreetype6 | grep libfreetype
+          # dpkg-query -L libfreetype6-dev
           # git config --global --add safe.directory $(pwd)
           # git config --global --add safe.directory .
       - name: Actual build
