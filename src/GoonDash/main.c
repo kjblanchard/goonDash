@@ -7,6 +7,10 @@
 
 #include <GoonPhysics/GoonPhysics.h>
 
+#ifndef FT_IMAGE_TAG
+#define FT_IMAGE_TAG( value, _x1, _x2, _x3, _x4 ) value
+#endif /* FT_IMAGE_TAG */
+
 // EMSCRIPTEN
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
