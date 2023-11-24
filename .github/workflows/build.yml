@@ -89,8 +89,9 @@ jobs:
       - name: Install CMake
         run: |
           apt update -y && apt upgrade -y
-          apt install cmake pkg-config -y
-          # apt install cmake pkg-config libfreetype-dev -y
+          # apt install cmake pkg-config -y
+          apt install cmake pkg-config libfreetype-dev -y
+          cp /usr/lib/x86_64-linux-gnu/pkgconfig/freetype2.pc /usr/lib/x86_64-linux-gnu/pkgconfig/freetype.pc
           # apt install cmake libfreetype6 libfreetype-dev pkg-config -y
           # dpkg-query -L libfreetype6 | grep libfreetype
           # dpkg-query -L libfreetype-dev
