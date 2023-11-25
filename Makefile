@@ -21,18 +21,16 @@ UNIX_PACKAGE_COMMAND = tar -czvf $(BUILD_FOLDER)/$(BINARY_NAME).tgz -C $(BINARY_
 WINDOWS_PACKAGE_COMMAND = 7z a -r $(BUILD_FOLDER)/$(BINARY_NAME).zip $(BINARY_FOLDER_REL_PATH)
 PACKAGE_COMMAND = UNIX_PACKAGE_COMMAND
 BUILD_COMMAND = cmake --build build --config $(CMAKE_BUILD_TYPE)
-
-# Set the default command
-# Check if CMAKE_BUILD_TYPE is RELEASE
-ifeq ($(CMAKE_BUILD_TYPE), Release)
-    # If it's RELEASE, set COMMAND to sudo command
-    BUILD_COMMAND = sudo $(BUILD_COMMAND)
-endif
 # Tiled Configuration
 TILED_PATH = /Applications/Tiled.app/Contents/MacOS/Tiled
 TILED_FOLDER_PATH = ./assets/tiled
 TILED_EXPORT_TILESETS = background terrain
 TILED_EXPORT_MAPS = level1
+###Conditional Variable Logic###
+ifeq ($(CMAKE_BUILD_TYPE), Release)
+    BUILD_COMMAND := sudo $(BUILD_COMMAND)
+endif
+### ### ###
 ### ### ###
 ### Targets / Rules ##
 ### ### ###
