@@ -5,6 +5,7 @@ BACKUP_BUILD_SYSTEM = 'Unix Makefiles'
 XCODE_BUILD_SYSTEM = Xcode
 WINDOWS_BUILD_SYSTEM = 'Visual Studio 17 2022'
 ### Build Type ### You can override this when calling make ### make CMAKE_BUILD_TYPE=Release ###
+CMAKE_CONFIGURE_COMMAND_PREFIX = ""
 CMAKE_BUILD_TYPE ?= Debug
 FULL_MAC_BUILD ?= OFF
 # Binary Config
@@ -13,8 +14,8 @@ BINARY_FOLDER = bin
 BINARY_NAME = SupergoonDash
 BINARY_FOLDER_REL_PATH = $(BUILD_FOLDER)/$(BINARY_FOLDER)
 ##Build Specific Flags
-CONFIGURE_FLAGS = ''
-EMSCRIPTEN_CONFIGURE_FLAGS = -DCMAKE_VERBOSE_MAKEFILE=ON
+CMAKE_CONFIGURE_COMMAND = cmake
+EMSCRIPTEN_CONFIGURE_FLAGS = '-DCMAKE_VERBOSE_MAKEFILE=ON'
 XCODE_CONFIGURE_FLAGS = '-DIOS_PLATFORM=OS -Dvendored_default=TRUE -DSDL2TTF_VENDORED=TRUE'
 # Tiled Configuration
 TILED_PATH = /Applications/Tiled.app/Contents/MacOS/Tiled
@@ -24,25 +25,11 @@ TILED_EXPORT_MAPS = level1
 
 all: build run
 
-# Macos dev
 configure:
-	@cmake . -B build -D CMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) -G $(BUILD_SYSTEM) -DGOON_FULL_MACOS_BUILD=$(FULL_MAC_BUILD) $(CONFIGURE_FLAGS)
-# econfigure:
-#	@emcmake cmake . -B build  -D CMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) -G $(BACKUP_BUILD_SYSTEM) -DGOON_FULL_MACOS_BUILD=ON -DCMAKE_VERBOSE_MAKEFILE=ON
-# Macos Runner Future
-# xconfigure:
-# 	@cmake . -B build -D CMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) -G $(XCODE_BUILD_SYSTEM) -DGOON_FULL_MACOS_BUILD=ON -DIOS_PLATFORM=OS -Dvendored_default=TRUE -DSDL2TTF_VENDORED=TRUE
-# Linux/Runner / MacosDev backup
-# bconfigure:
-# 	@cmake . -B build -D CMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) -G $(BACKUP_BUILD_SYSTEM)
-# Windows/Runner
-# wconfigure:
-# 	@cmake . -B build -D CMAKE_PREFIX_PATH=/c/cmake -G $(WINDOWS_BUILD_SYSTEM)
+	$(CMAKE_CONFIGURE_COMMAND) . -B build -D CMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) -G $(BUILD_SYSTEM) -DGOON_FULL_MACOS_BUILD=$(FULL_MAC_BUILD) $(CONFIGURE_FLAGS)
 
 build:
 	@cmake --build build --config $(CMAKE_BUILD_TYPE)
-ebuild:
-	@sudo cmake --build build
 
 install:
 	@cmake --install build --config $(CMAKE_BUILD_TYPE)
@@ -70,9 +57,12 @@ brebuild: clean configure build install test package
 wrebuild: BUILD_SYSTEM=$(WINDOWS_BUILD_SYSTEM)
 wrebuild: clean configure build install wpackage
 xrebuild: BUILD_SYSTEM=$(XCODE_BUILD_SYSTEM) CONFIGURE_FLAGS=$(XCODE_CONFIGURE_FLAGS)
+xrebuild: CONFIGURE_FLAGS=$(XCODE_CONFIGURE_FLAGS)
 xrebuild: clean configure build install package
-erebuild: @BUILD_SYSTEM=$(BACKUP_BUILD_SYSTEM) CONFIGURE_FLAGS=$(EMSCRIPTEN_CONFIGURE_FLAGS)
-erebuild: clean configure ebuild
+erebuild: CMAKE_CONFIGURE_COMMAND = emcmake cmake
+erebuild: BUILD_SYSTEM = $(BACKUP_BUILD_SYSTEM)
+erebuild: CONFIGURE_FLAGS = $(EMSCRIPTEN_CONFIGURE_FLAGS)
+erebuild: clean configure build
 
 # MacosDev
 run:
