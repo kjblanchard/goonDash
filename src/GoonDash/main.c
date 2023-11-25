@@ -4,11 +4,10 @@
 #include <GoonDash/input/keyboard.h>
 #include <SDL_ttf.h>
 #include <SupergoonSound/include/sound.h>
-
 #include <GoonPhysics/GoonPhysics.h>
 
 #ifndef FT_IMAGE_TAG
-#define FT_IMAGE_TAG( value, _x1, _x2, _x3, _x4 ) value
+#define FT_IMAGE_TAG(value, _x1, _x2, _x3, _x4) value
 #endif /* FT_IMAGE_TAG */
 
 // EMSCRIPTEN
@@ -29,6 +28,46 @@ static float msBuildup;
 // TODO this should be different, it is inside of SDLwindow.c
 extern SDL_Renderer *g_pRenderer;
 extern int g_refreshRate;
+
+// Quick font test
+SDL_Texture* CreateFontTest()
+{
+TTF_Font *font;
+printf("Creating font?\n");
+/* MS Himalaya (himalaya.ttf): http://fontzone.net/font-details/microsoft-himalaya */
+font = TTF_OpenFont("assets/fonts/himalaya.ttf", 600);
+
+if (!font)
+{
+    printf("%s\n", TTF_GetError());
+    return NULL;
+}
+
+const char tibstring[] = {0xe0, 0xbd, 0x96,
+                          0xe0, 0xbd, 0xa6,
+                          0xe0, 0xbe, 0x90,
+                          0xe0, 0xbe, 0xb1,
+                          0xe0, 0xbd, 0xbc,
+                          0xe0, 0xbd, 0x84,
+                          0xe0, 0xbd, 0xa6};
+
+SDL_Color colour = {255, 255, 255, 255};
+SDL_Surface *surface = TTF_RenderUTF8_Solid(font, tibstring, colour);
+
+if (surface == NULL)
+{
+    TTF_CloseFont(font);
+    printf("Surface error!\n");
+    return NULL;
+}
+
+SDL_Texture *texture = SDL_CreateTextureFromSurface(g_pRenderer, surface);
+
+SDL_Event event;
+int quit = 0;
+return texture;
+
+}
 
 void *MusicUpdateWrapper(void *arg)
 {
@@ -65,7 +104,15 @@ static bool sdlEventLoop()
 
 static int loop_func()
 {
+    static int shouldTestFont = 0;
+    if(!shouldTestFont)
+    {
+        // CreateFontTest();
+        shouldTestFont = 1;
+
+    }
     // Initialize this frame
+
     Uint64 beginFrame = SDL_GetTicks64();
     Uint64 delta = beginFrame - lastFrameMilliseconds;
     msBuildup += delta;
@@ -82,7 +129,6 @@ static int loop_func()
         return true;
     SetLuaTableValue(L, "Lua", "DeltaTime", (void *)&deltaTimeSeconds, gLuaTableNumber);
     UpdateSound();
-
 
     // Run Update and update physics as many times as needed
     while (msBuildup >= deltaTimeMs)
@@ -121,7 +167,7 @@ int main()
     {
         LogError("Could not initialize SDL_IMAGE\nError: %s", IMG_GetError());
     }
-    if(TTF_Init() != 0)
+    if (TTF_Init() != 0)
     {
         LogError("Could not initialize SDL TTF\n,Error: %s", TTF_GetError());
     }

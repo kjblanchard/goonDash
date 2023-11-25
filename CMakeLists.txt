@@ -133,17 +133,17 @@ else()
     message(STATUS "Cloning and updating submodules")
 
     if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
-        execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-            RESULT_VARIABLE GIT_SUBMOD_RESULT)
+            #        execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
+            #            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            #            RESULT_VARIABLE GIT_SUBMOD_RESULT)
+            #
+            #        if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+            #            message(FATAL_ERROR "git submodule update --init --recursive failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+            #        endif()
 
-        if(NOT GIT_SUBMOD_RESULT EQUAL "0")
-            message(FATAL_ERROR "git submodule update --init --recursive failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
-        endif()
-
-        # add_subdirectory(./external/SDL EXCLUDE_FROM_ALL)
-        # add_subdirectory(./external/SDL_image EXCLUDE_FROM_ALL)
-        # add_subdirectory(./external/SDL_ttf EXCLUDE_FROM_ALL)
+         add_subdirectory(./external/SDL EXCLUDE_FROM_ALL)
+         add_subdirectory(./external/SDL_image EXCLUDE_FROM_ALL)
+        #  add_subdirectory(./external/SDL_ttf EXCLUDE_FROM_ALL)
         # add_subdirectory(./external/SDL_ttf EXCLUDE_FROM_ALL)
         add_subdirectory(./external/Lua EXCLUDE_FROM_ALL)
         add_subdirectory(./external/sg_sound)
@@ -205,25 +205,46 @@ if(CMAKE_DEBUG_VARIABLES)
     endforeach()
 endif(CMAKE_DEBUG_VARIABLES)
 
+# Add a custom target with custom commands
+add_custom_target(CustomCommands
+    COMMAND /Users/kevin/git/python/emsdk/upstream/emscripten/embuilder build sdl2_ttf
+    COMMAND /Users/kevin/git/python/emsdk/upstream/emscripten/embuilder build libpng
+    COMMAND /Users/kevin/git/python/emsdk/upstream/emscripten/embuilder build sdl2_image
+    COMMENT "Running custom commands before linking..."
+)
+
+# Add dependency to ensure custom target runs before linking the main target
+add_dependencies(SupergoonDash CustomCommands)
+
+# add_custom_command(
+#     TARGET SupergoonDash
+#     PRE_LINK
+#     # COMMAND echo Hello
+#     COMMAND /Users/kevin/git/python/emsdk/upstream/emscripten/embuilder build sdl2_ttf
+#     COMMAND /Users/kevin/git/python/emsdk/upstream/emscripten/embuilder build sdl2_image
+#     # COMMAND /emsdk/upstream/emscripten/embuilder build sdl2_ttf
+#     # COMMAND /emsdk/upstream/emscripten/embuilder build sdl2_image
+# )
+
 # PROPERTIES
 # if(EMSCRIPTEN)
     # Use this for pthreads in emscripten when ready
-    # set_target_properties(SupergoonDash PROPERTIES LINK_FLAGS ${LINK_FLAGS} "-O0 -g -s USE_PTHREADS=1 -sPTHREAD_POOL_SIZE=2 -s SAFE_HEAP=1 -pthread -s STACK_OVERFLOW_CHECK=1 --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets --preload-file ${CMAKE_SOURCE_DIR}/src/Scripts@/Scripts")
-    # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread -sPTHREAD_POOL_SIZE=2 -s USE_PTHREADS=1 -s 'DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\"$autoResumeAudioContext\",\"$dynCall\"]'")
-    set(USE_FLAGS "-sUSE_SDL=2 -sUSE_SDL_IMAGE=2 -sUSE_FREETYPE=1")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${USE_FLAGS}")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${USE_FLAGS}")
-    set(CMAKE_EXECUTABLE_SUFFIX .html)
-    # set_target_properties(SupergoonDash PROPERTIES LINK_FLAGS ${LINK_FLAGS} "-O0 -g -sUSE_SDL=2 -sUSE_SDL_IMAGE=2 -sUSE_SDL_TTF=2 -s SAFE_HEAP=1 -s STACK_OVERFLOW_CHECK=1 --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets --preload-file ${CMAKE_SOURCE_DIR}/src/Scripts@/Scripts")
-    # target_compile_options(SupergoonDash "-s" "USE_FREETYPE=1")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s 'DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\"$autoResumeAudioContext\",\"$dynCall\"]'")
-    # set(USE_FLAGS "-s USE_SDL=2 -s USE_FREETYPE=1")
-    # set(USE_FLAGS "-s USE_FREETYPE=1")
-    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${USE_FLAGS}")
+    # set(USE_FLAGS "-sSDL2_IMAGE_FORMATS='[\"png\"]'")
     # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${USE_FLAGS}")
     # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${USE_FLAGS}")
-    # add_compile_options("-s" "USE_FREETYPE=1")
+    # set(CMAKE_EXECUTABLE_SUFFIX .html)
+    # target_compile_options(SupergoonDash PRIVATE "-sUSE_SDL_IMAGE=2 -sUSE_SDL_TTF=2 -sSDL2_IMAGE_FORMATS='[\"png\"]")
+
+    target_compile_options(SupergoonDash
+    PUBLIC
+    # -sUSE_SDL_IMAGE=2
+    -sUSE_SDL_TTF=2
+)
+    set_target_properties(SupergoonDash PROPERTIES LINK_FLAGS ${LINK_FLAGS}  " -O0 -g -s SAFE_HEAP=2 -s STACK_OVERFLOW_CHECK=1 --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets --preload-file ${CMAKE_SOURCE_DIR}/src/Scripts@/Scripts")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s 'DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\"$autoResumeAudioContext\",\"$dynCall\"]'")
 # endif(EMSCRIPTEN)
+
+
 
 # #########################################
 # Compile Options
@@ -283,7 +304,7 @@ target_link_libraries(SupergoonDash
     PRIVATE
 
     # SDL2::SDL2-static
-    # SDL2_image::SDL2_image-static
+    SDL2_image::SDL2_image-static
     # SDL2_ttf::SDL2_ttf-static
     ${LUA_LIBRARIES}
     ${GOONSOUND_LIBRARIES}
@@ -326,4 +347,5 @@ if(BUILD_TESTING AND NOT WIN32)
     enable_testing()
 endif(BUILD_TESTING AND NOT WIN32)
 
+# add_test(NAME cppclean COMM
 add_test(NAME cppclean COMMAND ${CMAKE_SOURCE_DIR}/tests/cppclean.sh ${CMAKE_SOURCE_DIR})
