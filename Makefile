@@ -47,7 +47,7 @@ brebuild: BUILD_SYSTEM = $(BACKUP_BUILD_SYSTEM)
 brebuild: clean configure build install test package
 wrebuild: BUILD_SYSTEM=$(WINDOWS_BUILD_SYSTEM)
 wrebuild: PACKAGE_COMMAND = $(WINDOWS_PACKAGE_COMMAND)
-wrebuild: clean configure build install wpackage
+wrebuild: clean configure build install package
 xrebuild: BUILD_SYSTEM=$(XCODE_BUILD_SYSTEM)
 xrebuild: FULL_MAC_BUILD = ON
 xrebuild: CONFIGURE_FLAGS=$(XCODE_CONFIGURE_FLAGS)
