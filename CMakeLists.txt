@@ -133,18 +133,20 @@ else()
     message(STATUS "Cloning and updating submodules")
 
     if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
-            #        execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-            #            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-            #            RESULT_VARIABLE GIT_SUBMOD_RESULT)
-            #
-            #        if(NOT GIT_SUBMOD_RESULT EQUAL "0")
-            #            message(FATAL_ERROR "git submodule update --init --recursive failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
-            #        endif()
+        # execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
+        # WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        # RESULT_VARIABLE GIT_SUBMOD_RESULT)
+        #
+        # if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+        # message(FATAL_ERROR "git submodule update --init --recursive failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+        # endif()
+        add_subdirectory(./external/SDL EXCLUDE_FROM_ALL)
+        add_subdirectory(./external/SDL_image EXCLUDE_FROM_ALL)
 
-         add_subdirectory(./external/SDL EXCLUDE_FROM_ALL)
-         add_subdirectory(./external/SDL_image EXCLUDE_FROM_ALL)
-        #  add_subdirectory(./external/SDL_ttf EXCLUDE_FROM_ALL)
-        # add_subdirectory(./external/SDL_ttf EXCLUDE_FROM_ALL)
+        if(NOT EMSCRIPTEN)
+            add_subdirectory(./external/SDL_ttf EXCLUDE_FROM_ALL)
+        endif(NOT EMSCRIPTEN)
+
         add_subdirectory(./external/Lua EXCLUDE_FROM_ALL)
         add_subdirectory(./external/sg_sound)
         add_subdirectory(./external/goonPhysics)
@@ -167,6 +169,19 @@ if(APPLE)
 elseif(WIN32)
     target_compile_definitions(SupergoonDash PRIVATE -DGN_PLATFORM_WINDOWS)
 elseif(EMSCRIPTEN)
+    add_custom_target(CustomCommands
+        COMMAND /Users/kevin/git/python/emsdk/upstream/emscripten/embuilder build sdl2_ttf
+        COMMENT "Running custom commands before linking..."
+    )
+
+    # Add dependency to ensure custom target runs before linking the main target
+    add_dependencies(SupergoonDash CustomCommands)
+    target_compile_options(SupergoonDash
+        PUBLIC
+        -sUSE_SDL_TTF=2
+    )
+    set_target_properties(SupergoonDash PROPERTIES LINK_FLAGS ${LINK_FLAGS} " -O0 -g -s SAFE_HEAP=2 -s STACK_OVERFLOW_CHECK=1 --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets --preload-file ${CMAKE_SOURCE_DIR}/src/Scripts@/Scripts")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s 'DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\"$autoResumeAudioContext\",\"$dynCall\"]'")
 elseif(LINUX)
     target_compile_definitions(SupergoonDash PRIVATE -DGN_PLATFORM_LINUX)
 
@@ -206,45 +221,8 @@ if(CMAKE_DEBUG_VARIABLES)
 endif(CMAKE_DEBUG_VARIABLES)
 
 # Add a custom target with custom commands
-add_custom_target(CustomCommands
-    COMMAND /Users/kevin/git/python/emsdk/upstream/emscripten/embuilder build sdl2_ttf
-    COMMAND /Users/kevin/git/python/emsdk/upstream/emscripten/embuilder build libpng
-    COMMAND /Users/kevin/git/python/emsdk/upstream/emscripten/embuilder build sdl2_image
-    COMMENT "Running custom commands before linking..."
-)
 
-# Add dependency to ensure custom target runs before linking the main target
-add_dependencies(SupergoonDash CustomCommands)
-
-# add_custom_command(
-#     TARGET SupergoonDash
-#     PRE_LINK
-#     # COMMAND echo Hello
-#     COMMAND /Users/kevin/git/python/emsdk/upstream/emscripten/embuilder build sdl2_ttf
-#     COMMAND /Users/kevin/git/python/emsdk/upstream/emscripten/embuilder build sdl2_image
-#     # COMMAND /emsdk/upstream/emscripten/embuilder build sdl2_ttf
-#     # COMMAND /emsdk/upstream/emscripten/embuilder build sdl2_image
-# )
-
-# PROPERTIES
-# if(EMSCRIPTEN)
-    # Use this for pthreads in emscripten when ready
-    # set(USE_FLAGS "-sSDL2_IMAGE_FORMATS='[\"png\"]'")
-    # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${USE_FLAGS}")
-    # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${USE_FLAGS}")
-    # set(CMAKE_EXECUTABLE_SUFFIX .html)
-    # target_compile_options(SupergoonDash PRIVATE "-sUSE_SDL_IMAGE=2 -sUSE_SDL_TTF=2 -sSDL2_IMAGE_FORMATS='[\"png\"]")
-
-    target_compile_options(SupergoonDash
-    PUBLIC
-    # -sUSE_SDL_IMAGE=2
-    -sUSE_SDL_TTF=2
-)
-    set_target_properties(SupergoonDash PROPERTIES LINK_FLAGS ${LINK_FLAGS}  " -O0 -g -s SAFE_HEAP=2 -s STACK_OVERFLOW_CHECK=1 --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets --preload-file ${CMAKE_SOURCE_DIR}/src/Scripts@/Scripts")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s 'DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\"$autoResumeAudioContext\",\"$dynCall\"]'")
 # endif(EMSCRIPTEN)
-
-
 
 # #########################################
 # Compile Options
@@ -279,6 +257,12 @@ if(TARGET SDL2::SDL2-static)
     target_link_libraries(SupergoonDash PRIVATE SDL2::SDL2-static)
 endif(TARGET SDL2::SDL2-static)
 
+
+    # SDL2_ttf::SDL2_ttf-static
+if(TARGET SDL2_ttf::SDL2_ttf-static)
+    target_link_libraries(SupergoonDash PRIVATE SDL2_ttf::SDL2_ttf-static)
+endif(TARGET SDL2_ttf::SDL2_ttf-static)
+
 if(TARGET goonPhysics)
     target_link_libraries(SupergoonDash PRIVATE goonPhysics)
     target_include_directories(SupergoonDash PUBLIC
@@ -302,10 +286,7 @@ endif(TARGET supergoonSound)
 target_link_libraries(SupergoonDash
     PUBLIC
     PRIVATE
-
-    # SDL2::SDL2-static
     SDL2_image::SDL2_image-static
-    # SDL2_ttf::SDL2_ttf-static
     ${LUA_LIBRARIES}
     ${GOONSOUND_LIBRARIES}
     ${LIB_SOCKET}
