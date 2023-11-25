@@ -26,10 +26,6 @@ TILED_PATH = /Applications/Tiled.app/Contents/MacOS/Tiled
 TILED_FOLDER_PATH = ./assets/tiled
 TILED_EXPORT_TILESETS = background terrain
 TILED_EXPORT_MAPS = level1
-###Conditional Variable Logic###
-ifeq ($(CMAKE_BUILD_TYPE), Release)
-    BUILD_COMMAND := sudo $(BUILD_COMMAND)
-endif
 ### ### ###
 ### ### ###
 ### Targets / Rules ##
@@ -57,6 +53,7 @@ xrebuild: FULL_MAC_BUILD = ON
 xrebuild: CONFIGURE_FLAGS=$(XCODE_CONFIGURE_FLAGS)
 xrebuild: clean configure build install package
 erebuild: CMAKE_CONFIGURE_COMMAND = emcmake cmake
+erebuild: BUILD_COMMAND := sudo $(BUILD_COMMAND)
 erebuild: BUILD_SYSTEM = $(BACKUP_BUILD_SYSTEM)
 erebuild: CONFIGURE_FLAGS = $(EMSCRIPTEN_CONFIGURE_FLAGS)
 erebuild: clean configure build
