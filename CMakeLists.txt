@@ -4,6 +4,7 @@
 cmake_minimum_required(VERSION 3.16)
 message(STATUS "Starting Goon Dash project initialization")
 message(STATUS "Project initializing")
+
 # This exports a file that clangd can use so that we know what compile/include flags so that we can use clangd language server properly with our cmake attributes.
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 include(FindPkgConfig)
@@ -16,7 +17,6 @@ set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-
 
 # #########################################
 # File globbing
@@ -54,6 +54,17 @@ elseif(UNIX AND NOT APPLE)
     message(STATUS "Configuring Linux")
     set(LINUX ON)
 endif(EMSCRIPTEN)
+
+# #########################################
+# Build Type specific setup
+# #########################################
+        # If we are debug, we should use the local path, otherwise use the location of embuilder from the docker image
+        if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        # set(EMBUILDER_PATH /Users/kevin/git/python/emsdk/upstream/emscripten/embuilder)
+        set(EMBUILDER_PATH embuilder)
+        else()
+        set(EMBUILDER_PATH /emsdk/upstream/emscripten/embuilder)
+        endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 # #########################################
 # Initialize
@@ -136,12 +147,13 @@ else()
 
     if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
         execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        RESULT_VARIABLE GIT_SUBMOD_RESULT)
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            RESULT_VARIABLE GIT_SUBMOD_RESULT)
 
         if(NOT GIT_SUBMOD_RESULT EQUAL "0")
-        message(FATAL_ERROR "git submodule update --init --recursive failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+            message(FATAL_ERROR "git submodule update --init --recursive failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
         endif()
+
         add_subdirectory(./external/SDL EXCLUDE_FROM_ALL)
         add_subdirectory(./external/SDL_image EXCLUDE_FROM_ALL)
 
@@ -172,9 +184,10 @@ elseif(WIN32)
     target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_PLATFORM_WINDOWS)
 elseif(EMSCRIPTEN)
     add_custom_target(CustomCommands
-        COMMAND /emsdk/upstream/emscripten/embuilder build sdl2_ttf
+        COMMAND ${EMBUILDER_PATH} build sdl2_ttf
+
         # If running locally, set this to this
-        # COMMAND /Users/kevin/git/python/emsdk/upstream/emscripten/embuilder build sdl2_ttf
+        # COMMAND build sdl2_ttf
         COMMENT "Running custom commands before linking..."
     )
 
@@ -261,8 +274,7 @@ if(TARGET SDL2::SDL2-static)
     target_link_libraries(${EXECUTABLE_TARGET_NAME} PRIVATE SDL2::SDL2-static)
 endif(TARGET SDL2::SDL2-static)
 
-
-    # SDL2_ttf::SDL2_ttf-static
+# SDL2_ttf::SDL2_ttf-static
 if(TARGET SDL2_ttf::SDL2_ttf-static)
     target_link_libraries(${EXECUTABLE_TARGET_NAME} PRIVATE SDL2_ttf::SDL2_ttf-static)
 endif(TARGET SDL2_ttf::SDL2_ttf-static)

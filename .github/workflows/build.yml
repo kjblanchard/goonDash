@@ -27,7 +27,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
       - name: Configure CMake
-        run: make ${{ matrix.make_cmd}}
+        run: make CMAKE_BUILD_TYPE=Release ${{ matrix.make_cmd}}
       - name: Save packaged artifacts
         uses: actions/upload-artifact@v3
         with:
