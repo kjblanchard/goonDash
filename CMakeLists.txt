@@ -3,18 +3,20 @@
 # #########################################
 cmake_minimum_required(VERSION 3.16)
 message(STATUS "Starting Goon Dash project initialization")
-set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-
-# This exports a file that clangd can use so that we know what compile/include flags so that we can use clangd language server properly with our cmake attributes.
 message(STATUS "Project initializing")
+# This exports a file that clangd can use so that we know what compile/include flags so that we can use clangd language server properly with our cmake attributes.
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 include(FindPkgConfig)
 project(goonDash
     VERSION 0.1.0
     LANGUAGES C)
+
+set(EXECUTABLE_TARGET_NAME SupergoonDash)
+set(CPACK_PROJECT_NAME ${PROJECT_NAME})
+set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
 
 # #########################################
 # File globbing
@@ -58,11 +60,11 @@ endif(EMSCRIPTEN)
 # #########################################
 message(STATUS "Initializing the project")
 
-add_executable(SupergoonDash
+add_executable(${EXECUTABLE_TARGET_NAME}
     ${FILES})
 
 # Using 11 instead of 99 for forward declaring typedef
-set_property(TARGET SupergoonDash PROPERTY C_STANDARD 11)
+set_property(TARGET ${EXECUTABLE_TARGET_NAME} PROPERTY C_STANDARD 11)
 find_package(PkgConfig REQUIRED)
 include(CTest)
 
@@ -151,7 +153,7 @@ else()
         add_subdirectory(./external/sg_sound)
         add_subdirectory(./external/goonPhysics)
 
-        target_link_libraries(SupergoonDash PRIVATE lua_static goonPhysics)
+        target_link_libraries(${EXECUTABLE_TARGET_NAME} PRIVATE lua_static goonPhysics)
     else()
         message(STATUS "Could not init git for some reason")
     endif()
@@ -161,13 +163,13 @@ endif(MACOS AND NOT GOON_FULL_MACOS_BUILD)
 # Compile Definitions
 # #########################################
 if(APPLE)
-    target_compile_definitions(SupergoonDash PRIVATE -DGN_PLATFORM_MACOS)
+    target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_PLATFORM_MACOS)
 
     if(GOON_MULTITHREADED_SOUND)
-        target_compile_definitions(SupergoonDash PRIVATE -DGN_MULTITHREADED)
+        target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_MULTITHREADED)
     endif(GOON_MULTITHREADED_SOUND)
 elseif(WIN32)
-    target_compile_definitions(SupergoonDash PRIVATE -DGN_PLATFORM_WINDOWS)
+    target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_PLATFORM_WINDOWS)
 elseif(EMSCRIPTEN)
     add_custom_target(CustomCommands
         COMMAND /emsdk/upstream/emscripten/embuilder build sdl2_ttf
@@ -177,27 +179,27 @@ elseif(EMSCRIPTEN)
     )
 
     # Add dependency to ensure custom target runs before linking the main target
-    add_dependencies(SupergoonDash CustomCommands)
-    target_compile_options(SupergoonDash
+    add_dependencies(${EXECUTABLE_TARGET_NAME} CustomCommands)
+    target_compile_options(${EXECUTABLE_TARGET_NAME}
         PUBLIC
         -sUSE_SDL_TTF=2
     )
-    set_target_properties(SupergoonDash PROPERTIES LINK_FLAGS ${LINK_FLAGS} " -O0 -g -s SAFE_HEAP=2 -s STACK_OVERFLOW_CHECK=1 --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets --preload-file ${CMAKE_SOURCE_DIR}/src/Scripts@/Scripts")
+    set_target_properties(${EXECUTABLE_TARGET_NAME} PROPERTIES LINK_FLAGS ${LINK_FLAGS} " -O0 -g -s SAFE_HEAP=2 -s STACK_OVERFLOW_CHECK=1 --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets --preload-file ${CMAKE_SOURCE_DIR}/src/Scripts@/Scripts")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s 'DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\"$autoResumeAudioContext\",\"$dynCall\"]'")
 elseif(LINUX)
-    target_compile_definitions(SupergoonDash PRIVATE -DGN_PLATFORM_LINUX)
+    target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_PLATFORM_LINUX)
 
     if(GOON_MULTITHREADED_SOUND)
-        target_compile_definitions(SupergoonDash PRIVATE -DGN_MULTITHREADED)
+        target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_MULTITHREADED)
     endif(GOON_MULTITHREADED_SOUND)
 endif(APPLE)
 
 if(GOON_DEBUG_LUA)
-    target_compile_definitions(SupergoonDash PRIVATE -DGN_DEBUG_LUA)
+    target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_DEBUG_LUA)
 endif(GOON_DEBUG_LUA)
 
 if(GOON_BENCHMARKING)
-    target_compile_definitions(SupergoonDash PRIVATE -DGN_BENCHMARKING_ENABLED)
+    target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_BENCHMARKING_ENABLED)
 endif(GOON_BENCHMARKING)
 
 # #########################################
@@ -205,7 +207,7 @@ endif(GOON_BENCHMARKING)
 # #########################################
 if(GOON_BUILD_PCH)
     message(STATUS "Setting up PCH, mac needs objc")
-    target_precompile_headers(SupergoonDash PRIVATE
+    target_precompile_headers(${EXECUTABLE_TARGET_NAME} PRIVATE
         "$<$<COMPILE_LANGUAGE:C>:${CMAKE_CURRENT_SOURCE_DIR}/src/GoonDash/gnpch.h>")
 endif(GOON_BUILD_PCH)
 
@@ -230,11 +232,11 @@ endif(CMAKE_DEBUG_VARIABLES)
 # Compile Options
 # #########################################
 if(WIN32)
-    target_compile_options(SupergoonDash PRIVATE
+    target_compile_options(${EXECUTABLE_TARGET_NAME} PRIVATE
         /std:c11
     )
 else()
-    target_compile_options(SupergoonDash PRIVATE
+    target_compile_options(${EXECUTABLE_TARGET_NAME} PRIVATE
         -Wall
         -Wextra
         -Wpedantic
@@ -252,40 +254,40 @@ endif(WIN32)
 # SDL2::SDL2main may or may not be available. It is e.g. required by Windows GUI applications
 if(TARGET SDL2::SDL2main)
     # It has an implicit dependency on SDL2 functions, so it MUST be added before SDL2::SDL2 (or SDL2::SDL2-static)
-    target_link_libraries(SupergoonDash PRIVATE SDL2::SDL2main)
+    target_link_libraries(${EXECUTABLE_TARGET_NAME} PRIVATE SDL2::SDL2main)
 endif()
 
 if(TARGET SDL2::SDL2-static)
-    target_link_libraries(SupergoonDash PRIVATE SDL2::SDL2-static)
+    target_link_libraries(${EXECUTABLE_TARGET_NAME} PRIVATE SDL2::SDL2-static)
 endif(TARGET SDL2::SDL2-static)
 
 
     # SDL2_ttf::SDL2_ttf-static
 if(TARGET SDL2_ttf::SDL2_ttf-static)
-    target_link_libraries(SupergoonDash PRIVATE SDL2_ttf::SDL2_ttf-static)
+    target_link_libraries(${EXECUTABLE_TARGET_NAME} PRIVATE SDL2_ttf::SDL2_ttf-static)
 endif(TARGET SDL2_ttf::SDL2_ttf-static)
 
 if(TARGET goonPhysics)
-    target_link_libraries(SupergoonDash PRIVATE goonPhysics)
-    target_include_directories(SupergoonDash PUBLIC
+    target_link_libraries(${EXECUTABLE_TARGET_NAME} PRIVATE goonPhysics)
+    target_include_directories(${EXECUTABLE_TARGET_NAME} PUBLIC
         external/goonPhysics/include/
     )
 endif(TARGET goonPhysics)
 
 # Always add goonphysics include instead of using the installed one for now
-target_include_directories(SupergoonDash PUBLIC
+target_include_directories(${EXECUTABLE_TARGET_NAME} PUBLIC
     external/goonPhysics/include/
 )
 
 if(TARGET supergoonSound)
-    target_link_libraries(SupergoonDash PRIVATE supergoonSound)
-    target_include_directories(SupergoonDash PUBLIC
+    target_link_libraries(${EXECUTABLE_TARGET_NAME} PRIVATE supergoonSound)
+    target_include_directories(${EXECUTABLE_TARGET_NAME} PUBLIC
         external/sg_sound/src/
     )
 endif(TARGET supergoonSound)
 
 # Link to the actual SDL2 library. SDL2::SDL2 is the shared SDL library, SDL2::SDL2-static is the static SDL libarary.
-target_link_libraries(SupergoonDash
+target_link_libraries(${EXECUTABLE_TARGET_NAME}
     PUBLIC
     PRIVATE
     SDL2_image::SDL2_image-static
@@ -294,12 +296,12 @@ target_link_libraries(SupergoonDash
     ${LIB_SOCKET}
     ${GOONPHYSICS_LIBRARIES}
 )
-target_link_directories(SupergoonDash
+target_link_directories(${EXECUTABLE_TARGET_NAME}
     PRIVATE
     /usr/local/lib
 )
 
-target_include_directories(SupergoonDash
+target_include_directories(${EXECUTABLE_TARGET_NAME}
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/
 )
