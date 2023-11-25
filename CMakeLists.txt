@@ -170,7 +170,9 @@ elseif(WIN32)
     target_compile_definitions(SupergoonDash PRIVATE -DGN_PLATFORM_WINDOWS)
 elseif(EMSCRIPTEN)
     add_custom_target(CustomCommands
-        COMMAND /Users/kevin/git/python/emsdk/upstream/emscripten/embuilder build sdl2_ttf
+        COMMAND /emsdk/upstream/emscripten/embuilder build sdl2_ttf
+        # If running locally, set this to this
+        # COMMAND /Users/kevin/git/python/emsdk/upstream/emscripten/embuilder build sdl2_ttf
         COMMENT "Running custom commands before linking..."
     )
 
