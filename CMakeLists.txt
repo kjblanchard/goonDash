@@ -1,18 +1,16 @@
 # #########################################
 # Initial config
 # #########################################
+set(EXECUTABLE_TARGET_NAME SupergoonDash)
 cmake_minimum_required(VERSION 3.16)
-message(STATUS "Starting Goon Dash project initialization")
-message(STATUS "Project initializing")
-
+message(STATUS "Starting ${EXECUTABLE_TARGET_NAME} project initialization")
 # This exports a file that clangd can use so that we know what compile/include flags so that we can use clangd language server properly with our cmake attributes.
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 include(FindPkgConfig)
-project(goonDash
+project(${EXECUTABLE_TARGET_NAME}
     VERSION 0.1.0
     LANGUAGES C)
 
-set(EXECUTABLE_TARGET_NAME SupergoonDash)
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -55,30 +53,18 @@ elseif(UNIX AND NOT APPLE)
     set(LINUX ON)
 endif(EMSCRIPTEN)
 
-# #########################################
-# Build Type specific setup
-# #########################################
-        # If we are debug, we should use the local path, otherwise use the location of embuilder from the docker image
-        if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        # set(EMBUILDER_PATH /Users/kevin/git/python/emsdk/upstream/emscripten/embuilder)
-        set(EMBUILDER_PATH embuilder)
-        else()
-        set(EMBUILDER_PATH /emsdk/upstream/emscripten/embuilder)
-        endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 # #########################################
 # Initialize
 # #########################################
-message(STATUS "Initializing the project")
 
+
+message(STATUS "Initializing the project")
 add_executable(${EXECUTABLE_TARGET_NAME}
     ${FILES})
-
-# Using 11 instead of 99 for forward declaring typedef
-set_property(TARGET ${EXECUTABLE_TARGET_NAME} PROPERTY C_STANDARD 11)
+set_property(TARGET ${EXECUTABLE_TARGET_NAME} PROPERTY C_STANDARD 99)
 find_package(PkgConfig REQUIRED)
 include(CTest)
-
 # #########################################
 # Options
 # #########################################
@@ -87,10 +73,22 @@ option(GOON_BUILD_PCH "Uses a PCH file to try and speed up compilation" ON)
 option(GOON_DEBUG_LUA "Includes socket so that we can debug lua remotely" OFF)
 option(GOON_MULTITHREADED_SOUND "Adds multithreaded support for sound updates, experimental and has a memory leak somehow" OFF)
 option(GOON_BENCHMARKING "Enables benchmarking functions, adds overhead" OFF)
-
 # option(GOON_FULL_MACOS_BUILD "Full builds of all libraries, used for runners mostly, and passed in to override." OFF)
-option(GOON_BUILD_TESTING "Should we enable testing" ON)
+option(GOON_BUILD_TESTING "Should we enable testing with ctest" ON)
+# Set the cmake variable build_testing to our option
 set(BUILD_TESTING GOON_BUILD_TESTING)
+
+# #########################################
+# Build Type specific setup
+# #########################################
+        # If we are debug, we should use the local path, otherwise use the location of embuilder from the docker image
+        if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(EMBUILDER_PATH embuilder)
+        target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_DEBUG_BUILD)
+        else()
+        set(EMBUILDER_PATH /emsdk/upstream/emscripten/embuilder)
+        target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_RELEASE_BUILD)
+        endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 # #########################################
 # Packages
@@ -121,12 +119,6 @@ if(MACOS AND NOT GOON_FULL_MACOS_BUILD)
         REQUIRED)
     set(LUA_LIBRARIES ${LIB_LUA})
 
-    # Disable this for now so that we always build it.
-    # find_library(LIB_GOONPHYSICS
-    # NAMES libgoonphysics.a libgoonPhysics.a
-    # HINTS /usr/local/lib
-    # REQUIRED)
-    # set(GOONPHYSICS_LIBRARIES ${LIB_GOONPHYSICS})
     add_subdirectory(./external/goonPhysics)
 
     if(GOON_DEBUG_LUA)
@@ -157,6 +149,7 @@ else()
         add_subdirectory(./external/SDL EXCLUDE_FROM_ALL)
         add_subdirectory(./external/SDL_image EXCLUDE_FROM_ALL)
 
+        # Emscripten needs to use the port for ttf due to ... reasons?
         if(NOT EMSCRIPTEN)
             add_subdirectory(./external/SDL_ttf EXCLUDE_FROM_ALL)
         endif(NOT EMSCRIPTEN)
@@ -176,7 +169,6 @@ endif(MACOS AND NOT GOON_FULL_MACOS_BUILD)
 # #########################################
 if(APPLE)
     target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_PLATFORM_MACOS)
-
     if(GOON_MULTITHREADED_SOUND)
         target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_MULTITHREADED)
     endif(GOON_MULTITHREADED_SOUND)
@@ -185,12 +177,8 @@ elseif(WIN32)
 elseif(EMSCRIPTEN)
     add_custom_target(CustomCommands
         COMMAND ${EMBUILDER_PATH} build sdl2_ttf
-
-        # If running locally, set this to this
-        # COMMAND build sdl2_ttf
         COMMENT "Running custom commands before linking..."
     )
-
     # Add dependency to ensure custom target runs before linking the main target
     add_dependencies(${EXECUTABLE_TARGET_NAME} CustomCommands)
     target_compile_options(${EXECUTABLE_TARGET_NAME}
@@ -246,7 +234,7 @@ endif(CMAKE_DEBUG_VARIABLES)
 # #########################################
 if(WIN32)
     target_compile_options(${EXECUTABLE_TARGET_NAME} PRIVATE
-        /std:c11
+        /std:c99
     )
 else()
     target_compile_options(${EXECUTABLE_TARGET_NAME} PRIVATE
