@@ -29,44 +29,50 @@ static float msBuildup;
 extern SDL_Renderer *g_pRenderer;
 extern int g_refreshRate;
 
+// This is used inside of SDLWindow
+SDL_Texture *g_font;
+int g_fontW, g_fontH = 0;
+
 // Quick font test
-SDL_Texture* CreateFontTest()
+SDL_Texture *CreateFontTest()
 {
-TTF_Font *font;
-printf("Creating font?\n");
-/* MS Himalaya (himalaya.ttf): http://fontzone.net/font-details/microsoft-himalaya */
-font = TTF_OpenFont("assets/fonts/himalaya.ttf", 600);
+    TTF_Font *font;
+    printf("Creating font?\n");
+    /* MS Himalaya (himalaya.ttf): http://fontzone.net/font-details/microsoft-himalaya */
+    font = TTF_OpenFont("assets/fonts/himalaya.ttf", 24);
 
-if (!font)
-{
-    printf("%s\n", TTF_GetError());
-    return NULL;
-}
+    if (!font)
+    {
+        printf("%s\n", TTF_GetError());
+        return NULL;
+    }
 
-const char tibstring[] = {0xe0, 0xbd, 0x96,
-                          0xe0, 0xbd, 0xa6,
-                          0xe0, 0xbe, 0x90,
-                          0xe0, 0xbe, 0xb1,
-                          0xe0, 0xbd, 0xbc,
-                          0xe0, 0xbd, 0x84,
-                          0xe0, 0xbd, 0xa6};
+    const char tibstring[] = {0xe0, 0xbd, 0x96,
+                              0xe0, 0xbd, 0xa6,
+                              0xe0, 0xbe, 0x90,
+                              0xe0, 0xbe, 0xb1,
+                              0xe0, 0xbd, 0xbc,
+                              0xe0, 0xbd, 0x84,
+                              0xe0, 0xbd, 0xa6};
 
-SDL_Color colour = {255, 255, 255, 255};
-SDL_Surface *surface = TTF_RenderUTF8_Solid(font, tibstring, colour);
+    SDL_Color colour = {255, 255, 255, 255};
+    // SDL_Surface *surface = TTF_RenderUTF8_Solid(font, tibstring, colour);
+    SDL_Surface *surface = TTF_RenderUTF8_Solid(font, "Hello", colour);
+    g_fontW = surface->w;
+    g_fontH = surface->h;
 
-if (surface == NULL)
-{
-    TTF_CloseFont(font);
-    printf("Surface error!\n");
-    return NULL;
-}
+    if (surface == NULL)
+    {
+        TTF_CloseFont(font);
+        printf("Surface error!\n");
+        return NULL;
+    }
 
-SDL_Texture *texture = SDL_CreateTextureFromSurface(g_pRenderer, surface);
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(g_pRenderer, surface);
 
-SDL_Event event;
-int quit = 0;
-return texture;
-
+    SDL_Event event;
+    int quit = 0;
+    return texture;
 }
 
 void *MusicUpdateWrapper(void *arg)
@@ -105,11 +111,10 @@ static bool sdlEventLoop()
 static int loop_func()
 {
     static int shouldTestFont = 0;
-    if(!shouldTestFont)
+    if (!shouldTestFont)
     {
-        // CreateFontTest();
+        g_font = CreateFontTest();
         shouldTestFont = 1;
-
     }
     // Initialize this frame
 
@@ -142,6 +147,8 @@ static int loop_func()
     SDL_SetRenderDrawColor(g_pRenderer, 100, 100, 100, 255);
     SDL_RenderClear(g_pRenderer);
     CallEngineLuaFunction(L, "Draw");
+    SDL_Rect dstFont = {50,50,g_fontW, g_fontH};
+    SDL_RenderCopy(g_pRenderer, g_font, NULL, &dstFont);
     SDL_RenderPresent(g_pRenderer);
 }
 
