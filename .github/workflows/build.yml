@@ -27,7 +27,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
       - name: Configure CMake
-        run: make ${{ matrix.make_cmd}}
+        run: make CMAKE_BUILD_TYPE=Release ${{ matrix.make_cmd}}
       - name: Save packaged artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -74,7 +74,7 @@ jobs:
   Build-Emscripten:
     runs-on: ubuntu-latest
     container:
-      image: emscripten/emsdk:3.1.46
+      image: emscripten/emsdk:latest
       env:
         thing: thing
       credentials:
@@ -89,11 +89,14 @@ jobs:
       - name: Install CMake
         run: |
           apt update -y && apt upgrade -y
-          apt install cmake pkg-config -y
-          # git config --global --add safe.directory $(pwd)
-          # git config --global --add safe.directory .
+          # This is needed as system freetype doesn't have proper files for find package.
+          embuilder build freetype
+          # apt install cmake pkg-config libfreetype-dev -y
+          apt install cmake pkg-config  -y
+          # cp /usr/lib/x86_64-linux-gnu/pkgconfig/freetype2.pc /usr/lib/x86_64-linux-gnu/pkgconfig/freetype.pc
+          # export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig/
       - name: Actual build
-        run: cd repo && make erebuild
+        run: cd repo && make CMAKE_BUILD_TYPE=Release erebuild
       - uses: actions/upload-artifact@v3
         name: Upload to S3
         with:
@@ -148,4 +151,5 @@ jobs:
           asset_name: ${{ matrix.asset_name }}
           tag: ${{ github.ref }}
           overwrite: true
-          body: "$ANNOTATION"
+          # body: "$ANNOTATION"
+          body: ${{ steps.tag-data.outputs.git-tag-annotation }}

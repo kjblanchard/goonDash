@@ -13,3 +13,6 @@
 [submodule "external/goonPhysics"]
 	path = external/goonPhysics
 	url = https://github.com/kjblanchard/goonPhysics.git
+[submodule "external/SDL_ttf"]
+	path = external/SDL_ttf
+	url = https://github.com/kjblanchard/SDL_ttf.git

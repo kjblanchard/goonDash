@@ -67,6 +67,9 @@ static void LogSetup(LogLevel level, const char *fmt, va_list args)
 
 static int ShouldLog(LogLevel level)
 {
+    #ifdef GN_RELEASE_BUILD
+    return false;
+    #endif
     return logLevel <= level;
 }
 
