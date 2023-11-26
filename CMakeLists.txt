@@ -21,23 +21,20 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 # #########################################
 message(STATUS "Getting all files for cmake..")
 file(GLOB_RECURSE FILES src/*.c* src/*.h*)
-
 # #########################################
 # Platform specific Project setup
 # #########################################
 message(STATUS "Changing the platform specific settings")
-
 if(EMSCRIPTEN)
     message(STATUS "Configuring Emscripten")
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
     set(GOON_ENABLE_TESTING OFF)
 elseif(APPLE)
-    # MACOS
+    # MACOS #
     if(NOT IOS)
         message(STATUS "Configuring Macos")
         set(MACOS ON)
         list(FILTER FILES EXCLUDE REGEX ".*platform/Windows.*$")
-
         if(CMAKE_GENERATOR STREQUAL "Xcode")
             message(STATUS "Setting Build to Universal Binary")
             set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE STRING "" FORCE)
@@ -52,13 +49,9 @@ elseif(UNIX AND NOT APPLE)
     message(STATUS "Configuring Linux")
     set(LINUX ON)
 endif(EMSCRIPTEN)
-
-
 # #########################################
 # Initialize
 # #########################################
-
-
 message(STATUS "Initializing the project")
 add_executable(${EXECUTABLE_TARGET_NAME}
     ${FILES})
@@ -79,6 +72,15 @@ option(GOON_BUILD_TESTING "Should we enable testing with ctest" ON)
 set(BUILD_TESTING GOON_BUILD_TESTING)
 
 # #########################################
+# Precompiled headers
+# #########################################
+if(GOON_BUILD_PCH)
+    message(STATUS "Setting up PCH, mac needs objc")
+    target_precompile_headers(${EXECUTABLE_TARGET_NAME} PRIVATE
+        "$<$<COMPILE_LANGUAGE:C>:${CMAKE_CURRENT_SOURCE_DIR}/src/GoonDash/gnpch.h>")
+endif(GOON_BUILD_PCH)
+
+# #########################################
 # Build Type specific setup
 # #########################################
         # If we are debug, we should use the local path, otherwise use the location of embuilder from the docker image
@@ -89,7 +91,6 @@ set(BUILD_TESTING GOON_BUILD_TESTING)
         set(EMBUILDER_PATH /emsdk/upstream/emscripten/embuilder)
         target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_RELEASE_BUILD)
         endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
-
 # #########################################
 # Packages
 # #########################################
@@ -98,29 +99,23 @@ if(MACOS AND NOT GOON_FULL_MACOS_BUILD)
     # 1. Look for a SDL2 package, 2. look for the SDL2 component and 3. fail if none can be found
     find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2)
     find_package(SDL2_image
-
         NAMES SDL2_Image libSDL2_Image SDL2_image libSDL2_image libSDL2_image
         CONFIG COMPONENTS SDL2_image
         HINTS /usr/local/lib)
-
     find_package(SDL2_ttf
-
         NAMES SDL2_ttf libSDL2_ttf SDL2_Ttf libSDL2_Ttf libSDL2_Ttf
         CONFIG COMPONENTS SDL2_ttf
         HINTS /usr/local/lib)
-
     # 1. Look for a SDL2 package, 2. Look for the SDL2maincomponent and 3. DO NOT fail when SDL2main is not available
     find_package(SDL2 REQUIRED CONFIG COMPONENTS SDL2main)
-
     # Find lua static (non homebrew on mac)
     find_library(LIB_LUA
         NAMES liblua_static lua_static liblua_static.a lua_static.a liblua.a
         HINTS /usr/local/lib
         REQUIRED)
     set(LUA_LIBRARIES ${LIB_LUA})
-
+    add_subdirectory(./external/sg_sound)
     add_subdirectory(./external/goonPhysics)
-
     if(GOON_DEBUG_LUA)
         find_library(LIB_SOCKET
             NAMES socket-3.0.0.so
@@ -129,36 +124,29 @@ if(MACOS AND NOT GOON_FULL_MACOS_BUILD)
             PATHS /Users/kevin/git/lua/luasocket/build/lib/lua/5.4/socket
             REQUIRED)
     endif(GOON_DEBUG_LUA)
-
-    add_subdirectory(./external/sg_sound)
-
 # Build everything, useful for runners, and builds we don't care take a little longer.
 else()
     find_package(Git REQUIRED QUIET)
     message(STATUS "Cloning and updating submodules")
-
     if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
         execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
             RESULT_VARIABLE GIT_SUBMOD_RESULT)
-
         if(NOT GIT_SUBMOD_RESULT EQUAL "0")
             message(FATAL_ERROR "git submodule update --init --recursive failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
         endif()
 
         add_subdirectory(./external/SDL EXCLUDE_FROM_ALL)
         add_subdirectory(./external/SDL_image EXCLUDE_FROM_ALL)
-
         # Emscripten needs to use the port for ttf due to ... reasons?
         if(NOT EMSCRIPTEN)
             add_subdirectory(./external/SDL_ttf EXCLUDE_FROM_ALL)
         endif(NOT EMSCRIPTEN)
-
         add_subdirectory(./external/Lua EXCLUDE_FROM_ALL)
         add_subdirectory(./external/sg_sound)
         add_subdirectory(./external/goonPhysics)
-
-        target_link_libraries(${EXECUTABLE_TARGET_NAME} PRIVATE lua_static goonPhysics)
+        set(GOONPHYSICS_LIBRARIES goonPhysics)
+        set(LUA_LIBRARIES lua_static)
     else()
         message(STATUS "Could not init git for some reason")
     endif()
@@ -203,14 +191,6 @@ if(GOON_BENCHMARKING)
     target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_BENCHMARKING_ENABLED)
 endif(GOON_BENCHMARKING)
 
-# #########################################
-# Precompiled headers
-# #########################################
-if(GOON_BUILD_PCH)
-    message(STATUS "Setting up PCH, mac needs objc")
-    target_precompile_headers(${EXECUTABLE_TARGET_NAME} PRIVATE
-        "$<$<COMPILE_LANGUAGE:C>:${CMAKE_CURRENT_SOURCE_DIR}/src/GoonDash/gnpch.h>")
-endif(GOON_BUILD_PCH)
 
 # #########################################
 # Debug
