@@ -142,9 +142,9 @@ else()
         add_subdirectory(./external/SDL_image EXCLUDE_FROM_ALL)
 
         # Emscripten needs to use the port for ttf due to ... reasons?
-        if(NOT EMSCRIPTEN)
+        # if(NOT EMSCRIPTEN)
             add_subdirectory(./external/SDL_ttf EXCLUDE_FROM_ALL)
-        endif(NOT EMSCRIPTEN)
+        # endif(NOT EMSCRIPTEN)
 
         add_subdirectory(./external/Lua EXCLUDE_FROM_ALL)
         set(GOONPHYSICS_LIBRARIES goonPhysics)
@@ -164,13 +164,13 @@ target_include_directories(${EXECUTABLE_TARGET_NAME} PUBLIC external/sg_sound/sr
 # Platform Specific Build settings
 # #########################################
 if(EMSCRIPTEN)
-    add_custom_target(CustomCommands
-        COMMAND ${EMBUILDER_PATH} build sdl2_ttf
-        COMMENT "Running custom commands before linking..."
-    )
+#     add_custom_target(CustomCommands
+#         COMMAND ${EMBUILDER_PATH} build sdl2_ttf
+#         COMMENT "Running custom commands before linking..."
+#     )
 
-    # Add dependency to ensure custom target runs before linking the main target
-    add_dependencies(${EXECUTABLE_TARGET_NAME} CustomCommands)
+#     # Add dependency to ensure custom target runs before linking the main target
+#     add_dependencies(${EXECUTABLE_TARGET_NAME} CustomCommands)
     set_target_properties(${EXECUTABLE_TARGET_NAME} PROPERTIES LINK_FLAGS ${LINK_FLAGS} " -O0 -g -s SAFE_HEAP=2 -s STACK_OVERFLOW_CHECK=1 --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets --preload-file ${CMAKE_SOURCE_DIR}/src/Scripts@/Scripts")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s 'DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\"$autoResumeAudioContext\",\"$dynCall\"]'")
 endif(EMSCRIPTEN)

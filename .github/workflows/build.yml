@@ -90,9 +90,11 @@ jobs:
         run: |
           apt update -y && apt upgrade -y
           # This is needed as system freetype doesn't have proper files for find package.
-          apt install cmake pkg-config libfreetype-dev -y
-          cp /usr/lib/x86_64-linux-gnu/pkgconfig/freetype2.pc /usr/lib/x86_64-linux-gnu/pkgconfig/freetype.pc
-          export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig/
+          embuilder build freetype
+          # apt install cmake pkg-config libfreetype-dev -y
+          apt install cmake pkg-config  -y
+          # cp /usr/lib/x86_64-linux-gnu/pkgconfig/freetype2.pc /usr/lib/x86_64-linux-gnu/pkgconfig/freetype.pc
+          # export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig/
       - name: Actual build
         run: cd repo && make CMAKE_BUILD_TYPE=Release erebuild
       - uses: actions/upload-artifact@v3
