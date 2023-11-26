@@ -1,12 +1,13 @@
 # GoonDash
 - A C program with Lua scripting, that utilizes Tiled and Aseprite for the game "engine".
 - ![Build All Platforms]( https://github.com/kjblanchard/goonDash/actions/workflows/build.yml/badge.svg)
-<!-- ![Status Picture](https://github.com/kjblanchard/goonDash/blob/master/img/status.png?raw=true) -->
+![Status Picture](https://github.com/kjblanchard/goonDash/blob/master/img/status.png?raw=true)
 - Play the game here, or likely watch its "progress" [Supergoon.com](https://supergoondash.supergoon.com)
 
 ## Development
 - Mostly developed on macos apple silicon
 - Builds on Mac, Linux, Windows, Emscripten throughout development with github actions
+- Releases on tags with github actions
 
 ## Goals
 - Better at C
@@ -18,13 +19,14 @@
 - Game build on Mobile (IOS priority)
 
 ## Building
-- If you have the libraries installed, just use the make rebuild command
-- Otherwise, use the full builds in the makefile for your platform as that clones all the dependencies and builds them locally.
+- If you have the libraries installed, just use the make rebuild command.  Libraries required are in the libraries section
+- Otherwise, use the full builds in the makefile for your platform as that clones all the dependencies and builds them locally, this just takes a bit longer.
 
 ## Current State
 - Loads a tilemap from tiled
 - Sound implemented, loops over and over.
 - Basic 2d AABB Physics implemented
+- TTF loads on all platforms
 - Builds on all platforms in runners.
 
 ## Requirements
@@ -49,6 +51,8 @@
 
 ### Libraries
 - [SDL](https://www.libsdl.org/license.php) - ZLIB - Low level Windowing / Eventing
+- [SDL_Image](https://www.libsdl.org/license.php) - ZLIB - Loads Different picture types into SDL_Textures
+- [SDL_Ttf](https://www.libsdl.org/license.php) - ZLIB - Loads True type fonts multi-platform with Freetype and Harfbuzz
 - [doxygen](https://doxygen.nl) - GPL | Automatic documentation
 - [Lua](https://www.lua.org/license.html) - MIT - Scripting
 - [Supergoon Sound](https://github.com/icculus/mojoAL/blob/main/LICENSE.txt) - ZLIB | OpenAL implementation - Mojoal wrapper
@@ -59,7 +63,7 @@
 - Had to get the build command from the mac.cmd file, and use that
 - Had to remove -bundle and use these changes:
 -LDFLAGS_macosx= -bundle -undefined dynamic_lookup -o
-+LDFLAGS_macosx=  -undefined dynamic_lookup -dynamiclib -o
+-LDFLAGS_macosx=  -undefined dynamic_lookup -dynamiclib -o
 - Had to rename the files and put in a shared lib local location, as for some reason it references core in different places (socket-3.0.0)
 - Now when you run (with make run) it will trigger breakpoints set in zerobrane after you start the server.
 

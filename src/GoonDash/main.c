@@ -46,32 +46,17 @@ SDL_Texture *CreateFontTest()
         printf("%s\n", TTF_GetError());
         return NULL;
     }
-
-    const char tibstring[] = {0xe0, 0xbd, 0x96,
-                              0xe0, 0xbd, 0xa6,
-                              0xe0, 0xbe, 0x90,
-                              0xe0, 0xbe, 0xb1,
-                              0xe0, 0xbd, 0xbc,
-                              0xe0, 0xbd, 0x84,
-                              0xe0, 0xbd, 0xa6};
-
     SDL_Color colour = {255, 255, 255, 255};
-    // SDL_Surface *surface = TTF_RenderUTF8_Solid(font, tibstring, colour);
-    SDL_Surface *surface = TTF_RenderUTF8_Solid(font, "Hello", colour);
+    SDL_Surface *surface = TTF_RenderUTF8_Blended_Wrapped(font, "Created by: Kevin Blanchard\nWASD to move, Spacebar to jump", colour, 0);
     g_fontW = surface->w;
     g_fontH = surface->h;
-
     if (surface == NULL)
     {
         TTF_CloseFont(font);
         printf("Surface error!\n");
         return NULL;
     }
-
     SDL_Texture *texture = SDL_CreateTextureFromSurface(g_pRenderer, surface);
-
-    SDL_Event event;
-    int quit = 0;
     return texture;
 }
 
@@ -147,8 +132,10 @@ static int loop_func()
     SDL_SetRenderDrawColor(g_pRenderer, 100, 100, 100, 255);
     SDL_RenderClear(g_pRenderer);
     CallEngineLuaFunction(L, "Draw");
-    SDL_Rect dstFont = {50,50,g_fontW, g_fontH};
+    SDL_Rect dstFont = {10,10,g_fontW, g_fontH};
     SDL_RenderCopy(g_pRenderer, g_font, NULL, &dstFont);
+    SDL_RenderDrawLine(g_pRenderer, 0, 11+g_fontH, 20 + g_fontW, 11+g_fontH);
+    SDL_RenderDrawLine(g_pRenderer, 20 + g_fontW, 0, 20 + g_fontW, 11+g_fontH);
     SDL_RenderPresent(g_pRenderer);
 }
 

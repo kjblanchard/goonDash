@@ -28,7 +28,7 @@ TILED_EXPORT_TILESETS = background terrain
 TILED_EXPORT_MAPS = level1
 ### ### ###
 ### ### ###
-### Targets / Rules ##
+### Targets / Rules for easy calls into cmake and runners utilize these instead of interfacing with cmake directly. ##
 ### ### ###
 all: build run
 clean:
