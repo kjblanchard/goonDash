@@ -125,8 +125,6 @@ if(MACOS AND NOT GOON_FULL_MACOS_BUILD)
         HINTS /usr/local/lib
         REQUIRED)
     set(LUA_LIBRARIES ${LIB_LUA})
-    add_subdirectory(./external/sg_sound)
-    add_subdirectory(./external/goonPhysics)
 
     if(GOON_DEBUG_LUA)
         find_library(LIB_SOCKET
@@ -160,8 +158,6 @@ else()
         endif(NOT EMSCRIPTEN)
 
         add_subdirectory(./external/Lua EXCLUDE_FROM_ALL)
-        add_subdirectory(./external/sg_sound)
-        add_subdirectory(./external/goonPhysics)
         set(GOONPHYSICS_LIBRARIES goonPhysics)
         set(LUA_LIBRARIES lua_static)
     else()
@@ -169,18 +165,16 @@ else()
     endif()
 endif(MACOS AND NOT GOON_FULL_MACOS_BUILD)
 
-# #########################################
-# Compile Definitions
-# #########################################
-if(APPLE)
-    target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_PLATFORM_MACOS)
+# Build my Libraries and include directories regardless
+add_subdirectory(./external/goonPhysics)
+target_include_directories(${EXECUTABLE_TARGET_NAME} PUBLIC external/goonPhysics/include/)
+add_subdirectory(./external/sg_sound)
+target_include_directories(${EXECUTABLE_TARGET_NAME} PUBLIC external/sg_sound/src/)
 
-    if(GOON_MULTITHREADED_SOUND)
-        target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_MULTITHREADED)
-    endif(GOON_MULTITHREADED_SOUND)
-elseif(WIN32)
-    target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_PLATFORM_WINDOWS)
-elseif(EMSCRIPTEN)
+# #########################################
+# Platform Specific Build settings
+# #########################################
+if(EMSCRIPTEN)
     add_custom_target(CustomCommands
         COMMAND ${EMBUILDER_PATH} build sdl2_ttf
         COMMENT "Running custom commands before linking..."
@@ -190,21 +184,47 @@ elseif(EMSCRIPTEN)
     add_dependencies(${EXECUTABLE_TARGET_NAME} CustomCommands)
     set_target_properties(${EXECUTABLE_TARGET_NAME} PROPERTIES LINK_FLAGS ${LINK_FLAGS} " -O0 -g -s SAFE_HEAP=2 -s STACK_OVERFLOW_CHECK=1 --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets --preload-file ${CMAKE_SOURCE_DIR}/src/Scripts@/Scripts")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s 'DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\"$autoResumeAudioContext\",\"$dynCall\"]'")
-elseif(LINUX)
-    target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_PLATFORM_LINUX)
+endif(EMSCRIPTEN)
 
-    if(GOON_MULTITHREADED_SOUND)
-        target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_MULTITHREADED)
-    endif(GOON_MULTITHREADED_SOUND)
-endif(APPLE)
+# #########################################
+# Compile Definitions
+# #########################################
+# if(APPLE)
+#     target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_PLATFORM_MACOS)
+#     if(GOON_MULTITHREADED_SOUND)
+#         target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_MULTITHREADED)
+#     endif(GOON_MULTITHREADED_SOUND)
+# elseif(WIN32)
+#     target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_PLATFORM_WINDOWS)
+# elseif(EMSCRIPTEN)
+#     target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_PLATFORM_EMSCRIPTEN)
+# elseif(LINUX)
+#     target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_PLATFORM_LINUX)
+#     if(GOON_MULTITHREADED_SOUND)
+#         target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_MULTITHREADED)
+#     endif(GOON_MULTITHREADED_SOUND)
+# endif(APPLE)
+# if(GOON_DEBUG_LUA)
+#     target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_DEBUG_LUA)
+# endif(GOON_DEBUG_LUA)
 
-if(GOON_DEBUG_LUA)
-    target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_DEBUG_LUA)
-endif(GOON_DEBUG_LUA)
+# if(GOON_BENCHMARKING)
+#     target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_BENCHMARKING_ENABLED)
+# endif(GOON_BENCHMARKING)
 
-if(GOON_BENCHMARKING)
-    target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_BENCHMARKING_ENABLED)
-endif(GOON_BENCHMARKING)
+# Platform-specific compile definitions
+target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE
+    $<$<BOOL:${APPLE}>: -DGN_PLATFORM_MACOS>
+    $<$<BOOL:${WIN32}>: -DGN_PLATFORM_WINDOWS>
+    $<$<BOOL:${EMSCRIPTEN}>: -DGN_PLATFORM_EMSCRIPTEN>
+    $<$<BOOL:${LINUX}>: -DGN_PLATFORM_LINUX>
+)
+# Other compile definitions
+target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE
+    $<$<BOOL:${GOON_MULTITHREADED_SOUND}>: -DGN_MULTITHREADED>
+    $<$<BOOL:${GOON_DEBUG_LUA}>: -DGN_DEBUG_LUA>
+    $<$<BOOL:${GOON_BENCHMARKING}>: -DGN_BENCHMARKING_ENABLED>
+)
 
 # #########################################
 # Debug
@@ -231,11 +251,13 @@ set(FULL_COMPILE_OPTIONS
     -Wno-strict-prototypes
     -pthread
 )
+
 if(WIN32)
     set(FULL_COMPILE_OPTIONS /std:c99)
 elseif(EMSCRIPTEN)
     target_compile_options(${EXECUTABLE_TARGET_NAME} PRIVATE -sUSE_SDL_TTF=2)
 endif(WIN32)
+
 target_compile_options(${EXECUTABLE_TARGET_NAME} PRIVATE ${FULL_COMPILE_OPTIONS})
 
 # #########################################
@@ -244,53 +266,34 @@ target_compile_options(${EXECUTABLE_TARGET_NAME} PRIVATE ${FULL_COMPILE_OPTIONS}
 
 # SDL2::SDL2main may or may not be available. It is e.g. required by Windows GUI applications
 # It has an implicit dependency on SDL2 functions, so it MUST be added before SDL2::SDL2 (or SDL2::SDL2-static)
-if(TARGET SDL2::SDL2main)
-    target_link_libraries(${EXECUTABLE_TARGET_NAME} PRIVATE SDL2::SDL2main)
-endif()
-
-if(TARGET SDL2::SDL2-static)
-    target_link_libraries(${EXECUTABLE_TARGET_NAME} PRIVATE SDL2::SDL2-static)
-endif(TARGET SDL2::SDL2-static)
-
-# SDL2_ttf::SDL2_ttf-static
-if(TARGET SDL2_ttf::SDL2_ttf-static)
-    target_link_libraries(${EXECUTABLE_TARGET_NAME} PRIVATE SDL2_ttf::SDL2_ttf-static)
-endif(TARGET SDL2_ttf::SDL2_ttf-static)
-
-if(TARGET goonPhysics)
-    target_link_libraries(${EXECUTABLE_TARGET_NAME} PRIVATE goonPhysics)
-    target_include_directories(${EXECUTABLE_TARGET_NAME} PUBLIC
-        external/goonPhysics/include/
-    )
-endif(TARGET goonPhysics)
-
-# Always add goonphysics include instead of using the installed one for now
-target_include_directories(${EXECUTABLE_TARGET_NAME} PUBLIC
-    external/goonPhysics/include/
+set(LIBRARIES_TO_LINK
+    SDL2::SDL2main
+    SDL2::SDL2-static
+    SDL2_image::SDL2_image-static
+    SDL2_ttf::SDL2_ttf-static
+    goonPhysics
+    supergoonSound
 )
 
-if(TARGET supergoonSound)
-    target_link_libraries(${EXECUTABLE_TARGET_NAME} PRIVATE supergoonSound)
-    target_include_directories(${EXECUTABLE_TARGET_NAME} PUBLIC
-        external/sg_sound/src/
-    )
-endif(TARGET supergoonSound)
+foreach(LIBRARY ${LIBRARIES_TO_LINK})
+    # Check if the target exists, if we are building it then we should link to it.
+    if(TARGET ${LIBRARY})
+        target_link_libraries(${EXECUTABLE_TARGET_NAME} PRIVATE ${LIBRARY})
+    endif()
+endforeach()
 
-# Link to the actual SDL2 library. SDL2::SDL2 is the shared SDL library, SDL2::SDL2-static is the static SDL libarary.
 target_link_libraries(${EXECUTABLE_TARGET_NAME}
     PUBLIC
     PRIVATE
-    SDL2_image::SDL2_image-static
     ${LUA_LIBRARIES}
     ${GOONSOUND_LIBRARIES}
-    ${LIB_SOCKET}
     ${GOONPHYSICS_LIBRARIES}
+    ${LIB_SOCKET}
 )
 target_link_directories(${EXECUTABLE_TARGET_NAME}
     PRIVATE
     /usr/local/lib
 )
-
 target_include_directories(${EXECUTABLE_TARGET_NAME}
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/
