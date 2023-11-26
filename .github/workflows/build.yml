@@ -151,4 +151,5 @@ jobs:
           asset_name: ${{ matrix.asset_name }}
           tag: ${{ github.ref }}
           overwrite: true
-          body: "$ANNOTATION"
+          # body: "$ANNOTATION"
+          body: ${{ steps.tag-data.outputs.git-tag-annotation }}
