@@ -4,14 +4,9 @@
 set(EXECUTABLE_TARGET_NAME SupergoonDash)
 cmake_minimum_required(VERSION 3.16)
 message(STATUS "Starting ${EXECUTABLE_TARGET_NAME} project initialization")
-
-# This exports a file that clangd can use so that we know what compile/include flags so that we can use clangd language server properly with our cmake attributes.
-set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+set(CMAKE_EXPORT_COMPILE_COMMANDS 1) # This exports a file that clangd can use so that we know what compile/include flags so that we can use clangd language server properly with our cmake attributes.
 include(FindPkgConfig)
-project(${EXECUTABLE_TARGET_NAME}
-    VERSION 0.1.0
-    LANGUAGES C)
-
+project(${EXECUTABLE_TARGET_NAME} VERSION 0.1.0 LANGUAGES C)
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -27,23 +22,21 @@ file(GLOB_RECURSE FILES src/*.c* src/*.h*)
 # Platform specific Project setup
 # #########################################
 message(STATUS "Changing the platform specific settings")
-
 if(EMSCRIPTEN)
     message(STATUS "Configuring Emscripten")
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
     set(GOON_ENABLE_TESTING OFF)
 elseif(APPLE)
-    # MACOS #
-    if(NOT IOS)
+    if(NOT IOS) # MACOS #
         message(STATUS "Configuring Macos")
         set(MACOS ON)
         list(FILTER FILES EXCLUDE REGEX ".*platform/Windows.*$")
-
         if(CMAKE_GENERATOR STREQUAL "Xcode")
             message(STATUS "Setting Build to Universal Binary")
             set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE STRING "" FORCE)
         endif(CMAKE_GENERATOR STREQUAL "Xcode")
     endif(NOT IOS)
+    # IOS
 elseif(WIN32)
     message(STATUS "Configuring Windows")
     set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} /c/cmake)
@@ -72,12 +65,9 @@ option(GOON_BUILD_PCH "Uses a PCH file to try and speed up compilation" ON)
 option(GOON_DEBUG_LUA "Includes socket so that we can debug lua remotely" OFF)
 option(GOON_MULTITHREADED_SOUND "Adds multithreaded support for sound updates, experimental and has a memory leak somehow" OFF)
 option(GOON_BENCHMARKING "Enables benchmarking functions, adds overhead" OFF)
-
-# option(GOON_FULL_MACOS_BUILD "Full builds of all libraries, used for runners mostly, and passed in to override." OFF)
 option(GOON_BUILD_TESTING "Should we enable testing with ctest" ON)
-
-# Set the cmake variable build_testing to our option
-set(BUILD_TESTING GOON_BUILD_TESTING)
+set(BUILD_TESTING GOON_BUILD_TESTING) # Set the cmake variable build_testing to our option
+# option(GOON_FULL_MACOS_BUILD "Full builds of all libraries, used for runners mostly, and passed in to override." OFF)
 
 # #########################################
 # Precompiled headers
@@ -129,7 +119,6 @@ if(MACOS AND NOT GOON_FULL_MACOS_BUILD)
     if(GOON_DEBUG_LUA)
         find_library(LIB_SOCKET
             NAMES socket-3.0.0.so
-
             # HINTS /Users/kevin/git/lua/luasocket/build/lib/lua/5.4/socket
             PATHS /Users/kevin/git/lua/luasocket/build/lib/lua/5.4/socket
             REQUIRED)
@@ -189,28 +178,6 @@ endif(EMSCRIPTEN)
 # #########################################
 # Compile Definitions
 # #########################################
-# if(APPLE)
-#     target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_PLATFORM_MACOS)
-#     if(GOON_MULTITHREADED_SOUND)
-#         target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_MULTITHREADED)
-#     endif(GOON_MULTITHREADED_SOUND)
-# elseif(WIN32)
-#     target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_PLATFORM_WINDOWS)
-# elseif(EMSCRIPTEN)
-#     target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_PLATFORM_EMSCRIPTEN)
-# elseif(LINUX)
-#     target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_PLATFORM_LINUX)
-#     if(GOON_MULTITHREADED_SOUND)
-#         target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_MULTITHREADED)
-#     endif(GOON_MULTITHREADED_SOUND)
-# endif(APPLE)
-# if(GOON_DEBUG_LUA)
-#     target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_DEBUG_LUA)
-# endif(GOON_DEBUG_LUA)
-
-# if(GOON_BENCHMARKING)
-#     target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE -DGN_BENCHMARKING_ENABLED)
-# endif(GOON_BENCHMARKING)
 
 # Platform-specific compile definitions
 target_compile_definitions(${EXECUTABLE_TARGET_NAME} PRIVATE
