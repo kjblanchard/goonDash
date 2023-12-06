@@ -86,14 +86,8 @@ endif(GOON_BUILD_PCH)
 # #########################################
 # Build Type specific setup
 # #########################################
-# If we are debug, we should use the local path, otherwise use the location of embuilder from the docker image
+# Local builds need to find all the packages
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-else()
-endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
-
-# #########################################
-# Packages
-# #########################################
 message(STATUS "Finding Packages")
 
 # 1. Look for a SDL2 package, 2. look for the SDL2 component and 3. fail if none can be found
@@ -117,6 +111,12 @@ find_library(LIB_LUA
     HINTS /usr/local/lib
     REQUIRED)
 set(LUA_LIBRARIES ${LIB_LUA})
+else()
+endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+
+# #########################################
+# Packages
+# #########################################
 
 # #########################################
 # Platform Specific Build settings
