@@ -210,6 +210,7 @@ PUBLIC
 /usr/local/include
 ${CMAKE_CURRENT_SOURCE_DIR}/../SDL/include
 ${CMAKE_CURRENT_SOURCE_DIR}/../SDL_ttf
+${CMAKE_CURRENT_SOURCE_DIR}/../Lua/lua-5.4.6/include
 )
 
 target_include_directories(${LIBRARY_TARGET_NAME}
