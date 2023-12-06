@@ -207,7 +207,10 @@ target_link_libraries(${EXECUTABLE_TARGET_NAME} PRIVATE ${LIBRARY_TARGET_NAME})
 # #########################################
 target_include_directories(${LIBRARY_TARGET_NAME}
 PUBLIC
-/usr/local/include)
+/usr/local/include
+${CMAKE_CURRENT_SOURCE_DIR}/../SDL/include
+${CMAKE_CURRENT_SOURCE_DIR}/../SDL_ttf
+)
 
 target_include_directories(${LIBRARY_TARGET_NAME}
     PUBLIC
