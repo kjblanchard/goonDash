@@ -86,14 +86,8 @@ endif(GOON_BUILD_PCH)
 # #########################################
 # Build Type specific setup
 # #########################################
-# If we are debug, we should use the local path, otherwise use the location of embuilder from the docker image
+# Local builds need to find all the packages
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-else()
-endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
-
-# #########################################
-# Packages
-# #########################################
 message(STATUS "Finding Packages")
 
 # 1. Look for a SDL2 package, 2. look for the SDL2 component and 3. fail if none can be found
@@ -117,6 +111,12 @@ find_library(LIB_LUA
     HINTS /usr/local/lib
     REQUIRED)
 set(LUA_LIBRARIES ${LIB_LUA})
+else()
+endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+
+# #########################################
+# Packages
+# #########################################
 
 # #########################################
 # Platform Specific Build settings
@@ -187,6 +187,7 @@ set(LIBRARIES_TO_LINK
     SDL2::SDL2main
     SDL2::SDL2-static
     # SDL2_image::SDL2_image-static
+    SDL2::ttf
     SDL2_ttf::SDL2_ttf-static
     ${LUA_LIBRARIES}
     # Lua
@@ -206,7 +207,11 @@ target_link_libraries(${EXECUTABLE_TARGET_NAME} PRIVATE ${LIBRARY_TARGET_NAME})
 # #########################################
 target_include_directories(${LIBRARY_TARGET_NAME}
 PUBLIC
-/usr/local/include)
+/usr/local/include
+${CMAKE_CURRENT_SOURCE_DIR}/../SDL/include
+${CMAKE_CURRENT_SOURCE_DIR}/../SDL_ttf
+${CMAKE_CURRENT_SOURCE_DIR}/../Lua/lua-5.4.6/include
+)
 
 target_include_directories(${LIBRARY_TARGET_NAME}
     PUBLIC

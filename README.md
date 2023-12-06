@@ -1,7 +1,7 @@
 # GoonDash
 - A C program with Lua scripting, that utilizes Tiled and Aseprite for the game "engine".
 - ![Build All Platforms]( https://github.com/kjblanchard/goonDash/actions/workflows/build.yml/badge.svg)
-![Status Picture](https://github.com/kjblanchard/goonDash/blob/master/img/status.png?raw=true)
+- ![Status Picture](https://github.com/kjblanchard/goonDash/blob/master/img/status.png?raw=true)
 - Play the game here, or likely watch its "progress" [Supergoon.com](https://supergoondash.supergoon.com)
 
 ## Development

@@ -44,6 +44,7 @@ package:
 rebuild: BUILD_SYSTEM = $(PRIMARY_BUILD_SYSTEM)
 rebuild: clean configure build install test
 brebuild: BUILD_SYSTEM = $(BACKUP_BUILD_SYSTEM)
+brebuild: FULL_MAC_BUILD = ON
 brebuild: clean configure build install test package
 wrebuild: BUILD_SYSTEM=$(WINDOWS_BUILD_SYSTEM)
 wrebuild: PACKAGE_COMMAND = $(WINDOWS_PACKAGE_COMMAND)

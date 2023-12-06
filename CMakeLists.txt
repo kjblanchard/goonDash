@@ -239,7 +239,7 @@ set(LIBRARIES_TO_LINK
     SDL2::SDL2main
     SDL2::SDL2-static
     SDL2_image::SDL2_image-static
-    SDL2_ttf::SDL2_ttf-static
+    # SDL2_ttf::SDL2_ttf-static
     goonPhysics
     supergoonSound
     SupergoonUI
