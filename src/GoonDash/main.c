@@ -2,7 +2,6 @@
 #include <GoonDash/misc/lua.h>
 #include <GoonDash/scripting/LuaScripting.h>
 #include <GoonDash/input/keyboard.h>
-#include <SDL_ttf.h>
 #include <SupergoonSound/include/sound.h>
 #include <GoonPhysics/GoonPhysics.h>
 #include <GoonUI/include/test.h>
@@ -31,37 +30,7 @@ static float msBuildup;
 extern SDL_Renderer *g_pRenderer;
 extern int g_refreshRate;
 
-// This is used inside of SDLWindow
-SDL_Texture *g_font;
-int g_fontW, g_fontH = 0;
 
-// Quick font test
-SDL_Texture *CreateFontTest()
-{
-    Hello();
-    TTF_Font *font;
-    printf("Creating font?\n");
-    /* MS Himalaya (himalaya.ttf): http://fontzone.net/font-details/microsoft-himalaya */
-    font = TTF_OpenFont("assets/fonts/himalaya.ttf", 24);
-
-    if (!font)
-    {
-        printf("%s\n", TTF_GetError());
-        return NULL;
-    }
-    SDL_Color colour = {255, 255, 255, 255};
-    SDL_Surface *surface = TTF_RenderUTF8_Blended_Wrapped(font, "Created by: Kevin Blanchard\nWASD to move, Spacebar to jump", colour, 0);
-    g_fontW = surface->w;
-    g_fontH = surface->h;
-    if (surface == NULL)
-    {
-        TTF_CloseFont(font);
-        printf("Surface error!\n");
-        return NULL;
-    }
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(g_pRenderer, surface);
-    return texture;
-}
 
 void *MusicUpdateWrapper(void *arg)
 {
@@ -98,13 +67,13 @@ static bool sdlEventLoop()
 
 static int loop_func()
 {
-    static int shouldTestFont = 0;
-    if (!shouldTestFont)
-    {
-        g_font = CreateFontTest();
-        shouldTestFont = 1;
-    }
+    static int shouldInitTtf = 0;
     // Initialize this frame
+    if(!shouldInitTtf)
+    {
+        InitializeUi(g_pRenderer);
+        shouldInitTtf = 1;
+    }
 
     Uint64 beginFrame = SDL_GetTicks64();
     Uint64 delta = beginFrame - lastFrameMilliseconds;
@@ -135,10 +104,7 @@ static int loop_func()
     SDL_SetRenderDrawColor(g_pRenderer, 100, 100, 100, 255);
     SDL_RenderClear(g_pRenderer);
     CallEngineLuaFunction(L, "Draw");
-    SDL_Rect dstFont = {10,10,g_fontW, g_fontH};
-    SDL_RenderCopy(g_pRenderer, g_font, NULL, &dstFont);
-    SDL_RenderDrawLine(g_pRenderer, 0, 11+g_fontH, 20 + g_fontW, 11+g_fontH);
-    SDL_RenderDrawLine(g_pRenderer, 20 + g_fontW, 0, 20 + g_fontW, 11+g_fontH);
+    DrawUI(g_pRenderer);
     SDL_RenderPresent(g_pRenderer);
 }
 
@@ -163,10 +129,6 @@ int main()
     if (IMG_Init(IMG_INIT_PNG) == 0)
     {
         LogError("Could not initialize SDL_IMAGE\nError: %s", IMG_GetError());
-    }
-    if (TTF_Init() != 0)
-    {
-        LogError("Could not initialize SDL TTF\n,Error: %s", TTF_GetError());
     }
     L = GetGlobalLuaState();
     int result = InitializeSound();
