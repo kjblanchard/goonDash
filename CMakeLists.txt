@@ -155,6 +155,8 @@ else()
 endif(MACOS AND NOT GOON_FULL_MACOS_BUILD)
 
 # Build my Libraries and include directories regardless
+add_subdirectory(./external/goonUI)
+target_include_directories(${EXECUTABLE_TARGET_NAME} PUBLIC external/goonUI/src)
 add_subdirectory(./external/goonPhysics)
 target_include_directories(${EXECUTABLE_TARGET_NAME} PUBLIC external/goonPhysics/include/)
 add_subdirectory(./external/sg_sound)
@@ -240,6 +242,7 @@ set(LIBRARIES_TO_LINK
     SDL2_ttf::SDL2_ttf-static
     goonPhysics
     supergoonSound
+    SupergoonUI
 )
 
 foreach(LIBRARY ${LIBRARIES_TO_LINK})

@@ -5,6 +5,8 @@
 #include <SDL_ttf.h>
 #include <SupergoonSound/include/sound.h>
 #include <GoonPhysics/GoonPhysics.h>
+#include <GoonUI/include/test.h>
+
 
 #ifndef FT_IMAGE_TAG
 #define FT_IMAGE_TAG(value, _x1, _x2, _x3, _x4) value
@@ -36,6 +38,7 @@ int g_fontW, g_fontH = 0;
 // Quick font test
 SDL_Texture *CreateFontTest()
 {
+    Hello();
     TTF_Font *font;
     printf("Creating font?\n");
     /* MS Himalaya (himalaya.ttf): http://fontzone.net/font-details/microsoft-himalaya */
