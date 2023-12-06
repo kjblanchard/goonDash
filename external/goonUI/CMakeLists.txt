@@ -187,6 +187,7 @@ set(LIBRARIES_TO_LINK
     SDL2::SDL2main
     SDL2::SDL2-static
     # SDL2_image::SDL2_image-static
+    SDL2::ttf
     SDL2_ttf::SDL2_ttf-static
     ${LUA_LIBRARIES}
     # Lua
