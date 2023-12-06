@@ -17,7 +17,7 @@
 #include <time.h>
 #include <stdbool.h>
 // External libs that we link to with large headers.
-#include <SDL2/SDL.h>
+#include <SDL.h>
 // #include <SDL2/SDL_ttf.h>
 #include <SDL_ttf.h>
 #include <lua.h>
